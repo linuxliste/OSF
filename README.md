@@ -3,13 +3,13 @@ This repository is a fork of this "mbrusa" project https://github.com/emmebrusa/
 
 The purpose here is to have a version that can be used on a TSDZ8 Tongsheng motor.
 
-Changes were required mainly because TSDZ8 uses a different microprocessor (XMC1302).
+Changes were required because TSDZ8 uses a different microprocessor (XMC1302).
 
-This version is supposed to provide the same functionalities and to support the same displays as the mbrusa project above.
+This version is supposed to provide the same functionalities and to support the same 4 displays as the mbrusa project above.
 
 Compare to the TSDZ8 original firmware there are some expected benefits:
-* let the user adapt many parameters to his preferences.
-* show more data on the display (without having to change the display firmware)
+* The user can adapt many parameters to his preferences.
+* The display can show more data (without having to change the display firmware) (and change some setup.
 
 For more information, you can: 
 * look at Endless Sphere forum reference thread: [endless-sphere.com.](https://endless-sphere.com/forums/viewtopic.php?f=30&t=110682).
@@ -18,18 +18,99 @@ For more information, you can:
 IMPORTANT : at this stage, this is just a beta version. It has even NOT been tested on a bike and there are probably some bugs.
 Try it at your own risk!!!!
 
-Like the TSDZ2 version, this version is supposed to let you change some setup parameters using the display keyboard. Still currently the changes done with the display are lost after a power off. This should be fixed in a future version.
+Small limitation whith the current version. Like the TSDZ2 version, this version is supposed to let you change some setup parameters using the display keyboard. Still currently the changes done with the display are lost after a power off. This should be fixed in a future version.
 
 To use this firmware, you will have to:
 
-* Install some softwares to compile this firmware to take care of your preferences
 * Donwload this firmware
 * Set up parameters to match your preferences
-* Compile This firmware
-* Use a Segger Jlink device and a cable to connect it to the controller ( to flash the firmware in the TSDZ8 controller); note : this device replace the Stlink used for TSDZ2
-* Flash the compiled firmware to the TSDZ8 controller
+* Use a Segger Jlink device and a cable (this device replace the Stlink used for TSDZ2)
+* Flash the compiled firmware on the TSDZ8 controller
+* Flash also the file containing your preferences
 
-# 1.Installing the softwares to compile this firmware
+# 1.Download this firmware
+
+Download or clone this repository. 
+If you downloaded, unzip the archive where you want.
+
+# 2.Set up the parameters
+
+There is an xls google sheet to let you define your preference.
+This sheet is stored here (on google sheet):
+ https://docs.google.com/spreadsheets/d/1JGoD7aYM3r_jNYhAEYnjPz8FSN3tRxFrSeNIAMIy3Ys/edit?usp=sharing.
+ 
+You can't modify it directly but you can copy (on google store) or dowload it as xlsx. You can then edit this copy or dowload. 
+
+This sheet replaces the OSF configurator for TSDZ2 but it allows to change (nearly) all the same parameters.
+
+To understand the purpose of all those parameters, see manual of TSDZ2 https://github.com/emmebrusa/TSDZ2-Smart-EBike-1/blob/master/manuals/EN-Parameter_configurator_guide-TSDZ2-v20.1C.2-2.pdf
+
+Note: it seems that the TSDZ2 manual is not 100% up to date (the configurator contains a few more fields).
+FYI the TSDZ2 configurator (JavaConfigurator.jar) is available at https://github.com/emmebrusa/TSDZ2-Smart-EBike-1 but can'be use for TSDZ8
+
+To use the sheet:
+- first edit the parameters you want in the 3 first sheets (Basic settings, Assistance settings, Advance settings).
+- in the sheet "HEX", select the cells from column A that are not empty and make a copy to the clipboard (CTRL+C)
+- open a basic editor (like notepad); create an empty document and paste the values you just copied.
+- save your document with a file name extension "HEX" 
+
+Important note: 
+The cells are not protected in the sheet. So be carreful to edit/modify only the cells containing parameters.
+There are currently nearly no check on the values being introduced. So be carrefull.
+In the future, I could add more checks/comments.
+If you have a doub look at the TSDZ2 configurator (manual and/or program). 
+
+# 3.Preparing Jlink
+
+You need a Segger Jlink device and a cable.
+You can get it from here : 
+https://ebikestuff.eu/en/content/18-tsdz8-firmware-update-using-j-link-jlink-v9-programming-kit
+
+This link provides also a link to an archive with all the files for flashing. You can download and unzip it.
+
+Note: I tested with a chinese clone V9 from aliexpress and it worked too.
+
+For the cable, you can also make your own cable with a speed sensor extension for TSDZ2 like this:https://fr.aliexpress.com/item/1005007479961045.html?spm=a2g0o.order_list.order_list_main.120.21ef5e5bFWfkqS&gatewayAdapt=glo2fra
+
+I cut the cable and connect it based on the diagram given in "DOC" folder in "Diagram-TS 32-bit Mid Drive Motor Controller Programming Cable (EN).pdf". It is safe to check that the extension cable you get uses the same colors.
+
+Note: After cutting the extension cable in 2 parts, I used the one with the female connector and connected it directly to the motor.
+I expect (not tested yet) that it is also possible to use the part with the male connector. The advantage is that you can keep the speed sensor cable connected to the motor when you flash. You connect then the Jlink device cable to the second yellow connector present on the speed sensor cable (the one foreseen for lights).  
+
+# 4.Flash the firmware
+
+To flash, you can follow the instructions from here: 
+https://ebikestuff.eu/en/content/18-tsdz8-firmware-update-using-j-link-jlink-v9-programming-kit
+
+The HEX file to upload is the one you downloaded at step 1. It is named "mtb-example-xmc-gpio-toggle.hex" in
+folder "test_gpio_in/build/tsdz8_for_GPIO_TEST/Debug".
+
+Note: while flashing, the motor should not be powered by the battery. Disconnect it or at least power it OFF. In principe, the Jkink will provide power to the controller (at least if it is a Jlink clone device).
+It seems possible to keep the motor connected the display but do not press any button on the display.
+
+# 5.Flash the file wwith your preference
+
+Flash the HEX file your created at step2 in the same way, you flashed the firmware.
+
+Note:
+There is normally no need to re-flash the firmware each time you change the HEX file with you preferences.
+
+Still if there are deep changes (in the firmware and/or the sheet), the Version nr in the sheet will be changed.
+When the controller starts running, it will check that the firmware is compatible with the parameter version.
+If not, it will runs with default internal parameters. In the future, this would be change in order to provide an error code on the display (and it will block the motor).  
+
+# IMPORTANT NOTES
+* Installing this firmware will void your warranty of the TSDZ8 mid drive.
+* We are not responsible for any personal injuries or accidents caused by use of this firmware.
+* There is no guarantee of safety using this firmware, please use it at your own risk.
+* We advise you to consult the laws of your country and tailor the motor configuration accordingly.
+* Please be aware of your surroundings and maintain a safe riding style.
+
+
+
+# Devepper
+
+If you want, you can look at the software and modify it.
 
 This software has been developped with 
  - Modus toolbox (from infineon)
@@ -42,15 +123,11 @@ https://www.infineon.com/dgdl/Infineon-Visual-Studio-Code-user-guide-UserManual-
 This can be quite long but is not very difficult.
 There is no need to follow the instructions in chapters 2 and after.
 
-On my side I still had an issue to use Jlink to directly flash/debug the firmware and I had to
+Note: on my side I still had an issue to use Jlink to directly flash/debug the firmware and I had to
 - rename the Jlink folder to remove the version nr (so it becomes just "SEEGER")
 - edit the .vscode/settings.json file in this project to adapt the paths to Segger tools
 
-# 2.Installing this firmware
-
-Download or clone this repository. 
-If you downloaded, unzip the archive where you want.
-Still take care to put all the folders inside an empty folder. 
+Still take care to put all the folders inside an empty folder in the case you would like to develop/compile your self. The m 
 
 Then there are some more steps to perform:
 - open "modus-shell"  (this tool is part of the programs that have been dowloaded with modus toolbox)
@@ -60,71 +137,13 @@ Then there are some more steps to perform:
 
 Normally you are now ready to use VS Code and to compile.
 
-# 3.Setting up the parameters
-The parameters used by this firmware are stored in the file config.h.
-
-They can be manually edited in this file using VS Code.
-
-They are the same as those of mbrusa firmware: see manual https://github.com/emmebrusa/TSDZ2-Smart-EBike-1/blob/master/manuals/EN-Parameter_configurator_guide-TSDZ2-v20.1C.2-2.pdf
-
-Still as this firmware uses the same parameters as the mbrusa project, it is also possible (not tested yet) to use a "mbrusa" graphical configurator to generate the config.h file in a user friendly way. See java program JavaConfigurator.jar that is available at https://github.com/emmebrusa/TSDZ2-Smart-EBike-1.
-This requires to follow the instructions of mbrusa manual (except what is related to compiling/flashing/Stlink).
-
-Important note: the JavaConfigurator has been developped by mbrusa to fill the config.h AND automaticaly also compile and flash the firmare on a TSDZ2 controller.
-As the TSDZ8 uses another microprocessor, compilation and flashing process are different and will fail when pressing on the button Compile & Flash of the configurator.
-
-I did not tested it, but I expect that before giving a flashing error, the configurator will first generate a config.h file.
-This "mbrusa" file can then be copied into this TSDZ8 project (and so replace the default file I provided)
-
-
-# 4.Compiling this firmware
-Open VS Code.
-
-
-
-In menu "File", select the option "Open Workspace from File..."
-
-Select a file named "TSDZ8.code-workspace" in folder "OSF"
-
-This should open all files.
-
-Edit the config.h file (if not yet done).
-
-You can then try to compile: select the menu "Terminal" and the option "Run Build Task"
+To compiling the firmware:
+* Open VS Code.
+* In menu "File", select the option "Open Workspace from File..."
+* Select a file named "TSDZ8.code-workspace" in folder "OSF".This should open all files.
+* Select the menu "Terminal" and the option "Run Build Task"
 
 Check if errors are generated. It is not abnormal to get quite many "Warnings" (but not "errors").
 This step created a HEX file that can be flashed in the controller.
-
-# 5.Preparing Jlink
-
-You need a Segger Jlink device and a cable.
-You can get it from here : https://ebikestuff.eu/en/content/18-tsdz8-firmware-update-using-j-link-jlink-v9-programming-kit
-
-Note: I tested with a chinese clone V9 and it worked too.
-
-For the cable, you can also make your own cable with a speed sensor extension for TSDZ2 like this:https://fr.aliexpress.com/item/1005007479961045.html?spm=a2g0o.order_list.order_list_main.120.21ef5e5bFWfkqS&gatewayAdapt=glo2fra
-
-I cut the cable and connect it based on the diagram given in "DOC" folder in "Diagram-TS 32-bit Mid Drive Motor Controller Programming Cable (EN).pdf". It is safe to check that the extension cable you get uses the same colors.
-
-Note: After cutting the extension cable in 2 parts, I used the one with the female connector and connected it directly to the motor.
-I expect (not tested yet) that it is also possible to use the part with the male connector. The advantage is that you can keep the speed sensor cable connected to the motor when you flash. You connect then the Jlink device cable to the second yellow connector present on the speed sensor cable (the one foreseen for lights).  
-
-# 6.Flashing
-
-To flash, you can follow the instructions from here: 
-https://ebikestuff.eu/en/content/18-tsdz8-firmware-update-using-j-link-jlink-v9-programming-kit
-
-The HEX file to upload is "mtb-example-xmc-gpio-toggle.hex". It has been generated during the compilation in
-folder "test_gpio_in/build/tsdz8_for_GPIO_TEST/Debug".
-
-Note: while flashing, the motor should not be powered by the battery. Disconnect it or at least power it OFF.
-It seems possible to keep the motor connected the display but do not press any button on the display.
  
-Note : it is also possible to flash the code directly from VS Code at the same time as you compile it but this requires probably to modify some set up in .vscode/settings.json file in order to let VS Code knows the location of some Segger files (depend on the folder where you installed Segger Jlink).
-
-# IMPORTANT NOTES
-* Installing this firmware will void your warranty of the TSDZ8 mid drive.
-* We are not responsible for any personal injuries or accidents caused by use of this firmware.
-* There is no guarantee of safety using this firmware, please use it at your own risk.
-* We advise you to consult the laws of your country and tailor the motor configuration accordingly.
-* Please be aware of your surroundings and maintain a safe riding style.
+Note : it is also possible to flash the code directly from VS Code at the same time as you compile (e.g. to debug it) but this requires probably to modify some set up in .vscode/settings.json file in order to let VS Code knows the location of some Segger files (depend on the folder where you installed Segger Jlink).

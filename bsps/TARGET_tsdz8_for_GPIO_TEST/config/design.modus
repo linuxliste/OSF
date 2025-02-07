@@ -2320,6 +2320,19 @@
                         <Param id="inFlash" value="true"/>
                     </Parameters>
                 </Personality>
+                <Personality template="xmc_wdt" version="1.0">
+                    <Block location="wdt[0]" locked="true"/>
+                    <Parameters>
+                        <Param id="desired_ms_wlb" value="0.00"/>
+                        <Param id="desired_ms_wub" value="500.00"/>
+                        <Param id="enable_pwa" value="false"/>
+                        <Param id="event_handler_pwa" value="wdt_0_EventHandler"/>
+                        <Param id="inFlash" value="true"/>
+                        <Param id="runInDebug" value="false"/>
+                        <Param id="start_after_init" value="true"/>
+                        <Param id="width_sip" value="1"/>
+                    </Parameters>
+                </Personality>
             </BlockConfig>
             <Netlist>
                 <Net>

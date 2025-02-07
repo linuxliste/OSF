@@ -479,8 +479,7 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
         // temp is here related to 256 (because 256 represent 360°); So 36° is here 25
         compensated_enlapsed_time = enlapsed_time + ui8_fw_hall_counter_offset + ui8_hall_counter_offset;
         // convert time tick to angle (256 = 360°)
-        // to do : use perhaps the match coprocessor to perform the division in less than 1 usec
-        ui8_interpolation_angle = (((uint32_t) compensated_enlapsed_time) << 8) /  ui16_hall_counter_total; // <<8 = 256 = 360 electric angle
+          ui8_interpolation_angle = (((uint32_t) compensated_enlapsed_time) << 8) /  ui16_hall_counter_total; // <<8 = 256 = 360 electric angle
         if (ui8_interpolation_angle > 50){  // added by mstrens because interpolation should not exceed 60°
             ui8_interpolation_angle = 21; // 21 is about 30° so mid position between 2 hall pattern changes
         }

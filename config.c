@@ -1,3 +1,4 @@
+#include "xmc_flash.h"
 #include "config.h"
 #include "common.h" // to know the uint type
 #include "main.h"
@@ -474,9 +475,16 @@ void init_extra_fields_config (){
 }
 
 void upload_m_config(){
-    #define ADDRESS_OF_M_CONFIG_FLASH  0x0000C000
-    
+    //#define XMC_SECTOR_ADDR                 (uint32_t *)0x10010000U
+
+    #define ADDRESS_OF_M_CONFIG_FLASH 0x1000C000U
+    //XMC_FLASH_ReadWord(	XMC_SECTOR_ADDR)	;
+
+
     uint16_t * pConfig = (uint16_t *) ADDRESS_OF_M_CONFIG_FLASH;  // point to the begin of user preference parameters in flash 
+    uint16_t value = *pConfig;
+    value = value+1;
+
     if ( *pConfig != m_config.main_version) return;  // discard flash parameters if the main version is different
                                                     // so keep the parameters defined in config.c 
     m_config.main_version = *pConfig++; // read the value given by the pointer, and afterward increment it

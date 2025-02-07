@@ -193,7 +193,7 @@ ui16_duty_cycle_percent                  12
 // added by mstrens
 #define _MAIN_VERSION 1
 #define _SUB_VERSION 1
-#define _RESERVE_1   0
+#define _RESERVE_1   2
 #define _RESERVE_2   0
 #define _RESERVE_3   0
 #define _RESERVE_4   0
@@ -203,18 +203,18 @@ ui16_duty_cycle_percent                  12
 #define _RESERVE_8   0
 
 #define _MOTOR_TYPE 0              // 0 = 48V, 1 = 36V ; is used to change the FOC_ANGLE_MULTIPLIER in main.h
-#define _TORQUE_SENSOR_CALIBRATED 1
+#define _TORQUE_SENSOR_CALIBRATED 0
 #define _MOTOR_ACCELERATION  35
 #define _MOTOR_ASSISTANCE_WITHOUT_PEDAL_ROTATION 0 // when enabled (1), assistance is provided when the pedal is pressed more than the thershold herafer
 #define _ASSISTANCE_WITHOUT_PEDAL_ROTATION_THRESHOLD 20
 #define _PEDAL_TORQUE_PER_10_BIT_ADC_STEP_X100 67    // used to calculate the correct ratio between the assistance factor and the human power + for total power
 #define _PEDAL_TORQUE_ADC_MAX 300                    // value from ADC when max weigth is apply on one pedal
-#define _STARTUP_BOOST_TORQUE_FACTOR 300
+#define _STARTUP_BOOST_TORQUE_FACTOR 250
 #define _MOTOR_BLOCKED_COUNTER_THRESHOLD 2
 #define _MOTOR_BLOCKED_BATTERY_CURRENT_THRESHOLD_X10 20  // mstrens : it was 30 for tsdz2, I reduce it for testing
 #define _MOTOR_BLOCKED_ERPS_THRESHOLD 10       // electric RPS mstrens it was 20 for tsdz2, TSDZ8 has 4 poles instead of 8, so 2 more ticks for the same speed
 
-#define _STARTUP_BOOST_CADENCE_STEP 20       
+#define _STARTUP_BOOST_CADENCE_STEP 25       
 #define _BATTERY_CURRENT_MAX        5          // A mstrens: it was 13 for tsdz2, reduce for testing
 #define _TARGET_MAX_BATTERY_POWER 500
 #define _TARGET_MAX_BATTERY_CAPACITY 500
@@ -245,18 +245,18 @@ ui16_duty_cycle_percent                  12
 #define _ENABLE_STREET_MODE_ON_STARTUP 1
 #define _ENABLE_SET_PARAMETER_ON_STARTUP 0
 #define _ENABLE_ODOMETER_COMPENSATION 0         // used in and #if!
-#define _STARTUP_BOOST_ON_STARTUP 1
+#define _STARTUP_BOOST_ON_STARTUP 0
 #define _TORQUE_SENSOR_ADV_ON_STARTUP 0
 #define _LIGHTS_CONFIGURATION_ON_STARTUP 0
 #define _RIDING_MODE_ON_STARTUP 3     // CADENCE_ASSIST_MODE= 3
 #define _LIGHTS_CONFIGURATION_1 1
 #define _LIGHTS_CONFIGURATION_2 9
 #define _LIGHTS_CONFIGURATION_3 10
-#define _STREET_MODE_POWER_LIMIT_ENABLED 1
-#define _STREET_MODE_POWER_LIMIT 500
+#define _STREET_MODE_POWER_LIMIT_ENABLED 0
+#define _STREET_MODE_POWER_LIMIT 250
 #define _STREET_MODE_SPEED_LIMIT 25
-#define _STREET_MODE_THROTTLE_ENABLED 0    // not used anymore
-#define _STREET_MODE_CRUISE_ENABLED 0      // used in and #if!
+#define _STREET_MODE_THROTTLE_ENABLED 1    // not used anymore
+#define _STREET_MODE_CRUISE_ENABLED 1     // used in and #if!
 #define _ADC_THROTTLE_MIN_VALUE 47             // It is ADC 8 bits ; For tsdz2, it was 47, for tsdz8 it could be 45; we keep 47; this is mapped to 0
 #define _ADC_THROTTLE_MAX_VALUE 176            // It is ADC 8 bits ; For TSDZ2, it was 176, for tsdz8 it could be 180; we keep 176 ; this is mapped to 255
 #define _MOTOR_TEMPERATURE_MIN_VALUE_LIMIT 65

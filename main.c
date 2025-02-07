@@ -321,7 +321,7 @@ const XMC_VADC_QUEUE_CONFIG_t vadc_0_group_1_queue_config2 = {
 //    XMC_VADC_GLOBAL_EnablePostCalibration(vadc_0_HW, 0U);
 //    XMC_VADC_GLOBAL_EnablePostCalibration(vadc_0_HW, 1U);
 //    XMC_VADC_GLOBAL_StartupCalibration(vadc_0_HW);
-    
+    XMC_WDT_Service();
     // todo should be adapted to get them from flash memory; currently we only use default)
     init_extra_fields_config (); // get the user parameters (
     // todo : change when eeprom is coded properly add some initialisation (e.g. m_configuration_init() and ebike_app.init)
@@ -330,22 +330,23 @@ const XMC_VADC_QUEUE_CONFIG_t vadc_0_group_1_queue_config2 = {
     
     // add some initialisation in ebike_app.init
     #if (PROCESS != DETECT_HALL_SENSORS_POSITIONS ) // is not done when we are just testing slow motion to detect hall pattern
+    XMC_WDT_Service();
     ebike_app_init();
     #else
+    XMC_WDT_Stop();  // do not use watchdog when running this part of the code
     log_hall_sensor_position();  // let the motor run slowly (10 turns) in each direction, log via jlink the angles of hall pattern changes
     // note: this function never ends
     #endif
     start = system_ticks;
 
-    #if (SEND_FRAME_100MS)   // for debugging
-    uint32_t send_frame_ticks = system_ticks;
-    #endif
-    
     
 //***************************** while ************************************
     while (1) // main loop
     {     
-	    // when there is no frame waiting for process (ui8_received_package_flag == 0), try to get incoming data from UART but do not process them
+	    // avoid a reset
+        XMC_WDT_Service(); // reset if we do not run here within the 0,5 sec
+    
+        // when there is no frame waiting for process (ui8_received_package_flag == 0), try to get incoming data from UART but do not process them
         // When frame is full, data are processed in ebike_app.c once every 100 msec
         if (ui8_received_package_flag == 0) {
             fillRxBuffer();

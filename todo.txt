@@ -13,6 +13,8 @@ change some parameters (max current, battery volt,...)
     - pehaps ui8_pedal_torque_per_10_bit_ADC_step_x100 has to be adapted
     - FOC_ANGLE_MULTIPLIER has probably to be adapted because L (inductance) is different (and also erps)
     
+add watchdog
+
 After debugging : 
 - in ebike_app_controller, remove the code that force the current on a fixed value in order to enable the switch on riding mode
 - Change/Add code for eeprom and initialisation for m_configuration when eeprom is in use
