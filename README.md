@@ -9,7 +9,7 @@ This version is supposed to provide the same functionalities and to support the 
 
 Compare to the TSDZ8 original firmware there are some expected benefits:
 * The user can adapt many parameters to his preferences.
-* The display can show more data (without having to change the display firmware) (and change some setup.
+* The display can show more data (without having to change the display firmware) and allow you to make a few changes to the setup.
 
 For more information, you can: 
 * look at Endless Sphere forum reference thread: [endless-sphere.com.](https://endless-sphere.com/forums/viewtopic.php?f=30&t=110682).
@@ -63,19 +63,18 @@ If you have a doub look at the TSDZ2 configurator (manual and/or program).
 # 3.Preparing Jlink
 
 You need a Segger Jlink device and a cable.
-You can get it from here : 
-https://ebikestuff.eu/en/content/18-tsdz8-firmware-update-using-j-link-jlink-v9-programming-kit
+You can get it from here : https://ebikestuff.eu/en/content/18-tsdz8-firmware-update-using-j-link-jlink-v9-programming-kit
 
 This link provides also a link to an archive with all the files for flashing. You can download and unzip it.
 
-Note: I tested with a chinese clone V9 from aliexpress and it worked too.
+Note: I tested with a chinese jlink clone V9 from aliexpress and it worked too.
 
-For the cable, you can also make your own cable with a speed sensor extension for TSDZ2 like this:https://fr.aliexpress.com/item/1005007479961045.html?spm=a2g0o.order_list.order_list_main.120.21ef5e5bFWfkqS&gatewayAdapt=glo2fra
+For the cable, you can also make your own cable with a speed sensor extension cord for TSDZ2 like this:https://fr.aliexpress.com/item/1005007479961045.html?spm=a2g0o.order_list.order_list_main.120.21ef5e5bFWfkqS&gatewayAdapt=glo2fra
 
 I cut the cable and connect it based on the diagram given in "DOC" folder in "Diagram-TS 32-bit Mid Drive Motor Controller Programming Cable (EN).pdf". It is safe to check that the extension cable you get uses the same colors.
 
-Note: After cutting the extension cable in 2 parts, I used the one with the female connector and connected it directly to the motor.
-I expect (not tested yet) that it is also possible to use the part with the male connector. The advantage is that you can keep the speed sensor cable connected to the motor when you flash. You connect then the Jlink device cable to the second yellow connector present on the speed sensor cable (the one foreseen for lights).  
+Note: After cutting the extension cord in 2 parts, I used the one with the female connector and connected it directly to the motor.
+I expect (not tested yet) that it is also possible to use the part with the male connector. The advantage is that you can keep the speed sensor cable connected to the motor when you flash. You connect then the Jlink device cable to the second yellow connector present on the speed sensor cable (instead of the cable foreseen for the lights).  
 
 # 4.Flash the firmware
 
@@ -83,7 +82,7 @@ To flash, you can follow the instructions from here:
 https://ebikestuff.eu/en/content/18-tsdz8-firmware-update-using-j-link-jlink-v9-programming-kit
 
 The HEX file to upload is the one you downloaded at step 1. It is named "mtb-example-xmc-gpio-toggle.hex" in
-folder "test_gpio_in/build/tsdz8_for_GPIO_TEST/Debug".
+folder "test_gpio_in/build/tsdz8_for_GPIO_TEST/Debug" or in "test_gpio_in/build/last_config".
 
 Note: while flashing, the motor should not be powered by the battery. Disconnect it or at least power it OFF. In principe, the Jkink will provide power to the controller (at least if it is a Jlink clone device).
 It seems possible to keep the motor connected the display but do not press any button on the display.

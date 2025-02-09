@@ -14,8 +14,6 @@
 
 #define VERSION "0.0.0"
 
-#define DEBUG_ON_UART          (0)  // when 0, no printf messages are sent on uart
-                                    // when 1, uart from controller should not be connected to the display and a USB serial device should be connected 
 #define DEBUG_ON_JLINK         (1)  // when 1, messages are generated on jlink; best is to connect only 3 wires (grnd + SWO and S???)
 
 #define NORMAL_OPERATIONS             0
@@ -24,7 +22,7 @@
 #define TEST_WITH_FIXED_DUTY_CYCLE    3 // rotate the motor with fixed duty cycle and a max current target
 #define TEST_WITH_THROTTLE            4 // rotate the motor with a duty cycle based on throttle
 // this define selects the main way the firmware is used; select one of the 5 options here above
-#define PROCESS       TEST_WITH_THROTTLE
+#define PROCESS  NORMAL_OPERATIONS  
 
 // ***************** setup to detect hall sensors positions -- to be done only once for a new motor
     // There may not be a load on the motor
@@ -53,7 +51,7 @@
 #define CALIBRATE_OFFSET_STEP 1    // 1// step used when increasing the global_offset_angle (normally 1; could be set to 0 for some kind of test)
 
 // ************* TEST WITH FIXED_DUTY_CYCLE *****************
-#define PWM_DUTY_CYCLE_MAX_TEST_WITH_FIXED_DUTY_CYCLE 200
+#define PWM_DUTY_CYCLE_MAX_TEST_WITH_FIXED_DUTY_CYCLE 20 // max is 254 !!!
 #define ADC_BATTERY_CURRENT_TARGET_TEST_WITH_FIXED_DUTY_CYCLE (6) // 1 adc step = 0,16A; so 6 = 1A
         
 // ************* TEST WITH THROTTLE *****************
@@ -380,7 +378,7 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 #define ERROR_CADENCE_SENSOR		    3 // E03
 #define ERROR_MOTOR_BLOCKED            	4 // E04
 #define ERROR_THROTTLE					5 // E05 (E03 blinking for XH18)
-#define ERROR_OVERTEMPERATURE			6 // E06
+#define ERROR_OVERTEMPERATURE			6 // E06  
 #define ERROR_BATTERY_OVERCURRENT      	7 // E07 (E04 blinking for XH18)
 #define ERROR_SPEED_SENSOR				8 // E08
 #define ERROR_WRITE_EEPROM  			9 // E09 shared (E08 blinking for XH18)
@@ -514,6 +512,6 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 
 #define AVAIABLE_FOR_FUTURE_USE				0 // EEPROM
 
-//#define VADC0_BGGTSEL_VALUE 1 // do not use gate for VADC triggering
-
+#define ADDRESS_OF_M_CONFIG_FLASH 0x1000F000U // address in flash where the config is strored (must be the same as the adrress set in the xls for config)
+    
 #endif // _MAIN_H_

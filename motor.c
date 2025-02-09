@@ -153,11 +153,6 @@ uint8_t  previous_hall_pattern = 7; // Invalid value, force execution of Hall co
 uint16_t previous_360_ref_ticks ; 
 
 // ----------   end of copy from tsdz2 -------------------------
-// to test the rotation of the motor atlow speed to detect the hall pattern sequence
-uint16_t speed_counter = SPEED_COUNTER_MAX ;  
-uint32_t angle_deg = ANGLE_INIT;      // for debug with slow rotation for hall pattern discovery: angle in range 0/255 (represent 0/360°)
-uint8_t ui8_g_duty_cycle_test = DUTY_CYCLE_TEST;
-
 
 uint8_t ui8_temp;
 uint16_t ui16_temp;
@@ -166,22 +161,13 @@ volatile uint16_t ui16_a = PWM_COUNTER_MAX / 2 ;//   840 in tsdz8   // 4*210 fro
 volatile uint16_t ui16_b = PWM_COUNTER_MAX / 2 ;//   840 in tsdz8   // 4*210 from tsdz2
 volatile uint16_t ui16_c = PWM_COUNTER_MAX / 2 ;//   840 in tsdz8   // 4*210 from tsdz2
 
-// for printing (debug)
-uint8_t ui8_svm_table_index_print  ; 
-uint8_t ui16_temp_print  ;
-uint16_t ui16_a_print ;
-uint16_t ui16_new_angle_print; 
-volatile uint32_t hall_print_pos = 0; //save the angle to let it be printed with hall position
-volatile uint32_t hall_print_angle = 0; // save the angle to let it be printed with hall position
-volatile uint32_t posif_print_current_pattern = 0; 
-volatile uint32_t hall_print_interval = 0; 
-volatile uint32_t posif_SR0 = 0; // count hall valid transition 
+// for testing use of posif for hall pattern valid changes
+//volatile uint32_t posif_print_current_pattern = 0; 
+//volatile uint32_t hall_print_interval = 0; 
+//volatile uint32_t posif_SR0 = 0; // count hall valid transition 
+//volatile uint32_t posif_SR1 = 0; // count hall transition (before check if valid or not)
 
-volatile uint32_t posif_SR1 = 0; // count hall transition (before check if valid or not)
-volatile bool new_hall = false;
-
-volatile uint32_t hall_pin_pos = 0;
-
+// to debug time spent in irqà and irq1
 volatile uint16_t debug_time_ccu8_irq0 = 0;
 volatile uint16_t debug_time_ccu8_irq1 = 0;
 volatile uint16_t debug_time_ccu8_irq1b = 0;
@@ -210,11 +196,6 @@ uint8_t global_offset_angle = CALIBRATED_OFFSET_ANGLE ; // This value is in main
 #endif
 
 extern uint8_t ui8_pwm_duty_cycle_max;
-
-extern uint32_t debug_values[20] ; // for debug with print at interval
-extern uint32_t first_debug_values[100][20];
-extern uint32_t first_debug_index ; 
-
 
 // variables captured during the hall sensor irq
 volatile uint32_t hall_pattern_irq;                   // current hall pattern
@@ -395,7 +376,8 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
     XMC_ExitCriticalSection(critical_section_value);
     uint16_t enlapsed_time =  current_ticks - last_hall_pattern_change_ticks ; // ticks between now and last change
     // to debug
-    uint16_t start_ticks = current_ticks; // save to calculate enlased time inside the irq // just for debug could be removed
+    //uint16_t start_ticks = current_ticks; // save to calculate enlased time inside the irq // just for debug could be removed
+    
     // when pattern change
     if ( current_hall_pattern != previous_hall_pattern) {
         if (current_hall_pattern != expected_pattern_table[previous_hall_pattern]){ // new pattern is not the expected one
@@ -490,7 +472,6 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
     ui16_temp = ui16_svm_table[(uint8_t) (ui8_svm_table_index + 171)]; // 171 = 240 deg when 360° is coded as 256
     if (ui16_temp > MIDDLE_SVM_TABLE) { // 214 at 19 khz
         ui16_a = MIDDLE_SVM_TABLE + (((ui16_temp - MIDDLE_SVM_TABLE) * (uint16_t) ui8_g_duty_cycle)>>8); // >>8 because duty_cycle 100% is 256
-        //ui16_a_print = ui16_a ;
     } else {
         ui16_a = MIDDLE_SVM_TABLE - (((MIDDLE_SVM_TABLE - ui16_temp) * (uint16_t) ui8_g_duty_cycle)>>8);
     }
@@ -513,16 +494,17 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
     // get the voltage ; done in irq0 because used in irq1 and irq0 takes less time
     ui16_adc_voltage  = (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 4 ) & 0xFFFF) >> 2; // battery gr1 ch6 result 4   in bg
         
-    uint16_t temp  = XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW) ;
-    temp = temp - start_ticks;
-    if (temp > debug_time_ccu8_irq0) debug_time_ccu8_irq0 = temp; // store the max enlapsed time in the irq
+    //uint16_t temp  = XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW) ;
+    //temp = temp - start_ticks;
+    //if (temp > debug_time_ccu8_irq0) debug_time_ccu8_irq0 = temp; // store the max enlapsed time in the irq
 } // end of CCU80_0_IRQHandler
 
 
 // ************* irq handler 
 __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  counting DOWN (= 1/4 of 19mhz cycles)   __RAM_FUNC 
     //uint16_t start_ticks = XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW) ; // save ticks to measure enlapsed time in this irq
-    uint16_t start_ticks = (uint16_t) RUNNING_250KH_TIMER_HW->TIMER;
+    //uint16_t start_ticks = (uint16_t) RUNNING_250KH_TIMER_HW->TIMER;
+    
     //uint32_t critical_section_value = XMC_EnterCriticalSection();
     // fill the PWM parameters with the values calculated in the other CCU8 interrupt
     PHASE_U_TIMER_HW->CR1S = (uint32_t) ui16_a;
@@ -539,11 +521,11 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
 	                                            (uint32_t)XMC_CCU8_SHADOW_TRANSFER_SLICE_1 |
 	                                            (uint32_t)XMC_CCU8_SHADOW_TRANSFER_SLICE_2 );
     //XMC_ExitCriticalSection(critical_section_value);
-    
+    // to debug
     //uint16_t temp1b  =  XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW);
-    uint16_t temp1b  = (uint16_t) RUNNING_250KH_TIMER_HW->TIMER;
-    temp1b = temp1b - start_ticks;
-    if (temp1b > debug_time_ccu8_irq1b) debug_time_ccu8_irq1b = temp1b; // store the max enlapsed time in the irq
+    //uint16_t temp1b  = (uint16_t) RUNNING_250KH_TIMER_HW->TIMER;
+    //temp1b = temp1b - start_ticks;
+    //if (temp1b > debug_time_ccu8_irq1b) debug_time_ccu8_irq1b = temp1b; // store the max enlapsed time in the irq
     
     /****************************************************************************/
         // Read all ADC values (right aligned values).
@@ -571,11 +553,12 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
         ui16_adc_battery_current_acc_X8 = (ui16_temp_current_X8 + ui16_adc_battery_current_acc_X8)>> 1;
         ui16_adc_battery_current_filtered_X8 = (ui16_adc_battery_current_acc_X8 + ui16_adc_battery_current_filtered_X8) >>1;
         ui8_adc_battery_current_filtered = (uint8_t) (ui16_adc_battery_current_filtered_X8 >> 3); // divide by 8 to have the same value as tsdz2
-
+    // to debug
     //uint16_t temp1c  =  XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW);
-    uint16_t temp1c  = (uint16_t) RUNNING_250KH_TIMER_HW->TIMER;
-    temp1c = temp1c - start_ticks;
-    if (temp1c > debug_time_ccu8_irq1c) debug_time_ccu8_irq1c = temp1c; // store the max enlapsed time in the irq
+    //uint16_t temp1c  = (uint16_t) RUNNING_250KH_TIMER_HW->TIMER;
+    //temp1c = temp1c - start_ticks;
+    //if (temp1c > debug_time_ccu8_irq1c) debug_time_ccu8_irq1c = temp1c; // store the max enlapsed time in the irq
+        
         // update foc_angle once per electric rotation (based on fog_flag
         // foc_angle is added to the position given by hall sensor + interpolation )
         if (ui8_g_duty_cycle > 0) {
@@ -600,10 +583,11 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
         }
         // get brake state-
         ui8_brake_state = XMC_GPIO_GetInput(IN_BRAKE_PORT, IN_BRAKE_PIN) == 0; // Low level means that brake is on
+    
     // to debug
-    uint16_t temp1d  = (uint16_t) RUNNING_250KH_TIMER_HW->TIMER; //uint16_t temp1d  =  XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW);
-    temp1d = temp1d - start_ticks;
-    if (temp1d > debug_time_ccu8_irq1d) debug_time_ccu8_irq1d = temp1d; // store the max enlapsed time in the irq
+    //uint16_t temp1d  = (uint16_t) RUNNING_250KH_TIMER_HW->TIMER; //uint16_t temp1d  =  XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW);
+    //temp1d = temp1d - start_ticks;
+    //if (temp1d > debug_time_ccu8_irq1d) debug_time_ccu8_irq1d = temp1d; // store the max enlapsed time in the irq
     
                 /****************************************************************************/
         // PWM duty_cycle controller:
@@ -676,9 +660,10 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
             ui8_counter_duty_cycle_ramp_up = 0;
             ui8_counter_duty_cycle_ramp_down = 0;
         }
-    uint16_t temp1e  =  XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW);
-    temp1e = temp1e - start_ticks;
-    if (temp1e > debug_time_ccu8_irq1e) debug_time_ccu8_irq1e = temp1e; // store the max enlapsed time in the irq
+    // to debug
+    //uint16_t temp1e  =  XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW);
+    //temp1e = temp1e - start_ticks;
+    //if (temp1e > debug_time_ccu8_irq1e) debug_time_ccu8_irq1e = temp1e; // store the max enlapsed time in the irq
 
         /****************************************************************************/
         // Wheel speed sensor detection
@@ -796,10 +781,10 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
         // end cadence
 
         // original perform also a save of some parameters (battery consumption) // to do 
-        
-    uint16_t temp1  =  XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW);
-    temp1 = temp1 - start_ticks;
-    if (temp1 > debug_time_ccu8_irq1) debug_time_ccu8_irq1 = temp1; // store the max enlapsed time in the irq
+    // to debug    
+    //uint16_t temp1  =  XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW);
+    //temp1 = temp1 - start_ticks;
+    //if (temp1 > debug_time_ccu8_irq1) debug_time_ccu8_irq1 = temp1; // store the max enlapsed time in the irq
 }  // end of CCU8_1_IRQ
 
 #endif // end of code for production
@@ -822,6 +807,7 @@ uint32_t getHallPosition(void)
   return ((uint32_t)(hallposition & 0X07));
 }
 
+/*
 // is probably not required anymore because we use irq to capture the hall pattern changes just like tsdz2 (and not posif logic)
 void posif_init_position(){
     uint8_t current_pos = getHallPosition(); // get current position
@@ -854,7 +840,7 @@ void posif_init_position(){
     expected = XMC_POSIF_HSC_GetExpectedPattern(HALL_POSIF_HW);
     printf("after second update shadow: sR0= %ld pins=%ld Cur=%ld Exp=%ld\r\n", posif_SR0, current_pins , (uint32_t) current, (uint32_t) expected);
 }
-
+*/
 
 // after a transition, shadow register is automatically copy in HALP (with current and expected)
 // CCU4 slice1 generates a SR0 (at end of period) that is internally routed to MSET of posif
@@ -929,7 +915,6 @@ void set_rotor_angle( uint8_t angle, uint8_t duty_cycle){
     ui16_temp = ui16_svm_table[(uint8_t) (angle + 171)]; // 171 = 240 deg when 360° is coded as 256
     if (ui16_temp > MIDDLE_SVM_TABLE) { // 214 at 19 khz
         ui16_a = MIDDLE_SVM_TABLE + (((ui16_temp - MIDDLE_SVM_TABLE) * (uint16_t) duty_cycle)>>8); // >>8 because duty_cycle 100% is 256
-        //ui16_a_print = ui16_a ;
     } else {
         ui16_a = MIDDLE_SVM_TABLE - (((MIDDLE_SVM_TABLE - ui16_temp) * (uint16_t) duty_cycle)>>8);
     }    

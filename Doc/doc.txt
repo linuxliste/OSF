@@ -68,6 +68,8 @@ It is possible in main.h to select also:
 This process gives the results on the Jlink and then stops the firmware.
 The results have to be introduced in motor.c in ui8_hall_ref_angles[8]
 
+
+
 ---------------  set up to find best global hall offset ------------------------
 It is important to find the best offset angle to apply between sensor positions and magnetic flux.
 There is a process to help finding it.
@@ -124,6 +126,8 @@ A test with a battery with 37V gives a adc = 1720. This supposes a voltage on XM
     The 2 ratios are the sample
     So - BATTERY_VOLTAGE_PER_10_BIT_ADC_STEP_X1000 should be the same (if TSDZ8 ADC is reduced to 10 bits)
 
+Note : when the controller is powered by the Jlink , the conversions does not seems ok.
+Perhaps there is an issue with the calibration when VCC change? 
 
 --------  display -------
 The data being transmitted (for field Km/h on display) are in fact inverted (1/value)
@@ -137,3 +141,4 @@ By default, the numerator used for conversion = 37310 (for wheel = ???)
 
 So, it is not possible to view on the display current that are less than 3,7 A (display gives then 0)
 
+------------ detect hall positions --------------------

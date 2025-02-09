@@ -224,7 +224,8 @@ extern uint16_t ui16_adc_pedal_torque_offset_max;// = PEDAL_TORQUE_ADC_OFFSET + 
 
 extern uint8_t ui8_torque_sensor_calibrated;// = TORQUE_SENSOR_CALIBRATED;
  
-extern  uint8_t ui8_wheel_speed_max_array[2];// = {WHEEL_MAX_SPEED,STREET_MODE_SPEED_LIMIT};
+extern uint8_t ui8_wheel_speed_max_array[2];// = {WHEEL_MAX_SPEED,STREET_MODE_SPEED_LIMIT};
+extern uint8_t ui8_eMTB_based_on_power;
 
 extern uint8_t ui8_throttle_mode_array[2]; // defined in ebike.app.c
 
@@ -249,10 +250,11 @@ extern uint8_t  ui8_riding_mode_parameter_array[8][5];
 	
 
 
- 
+//#define USE_CONFIG_FROM_COMPILATION (1)
 void init_extra_fields_config (){
-    
+    #if (USE_CONFIG_FROM_COMPILATION != 1)
     upload_m_config(); // try to get the user preference from flash at 0XC000;
+    #endif
     // battery
     ui16_actual_battery_capacity = (uint16_t)(((uint32_t) m_config.target_max_battery_capacity * m_config.actual_battery_capacity_percent ) / 100);
  
@@ -326,8 +328,8 @@ void init_extra_fields_config (){
         c_BATTERY_SOC_VOLTS_1_X10	=		(uint16_t)(m_config.battery_cells_number * ((float) m_config.li_ion_cell_volts_1_of_4 * 10));
         c_BATTERY_SOC_VOLTS_0_X10	=		(uint16_t)(m_config.battery_cells_number * ((float) m_config.li_ion_cell_volts_empty * 10));
     } else { // ENABLE_VLCD5 or 850C
-        c_LI_ION_CELL_VOLTS_8_X100	=	(uint16_t)((float)m_config.li_ion_cell_overvolt * 100);
-        c_LI_ION_CELL_VOLTS_7_X100	=	(uint16_t)((float)m_config.li_ion_cell_reset_soc_percent * 100);
+        c_LI_ION_CELL_VOLTS_8_X100	=	(uint16_t)((float)m_config.li_ion_cell_overvolt * 100.0);
+        c_LI_ION_CELL_VOLTS_7_X100	=	(uint16_t)((float)m_config.li_ion_cell_reset_soc_percent * 100.0);
         c_LI_ION_CELL_VOLTS_6_X100	=	(uint16_t)((float)m_config.li_ion_cell_volts_full * 100);
         c_LI_ION_CELL_VOLTS_5_X100	=	(uint16_t)((float)m_config.li_ion_cell_volts_5_of_6 * 100);
         c_LI_ION_CELL_VOLTS_4_X100	=	(uint16_t)((float)m_config.li_ion_cell_volts_4_of_6 * 100);
@@ -388,6 +390,8 @@ void init_extra_fields_config (){
  
      ui8_wheel_speed_max_array[0] = m_config.wheel_max_speed;
      ui8_wheel_speed_max_array[1] = m_config.street_mode_speed_limit; // {WHEEL_MAX_SPEED,STREET_MODE_SPEED_LIMIT};
+
+    ui8_eMTB_based_on_power =  m_config.emtb_based_on_power ;//eMTB_BASED_ON_POWER;
 
     ui8_throttle_mode_array[0] = m_config.throttle_mode;
     ui8_throttle_mode_array[1] = m_config.street_mode_throttle_mode;
@@ -475,164 +479,157 @@ void init_extra_fields_config (){
 }
 
 void upload_m_config(){
-    //#define XMC_SECTOR_ADDR                 (uint32_t *)0x10010000U
-
-    #define ADDRESS_OF_M_CONFIG_FLASH 0x1000C000U
-    //XMC_FLASH_ReadWord(	XMC_SECTOR_ADDR)	;
-
-
     uint16_t * pConfig = (uint16_t *) ADDRESS_OF_M_CONFIG_FLASH;  // point to the begin of user preference parameters in flash 
-    uint16_t value = *pConfig;
-    value = value+1;
-
-    if ( *pConfig != m_config.main_version) return;  // discard flash parameters if the main version is different
-                                                    // so keep the parameters defined in config.c 
-    m_config.main_version = *pConfig++; // read the value given by the pointer, and afterward increment it
-    m_config.sub_version = *pConfig++;
-    m_config.reserve_1 = *pConfig++;
-    m_config.reserve_2 = *pConfig++;
-    m_config.reserve_3 = *pConfig++;
-    m_config.reserve_4 = *pConfig++;
-    m_config.reserve_5 = *pConfig++;
-    m_config.reserve_6 = *pConfig++;
-    m_config.reserve_7 = *pConfig++;
-    m_config.reserve_8 = *pConfig++;
-    m_config.motor_type = *pConfig++;
-    m_config.torque_sensor_calibrated = *pConfig++;
-    m_config.motor_acceleration = *pConfig++;
-    m_config.motor_assistance_without_pedal_rotation = *pConfig++;
-    m_config.assistance_without_pedal_rotation_threshold = *pConfig++;
-    m_config.pedal_torque_per_10_bit_adc_step_x100 = *pConfig++;
-    m_config.pedal_torque_adc_max = *pConfig++;
-    m_config.startup_boost_torque_factor = *pConfig++;
-    m_config.motor_blocked_counter_threshold = *pConfig++;
-    m_config.motor_blocked_battery_current_threshold_x10 = *pConfig++;
-    m_config.motor_blocked_erps_threshold = *pConfig++;
-    m_config.startup_boost_cadence_step = *pConfig++;
-    m_config.battery_current_max = *pConfig++;
-    m_config.target_max_battery_power = *pConfig++;
-    m_config.target_max_battery_capacity = *pConfig++;
-    m_config.battery_cells_number = *pConfig++;
-    m_config.motor_deceleration = *pConfig++;
-    m_config.battery_low_voltage_cut_off = *pConfig++;
-    m_config.actual_battery_voltage_percent = *pConfig++;
-    m_config.actual_battery_capacity_percent = *pConfig++;
-    m_config.li_ion_cell_overvolt = *pConfig++;
-    m_config.li_ion_cell_reset_soc_percent = *pConfig++;
-    m_config.li_ion_cell_volts_full = *pConfig++;
-    m_config.li_ion_cell_volts_3_of_4 = *pConfig++;
-    m_config.li_ion_cell_volts_2_of_4 = *pConfig++;
-    m_config.li_ion_cell_volts_1_of_4 = *pConfig++;
-    m_config.li_ion_cell_volts_5_of_6 = *pConfig++;
-    m_config.li_ion_cell_volts_4_of_6 = *pConfig++;
-    m_config.li_ion_cell_volts_3_of_6 = *pConfig++;
-    m_config.li_ion_cell_volts_2_of_6 = *pConfig++;
-    m_config.li_ion_cell_volts_1_of_6 = *pConfig++;
-    m_config.li_ion_cell_volts_empty = *pConfig++;
-    m_config.wheel_perimeter = *pConfig++;
-    m_config.wheel_max_speed = *pConfig++;
-    m_config.enable_lights = *pConfig++;
-    m_config.enable_walk_assist = *pConfig++;
-    m_config.enable_brake_sensor = *pConfig++;
-    m_config.enable_throttle = *pConfig++;
-    m_config.enable_temperature_limit = *pConfig++;
-    m_config.enable_street_mode_on_startup = *pConfig++;
-    m_config.enable_set_parameter_on_startup = *pConfig++;
-    m_config.enable_odometer_compensation = *pConfig++;
-    m_config.startup_boost_on_startup = *pConfig++;
-    m_config.torque_sensor_adv_on_startup = *pConfig++;
-    m_config.lights_configuration_on_startup = *pConfig++;
-    m_config.riding_mode_on_startup = *pConfig++;
-    m_config.lights_configuration_1 = *pConfig++;
-    m_config.lights_configuration_2 = *pConfig++;
-    m_config.lights_configuration_3 = *pConfig++;
-    m_config.street_mode_power_limit_enabled = *pConfig++;
-    m_config.street_mode_power_limit = *pConfig++;
-    m_config.street_mode_speed_limit = *pConfig++;
-    m_config.street_mode_throttle_enabled = *pConfig++;
-    m_config.street_mode_cruise_enabled = *pConfig++;
-    m_config.adc_throttle_min_value = *pConfig++;
-    m_config.adc_throttle_max_value = *pConfig++;
-    m_config.motor_temperature_min_value_limit = *pConfig++;
-    m_config.motor_temperature_max_value_limit = *pConfig++;
-    m_config.enable_temperature_error_min_limit = *pConfig++;
-    m_config.enable_vlcd6 = *pConfig++;
-    m_config.enable_vlcd5 = *pConfig++;
-    m_config.enable_xh18 = *pConfig++;
-    m_config.enable_display_working_flag = *pConfig++;
-    m_config.enable_display_always_on = *pConfig++;
-    m_config.enable_wheel_max_speed_from_display = *pConfig++;
-    m_config.delay_menu_on = *pConfig++;
-    m_config.coaster_brake_enabled = *pConfig++;
-    m_config.coaster_brake_torque_threshold = *pConfig++;
-    m_config.enable_auto_data_display = *pConfig++;
-    m_config.startup_assist_enabled = *pConfig++;
-    m_config.auto_data_number_display = *pConfig++;
-    m_config.delay_display_data_1 = *pConfig++;
-    m_config.delay_display_data_2 = *pConfig++;
-    m_config.delay_display_data_3 = *pConfig++;
-    m_config.delay_display_data_4 = *pConfig++;
-    m_config.delay_display_data_5 = *pConfig++;
-    m_config.delay_display_data_6 = *pConfig++;
-    m_config.display_data_1 = *pConfig++;
-    m_config.display_data_2 = *pConfig++;
-    m_config.display_data_3 = *pConfig++;
-    m_config.display_data_4 = *pConfig++;
-    m_config.display_data_5 = *pConfig++;
-    m_config.display_data_6 = *pConfig++;
-    m_config.power_assist_level_1 = *pConfig++;
-    m_config.power_assist_level_2 = *pConfig++;
-    m_config.power_assist_level_3 = *pConfig++;
-    m_config.power_assist_level_4 = *pConfig++;
-    m_config.torque_assist_level_1 = *pConfig++;
-    m_config.torque_assist_level_2 = *pConfig++;
-    m_config.torque_assist_level_3 = *pConfig++;
-    m_config.torque_assist_level_4 = *pConfig++;
-    m_config.cadence_assist_level_1 = *pConfig++;
-    m_config.cadence_assist_level_2 = *pConfig++;
-    m_config.cadence_assist_level_3 = *pConfig++;
-    m_config.cadence_assist_level_4 = *pConfig++;
-    m_config.emtb_assist_level_1 = *pConfig++;
-    m_config.emtb_assist_level_2 = *pConfig++;
-    m_config.emtb_assist_level_3 = *pConfig++;
-    m_config.emtb_assist_level_4 = *pConfig++;
-    m_config.walk_assist_level_1 = *pConfig++;
-    m_config.walk_assist_level_2 = *pConfig++;
-    m_config.walk_assist_level_3 = *pConfig++;
-    m_config.walk_assist_level_4 = *pConfig++;
-    m_config.walk_assist_threshold_speed_x10 = *pConfig++;
-    m_config.walk_assist_debounce_enabled = *pConfig++;
-    m_config.walk_assist_debounce_time = *pConfig++;
-    m_config.cruise_target_speed_level_1 = *pConfig++;
-    m_config.cruise_target_speed_level_2 = *pConfig++;
-    m_config.cruise_target_speed_level_3 = *pConfig++;
-    m_config.cruise_target_speed_level_4 = *pConfig++;
-    m_config.cruise_mode_walk_enabled = *pConfig++;
-    m_config.cruise_threshold_speed = *pConfig++;
-    m_config.pedal_torque_adc_offset = *pConfig++;
-    m_config.units_type = *pConfig++;
-    m_config.assist_throttle_min_value = *pConfig++;
-    m_config.assist_throttle_max_value = *pConfig++;
-    m_config.street_mode_walk_enabled = *pConfig++;
-    m_config.data_display_on_startup = *pConfig++;
-    m_config.field_weakening_enabled = *pConfig++;
-    m_config.pedal_torque_adc_offset_adj = *pConfig++;
-    m_config.pedal_torque_adc_range_adj = *pConfig++;
-    m_config.pedal_torque_adc_angle_adj = *pConfig++;
-    m_config.pedal_torque_per_10_bit_adc_step_adv_x100 = *pConfig++;
-    m_config.soc_percent_calc = *pConfig++;
-    m_config.startup_boost_at_zero = *pConfig++;
-    m_config.enablec850 = *pConfig++;
-    m_config.street_mode_throttle_legal = *pConfig++;
-    m_config.brake_temperature_switch = *pConfig++;
-    m_config.emtb_based_on_power = *pConfig++;
-    m_config.smooth_start_enabled = *pConfig++;
-    m_config.smooth_start_set_percent = *pConfig++;
-    m_config.temperature_sensor_type = *pConfig++;
-    m_config.cruise_mode_enabled = *pConfig++;
-    m_config.throttle_mode = *pConfig++;
-    m_config.street_mode_throttle_mode = *pConfig++;
-    m_config.assist_level_1_of_5_percent = *pConfig++;
-    m_config.alternative_miles = *pConfig++;
-
+    if ( *pConfig != m_config.main_version) {
+        return; // discard flash parameters (and use those from compilation) if the main version is different
+                            // set a flag to stop running the motor using ERROR_MOTOR_BLOCKED 
+    } else {           
+        m_config.main_version = *pConfig++; // read the value given by the pointer, and afterward increment it
+        m_config.sub_version = *pConfig++;
+        m_config.reserve_1 = *pConfig++;
+        m_config.reserve_2 = *pConfig++;
+        m_config.reserve_3 = *pConfig++;
+        m_config.reserve_4 = *pConfig++;
+        m_config.reserve_5 = *pConfig++;
+        m_config.reserve_6 = *pConfig++;
+        m_config.reserve_7 = *pConfig++;
+        m_config.reserve_8 = *pConfig++;
+        m_config.motor_type = *pConfig++;
+        m_config.torque_sensor_calibrated = *pConfig++;
+        m_config.motor_acceleration = *pConfig++;
+        m_config.motor_assistance_without_pedal_rotation = *pConfig++;
+        m_config.assistance_without_pedal_rotation_threshold = *pConfig++;
+        m_config.pedal_torque_per_10_bit_adc_step_x100 = *pConfig++;
+        m_config.pedal_torque_adc_max = *pConfig++;
+        m_config.startup_boost_torque_factor = *pConfig++;
+        m_config.motor_blocked_counter_threshold = *pConfig++;
+        m_config.motor_blocked_battery_current_threshold_x10 = *pConfig++;
+        m_config.motor_blocked_erps_threshold = *pConfig++;
+        m_config.startup_boost_cadence_step = *pConfig++;
+        m_config.battery_current_max = *pConfig++;
+        m_config.target_max_battery_power = *pConfig++;
+        m_config.target_max_battery_capacity = *pConfig++;
+        m_config.battery_cells_number = *pConfig++;
+        m_config.motor_deceleration = *pConfig++;
+        m_config.battery_low_voltage_cut_off = *pConfig++;
+        m_config.actual_battery_voltage_percent = *pConfig++;
+        m_config.actual_battery_capacity_percent = *pConfig++;
+        m_config.li_ion_cell_overvolt = ((float)*pConfig++)/100.0;
+        m_config.li_ion_cell_reset_soc_percent = ((float)*pConfig++)/100.0;
+        m_config.li_ion_cell_volts_full = ((float)*pConfig++)/100.0;
+        m_config.li_ion_cell_volts_3_of_4 = ((float)*pConfig++)/100.0;
+        m_config.li_ion_cell_volts_2_of_4 = ((float)*pConfig++)/100.0;
+        m_config.li_ion_cell_volts_1_of_4 = ((float)*pConfig++)/100.0;
+        m_config.li_ion_cell_volts_5_of_6 = ((float)*pConfig++)/100.0;
+        m_config.li_ion_cell_volts_4_of_6 = ((float)*pConfig++)/100.0;
+        m_config.li_ion_cell_volts_3_of_6 = ((float)*pConfig++)/100.0;
+        m_config.li_ion_cell_volts_2_of_6 = ((float)*pConfig++)/100.0;
+        m_config.li_ion_cell_volts_1_of_6 = ((float)*pConfig++)/100.0;
+        m_config.li_ion_cell_volts_empty = ((float)*pConfig++)/100.0;
+        m_config.wheel_perimeter = *pConfig++;
+        m_config.wheel_max_speed = *pConfig++;
+        m_config.enable_lights = *pConfig++;
+        m_config.enable_walk_assist = *pConfig++;
+        m_config.enable_brake_sensor = *pConfig++;
+        m_config.enable_throttle = *pConfig++;
+        m_config.enable_temperature_limit = *pConfig++;
+        m_config.enable_street_mode_on_startup = *pConfig++;
+        m_config.enable_set_parameter_on_startup = *pConfig++;
+        m_config.enable_odometer_compensation = *pConfig++;
+        m_config.startup_boost_on_startup = *pConfig++;
+        m_config.torque_sensor_adv_on_startup = *pConfig++;
+        m_config.lights_configuration_on_startup = *pConfig++;
+        m_config.riding_mode_on_startup = *pConfig++;
+        m_config.lights_configuration_1 = *pConfig++;
+        m_config.lights_configuration_2 = *pConfig++;
+        m_config.lights_configuration_3 = *pConfig++;
+        m_config.street_mode_power_limit_enabled = *pConfig++;
+        m_config.street_mode_power_limit = *pConfig++;
+        m_config.street_mode_speed_limit = *pConfig++;
+        m_config.street_mode_throttle_enabled = *pConfig++;
+        m_config.street_mode_cruise_enabled = *pConfig++;
+        m_config.adc_throttle_min_value = *pConfig++;
+        m_config.adc_throttle_max_value = *pConfig++;
+        m_config.motor_temperature_min_value_limit = *pConfig++;
+        m_config.motor_temperature_max_value_limit = *pConfig++;
+        m_config.enable_temperature_error_min_limit = *pConfig++;
+        m_config.enable_vlcd6 = *pConfig++;
+        m_config.enable_vlcd5 = *pConfig++;
+        m_config.enable_xh18 = *pConfig++;
+        m_config.enable_display_working_flag = *pConfig++;
+        m_config.enable_display_always_on = *pConfig++;
+        m_config.enable_wheel_max_speed_from_display = *pConfig++;
+        m_config.delay_menu_on = *pConfig++;
+        m_config.coaster_brake_enabled = *pConfig++;
+        m_config.coaster_brake_torque_threshold = *pConfig++;
+        m_config.enable_auto_data_display = *pConfig++;
+        m_config.startup_assist_enabled = *pConfig++;
+        m_config.auto_data_number_display = *pConfig++;
+        m_config.delay_display_data_1 = *pConfig++;
+        m_config.delay_display_data_2 = *pConfig++;
+        m_config.delay_display_data_3 = *pConfig++;
+        m_config.delay_display_data_4 = *pConfig++;
+        m_config.delay_display_data_5 = *pConfig++;
+        m_config.delay_display_data_6 = *pConfig++;
+        m_config.display_data_1 = *pConfig++;
+        m_config.display_data_2 = *pConfig++;
+        m_config.display_data_3 = *pConfig++;
+        m_config.display_data_4 = *pConfig++;
+        m_config.display_data_5 = *pConfig++;
+        m_config.display_data_6 = *pConfig++;
+        m_config.power_assist_level_1 = *pConfig++;
+        m_config.power_assist_level_2 = *pConfig++;
+        m_config.power_assist_level_3 = *pConfig++;
+        m_config.power_assist_level_4 = *pConfig++;
+        m_config.torque_assist_level_1 = *pConfig++;
+        m_config.torque_assist_level_2 = *pConfig++;
+        m_config.torque_assist_level_3 = *pConfig++;
+        m_config.torque_assist_level_4 = *pConfig++;
+        m_config.cadence_assist_level_1 = *pConfig++;
+        m_config.cadence_assist_level_2 = *pConfig++;
+        m_config.cadence_assist_level_3 = *pConfig++;
+        m_config.cadence_assist_level_4 = *pConfig++;
+        m_config.emtb_assist_level_1 = *pConfig++;
+        m_config.emtb_assist_level_2 = *pConfig++;
+        m_config.emtb_assist_level_3 = *pConfig++;
+        m_config.emtb_assist_level_4 = *pConfig++;
+        m_config.walk_assist_level_1 = *pConfig++;
+        m_config.walk_assist_level_2 = *pConfig++;
+        m_config.walk_assist_level_3 = *pConfig++;
+        m_config.walk_assist_level_4 = *pConfig++;
+        m_config.walk_assist_threshold_speed_x10 = *pConfig++;
+        m_config.walk_assist_debounce_enabled = *pConfig++;
+        m_config.walk_assist_debounce_time = *pConfig++;
+        m_config.cruise_target_speed_level_1 = *pConfig++;
+        m_config.cruise_target_speed_level_2 = *pConfig++;
+        m_config.cruise_target_speed_level_3 = *pConfig++;
+        m_config.cruise_target_speed_level_4 = *pConfig++;
+        m_config.cruise_mode_walk_enabled = *pConfig++;
+        m_config.cruise_threshold_speed = *pConfig++;
+        m_config.pedal_torque_adc_offset = *pConfig++;
+        m_config.units_type = *pConfig++;
+        m_config.assist_throttle_min_value = *pConfig++;
+        m_config.assist_throttle_max_value = *pConfig++;
+        m_config.street_mode_walk_enabled = *pConfig++;
+        m_config.data_display_on_startup = *pConfig++;
+        m_config.field_weakening_enabled = *pConfig++;
+        m_config.pedal_torque_adc_offset_adj = *pConfig++;
+        m_config.pedal_torque_adc_range_adj = *pConfig++;
+        m_config.pedal_torque_adc_angle_adj = *pConfig++;
+        m_config.pedal_torque_per_10_bit_adc_step_adv_x100 = *pConfig++;
+        m_config.soc_percent_calc = *pConfig++;
+        m_config.startup_boost_at_zero = *pConfig++;
+        m_config.enablec850 = *pConfig++;
+        m_config.street_mode_throttle_legal = *pConfig++;
+        m_config.brake_temperature_switch = *pConfig++;
+        m_config.emtb_based_on_power = *pConfig++;
+        m_config.smooth_start_enabled = *pConfig++;
+        m_config.smooth_start_set_percent = *pConfig++;
+        m_config.temperature_sensor_type = *pConfig++;
+        m_config.cruise_mode_enabled = *pConfig++;
+        m_config.throttle_mode = *pConfig++;
+        m_config.street_mode_throttle_mode = *pConfig++;
+        m_config.assist_level_1_of_5_percent = *pConfig++;
+        m_config.alternative_miles = *pConfig++;
+    } // end of good config version
 }

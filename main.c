@@ -30,10 +30,7 @@
 
 
 /* Define macro to enable/disable printing of debug messages */    // for debugging
-
-#define ENABLE_XMC_DEBUG_VADC_PRINT       (0)
-#define SEND_FRAME_100MS                  (0) // 1 = send the frame to the display (currently do not print them)
-#define RECEIVE_FRAME                     (0) // 1 = receive frame from display
+// this should be update to avoid use of uart for debugging (debug only with jlink)
 #define ENABLE_PRINT_SOME_DEBUG           (0)
 /*******************************************************************************
 * Macros
@@ -81,7 +78,6 @@ extern volatile uint8_t ui8_tx_buffer[];
 // for debugging // probably to remove todo
 extern volatile uint32_t hall_print_pos ; 
 extern volatile uint32_t hall_print_angle ;
-extern volatile bool new_hall ;   
 extern volatile uint32_t hall_print_pos2; // current hall pattern (after a sampling delay)
 extern volatile uint32_t hall_print_interval ; // interval between 2 correct hall transitions
 extern volatile uint32_t posif_SR0; 
@@ -166,18 +162,7 @@ void SysTick_Handler(void)
 
 
 // ************* declaration **********
-void print_vadc(void);
-void print_system_state();
-void print_hall_pattern_debug();
-void print_hall_pattern_debug2();
-void print_motor_regulation_debug();
-
 void jlink_print_system_state();
-
-//my_CCU8_init(){
-//}
-
-
 
 
 /*******************************************************************************
@@ -279,27 +264,16 @@ const XMC_VADC_QUEUE_CONFIG_t vadc_0_group_1_queue_config2 = {
     XMC_VADC_GROUP_QueueSetGatingMode(vadc_0_group_1_HW, (XMC_VADC_GATEMODE_t) XMC_VADC_GATEMODE_IGNORE);
     XMC_VADC_GROUP_QueueInit(vadc_0_group_1_HW, &vadc_0_group_1_queue_config2);
 */    
-
-
-    /*Generate a load event to start background request source continuous conversion*/
-    //XMC_VADC_GLOBAL_BackgroundTriggerConversion(VADC);
-
-    // to test : this could be replaced by an interrupt on CCU4 slice 1 SR0 ( capture done)
-    //NVIC_SetPriority(POSIF0_0_IRQn, 1U); //Testing with SR 0 when POSIF detect a valid transition (for debug)
-	//NVIC_EnableIRQ(POSIF0_0_IRQn);
-    
-    // use CCU4 SR0 (slice 1 external event from POSIT) to say that a correct event occured
-    //NVIC_SetPriority(CCU40_0_IRQn, 1U); //Testing with SR 0 when POSIF detect a valid transition (for debug)
-	//NVIC_EnableIRQ(CCU40_0_IRQn);
-    NVIC_SetPriority(CCU40_1_IRQn, 0U); //capture hall pattern and slice 2 time when a hall change occurs
-	NVIC_EnableIRQ(CCU40_1_IRQn);
-    
-
-    /* CCU80_0_IRQn and CCU80_1_IRQn. slice 3 interrupt on counting up and down. at 19 khz to manage rotating flux*/
-	NVIC_SetPriority(CCU80_0_IRQn, 1U);
-	NVIC_EnableIRQ(CCU80_0_IRQn);
-    NVIC_SetPriority(CCU80_1_IRQn, 1U);
-	NVIC_EnableIRQ(CCU80_1_IRQn);
+    // **** load the config from flash
+    XMC_WDT_Service();
+    // todo should be adapted to get them from flash memory; currently we only use default)
+    init_extra_fields_config (); // get the user parameters (
+    // todo : change when eeprom is coded properly add some initialisation (e.g. m_configuration_init() and ebike_app.init)
+    // currently it is filled with parameters from user setup + some dummy values (e.g. for soc)
+    m_configuration_init();
+    // add some initialisation in ebike_app.init
+    XMC_WDT_Service();
+    ebike_app_init();
 
     // set initial position of hall sensor and first next expected one in shadow and load immediately in real register
     //posif_init_position();
@@ -307,6 +281,16 @@ const XMC_VADC_QUEUE_CONFIG_t vadc_0_group_1_queue_config2 = {
     previous_hall_pattern = 0; // use a different hall pattern to force the angle. 
     XMC_POSIF_Start(HALL_POSIF_HW);
     
+    // set interrupt 
+    NVIC_SetPriority(CCU40_1_IRQn, 0U); //capture hall pattern and slice 2 time when a hall change occurs
+	NVIC_EnableIRQ(CCU40_1_IRQn);
+    
+    /* CCU80_0_IRQn and CCU80_1_IRQn. slice 3 interrupt on counting up and down. at 19 khz to manage rotating flux*/
+	NVIC_SetPriority(CCU80_0_IRQn, 1U);
+	NVIC_EnableIRQ(CCU80_0_IRQn);
+    NVIC_SetPriority(CCU80_1_IRQn, 1U);
+	NVIC_EnableIRQ(CCU80_1_IRQn);
+
     /* Enable Global Start Control CCU80  in a synchronized way*/
     XMC_SCU_SetCcuTriggerHigh(SCU_GENERAL_CCUCON_GSC80_Msk);
     XMC_SCU_SetCcuTriggerLow(SCU_GENERAL_CCUCON_GSC80_Msk);
@@ -318,27 +302,16 @@ const XMC_VADC_QUEUE_CONFIG_t vadc_0_group_1_queue_config2 = {
         //SEGGER_RTT_printf(0, "Retry CCU8 start; still %u try\r\n", retry_counter);
     }
 
-//    XMC_VADC_GLOBAL_EnablePostCalibration(vadc_0_HW, 0U);
-//    XMC_VADC_GLOBAL_EnablePostCalibration(vadc_0_HW, 1U);
-//    XMC_VADC_GLOBAL_StartupCalibration(vadc_0_HW);
-    XMC_WDT_Service();
-    // todo should be adapted to get them from flash memory; currently we only use default)
-    init_extra_fields_config (); // get the user parameters (
-    // todo : change when eeprom is coded properly add some initialisation (e.g. m_configuration_init() and ebike_app.init)
-    // currently it is filled with parameters from user setup + some dummy values (e.g. for soc)
-    m_configuration_init();
+    //XMC_VADC_GLOBAL_EnablePostCalibration(vadc_0_HW, 0U);
+    //XMC_VADC_GLOBAL_EnablePostCalibration(vadc_0_HW, 1U);
+    //XMC_VADC_GLOBAL_StartupCalibration(vadc_0_HW);
     
-    // add some initialisation in ebike_app.init
-    #if (PROCESS != DETECT_HALL_SENSORS_POSITIONS ) // is not done when we are just testing slow motion to detect hall pattern
-    XMC_WDT_Service();
-    ebike_app_init();
-    #else
+    #if (PROCESS == DETECT_HALL_SENSORS_POSITIONS ) // is not done when we are just testing slow motion to detect hall pattern
     XMC_WDT_Stop();  // do not use watchdog when running this part of the code
     log_hall_sensor_position();  // let the motor run slowly (10 turns) in each direction, log via jlink the angles of hall pattern changes
     // note: this function never ends
     #endif
     start = system_ticks;
-
     
 //***************************** while ************************************
     while (1) // main loop
@@ -350,7 +323,6 @@ const XMC_VADC_QUEUE_CONFIG_t vadc_0_group_1_queue_config2 = {
         // When frame is full, data are processed in ebike_app.c once every 100 msec
         if (ui8_received_package_flag == 0) {
             fillRxBuffer();
-            // if (ui8_received_package_flag) SEGGER_RTT_printf(0,"Frame in\r\n"); // just for debug
         }
         // to be activated for real production
         // Here we should call a funtion every 25 msec (based on systick or on an interrupt based on a CCU4 timer)
@@ -366,11 +338,11 @@ const XMC_VADC_QUEUE_CONFIG_t vadc_0_group_1_queue_config2 = {
         #endif
         
         // for debug
-    #if (DEBUG_ON_JLINK == 1)
+        #if (DEBUG_ON_JLINK == 1)
          // do debug if communication with display is working
         //if( take_action(1, 250)) SEGGER_RTT_printf(0,"Light is= %u\r\n", (unsigned int) ui8_lights_button_flag);
         if (ui8_system_state) { // print a message when there is an error detected
-            if( take_action(4,500)) jlink_print_system_state();
+            if( take_action(1,200)) jlink_print_system_state();
         }
 //        if( take_action(2, 500)) SEGGER_RTT_printf(0,"Adc current= %u adcX8=%u  current_Ax10=%u  factor=%u\r\n", 
 //            (unsigned int) ui8_adc_battery_current_filtered ,
@@ -394,7 +366,7 @@ const XMC_VADC_QUEUE_CONFIG_t vadc_0_group_1_queue_config2 = {
         */
         // monitor results of find best global hall offset
         #if ( PROCESS == FIND_BEST_GLOBAL_HALL_OFFSET ) 
-        if( take_action(4, 500)) SEGGER_RTT_printf(0,"offset=%u current=%u erps=%u foc%u   dctarg=%u dc=%u    ctarg=%u cfilt=%u\r\n",
+        if( take_action(4 , 500)) SEGGER_RTT_printf(0,"offset=%u current=%u erps=%u foc%u   dctarg=%u dc=%u    ctarg=%u cfilt=%u\r\n",
             (unsigned int) calibration_offset_angle_to_display ,
             (unsigned int) calibration_offset_current_average_to_display,
             (unsigned int) ui16_motor_speed_erps,
@@ -406,53 +378,38 @@ const XMC_VADC_QUEUE_CONFIG_t vadc_0_group_1_queue_config2 = {
         );
         #endif
         #if ( PROCESS == TEST_WITH_FIXED_DUTY_CYCLE ) || ( PROCESS == TEST_WITH_THROTTLE )
-        if( take_action(4, 500)) SEGGER_RTT_printf(0,"trotl=%u erps=%u foc%u   dctarg=%u dc=%u    ctarg=%u cfilt=%u\r\n",
-            (unsigned int) ui8_throttle_adc_in,
-            (unsigned int) ui16_motor_speed_erps,
-            (unsigned int) ui8_g_foc_angle,
-            (unsigned int) ui8_controller_duty_cycle_target,
-            (unsigned int) ui8_g_duty_cycle,
-            (unsigned int) ui8_controller_adc_battery_current_target,
-            (unsigned int) ui8_adc_battery_current_filtered
-        );    
+        if( take_action(5, 200)) {
+            uint16_t adc_throttle = XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 5 ) & 0x0FFF;
+            SEGGER_RTT_printf(0,
+            "trotl=%u  bcT=%u cbcT=%u bcF=%u   dcT=%u cdcT=%u  gdc=%u   erps=%u foc%u  moEn=%u t1=%u t2=%u t3=%u t4=%u t5=%u t6=%u m1=%u m2=%u thr=%u\r\n",
+                (unsigned int) ui8_throttle_adc_in,
+
+                (unsigned int) ui8_adc_battery_current_target,
+                (unsigned int) ui8_controller_adc_battery_current_target,
+                (unsigned int) ui8_adc_battery_current_filtered,
+
+                (unsigned int) ui8_duty_cycle_target,
+                (unsigned int) ui8_controller_duty_cycle_target,
+                (unsigned int) ui8_g_duty_cycle,
+                
+                (unsigned int) ui16_motor_speed_erps,
+                (unsigned int) ui8_g_foc_angle,
+                (unsigned int) ui8_motor_enabled,
+
+                (unsigned int) mstest1,
+                (unsigned int) mstest2,
+                (unsigned int) mstest3,
+                (unsigned int) mstest4,
+                (unsigned int) mstest5,
+                (unsigned int) mstest6,
+                (unsigned int) ui8_adc_battery_current_max_temp_1,
+                (unsigned int)  ui8_adc_battery_current_max_temp_2,
+
+                (unsigned int) adc_throttle
+                );
+        }        
         #endif
-    #endif    
-    #if (DEBUG_ON_UART == 1 )
-        if (new_hall) {
-            ccu4_S2_timer = XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW);
-            //SEGGER_RTT_printf(0,"angle= %u pins= %u a=%u b=%u c=%u tim=%u\r\n ",
-            //    (uint32_t) ui16_new_angle_print , (uint32_t) hall_print_pos , (uint32_t) ui16_a , (uint32_t)ui16_b , (uint32_t)ui16_c ,
-            //     (uint32_t)ccu4_S2_timer);
-            printf("angle= %u pins= %u a=%u b=%u c=%u tim=%u\r\n ",
-                 (unsigned int) ui16_new_angle_print , (unsigned int) hall_print_pos ,  (unsigned int) ui16_a , (unsigned int) ui16_b , (unsigned int) ui16_c ,
-                 (unsigned int) ccu4_S2_timer);
-            new_hall = false;
-        }
-        
-        //to debug print any error
-        if (ui8_system_state) { // print a message when there is an error detected
-                if( take_action(4,500)) print_system_state();
-        }
-        #if (ENABLE_PRINT_SOME_DEBUG == 1)
-        //if (take_action(0, 250)) print_hall_pattern_debug();
-        //if (take_action(6, 250)) print_motor_regulation_debug(); // print duty cycle and current (target ar real)
-        
-        // print Throttle  throttle gr1 ch7 result 5  in bg  p2.5)
-        //if (take_action(3,500)) printf("Throttle adc 8 bits=%u\r\n", (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 5 ) & 0x0FFF) >> 4); 
-       
-       // print torque sensor group 0 ch7 , result 2 , pin 2.2
-       if (take_action(7,500)) printf("Torque adc 12 bits=%u\r\n", (XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 2 ) & 0xFFFF) );  
-
-       // print batery sensor group 1 ch6 , result 4 , pin 2.4
-       //if (take_action(8,500)) printf("                      Battery adc 12 bits=%u\r\n", (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 4 ) & 0xFFFF) );  
-        if (take_action(8,500)) printf("                      Battery mv=%u\r\n",ui16_battery_voltage_filtered_x1000);
-       // print CCU4 torque is running or not
-       //if (take_action(9,500)) printf("CCU4 s3= %u\r\n", XMC_CCU4_SLICE_GetTimerValue(PWM_TORQUE_TIMER_HW  ) );  
-
-       //print_hall_pattern_debug2(); // print first 100 passage in ccu8 irq0
-        
-       #endif
-    #endif   
+        #endif    
        
     } // end while main loop
 }
@@ -490,125 +447,5 @@ void jlink_print_system_state(){
              
     }
 }    
-
-void print_system_state(){
-    switch (ui8_system_state) {
-        case 1: 
-            printf("Error : overvoltage\r\n");
-            break;
-        case 2: 
-            printf("Error : torque_sensor\r\n");
-            break;
-        case 3: 
-            printf("Error : cadence_sensor\r\n");
-            break;
-        case 4: 
-            printf("Error : motor_blocked\n");
-            break;
-        case 5: 
-            printf("Error : throttle\r\n");
-            break;
-        case 6: 
-            printf("Error : overtemperature\r\n");
-            break;
-        case 7: 
-            printf("Error : battery_overcurrent\r\n");
-            break;
-        case 8: 
-            printf("Error : speed_sensor\r\n");
-            break;
-        case 9: 
-            printf("Error : motor_check\r\n");
-            break;
-             
-    }
-}    
-
-void print_motor_regulation_debug(){
-        debug_values_copy[11] = debug_values[11] ;// ui8_controller_duty_cycle_target;
-        debug_values_copy[1] = debug_values[1] ;// ui8_g_duty_cycle;
-        debug_values_copy[12] = debug_values[12] ;// ui8_controller_adc_battery_current_target;
-        debug_values_copy[3] = debug_values[3] ; // ui8_adc_battery_current_filtered;
-        debug_values_copy[14] =debug_values[14]; // ui8_adc_battery_current_acc
-        debug_values_copy[15] = (XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 8 ) & 0xFFFF);
-        debug_values_copy[16] = (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 12 ) & 0xFFFF);
-        printf("dctarg=%u dc=%u  ctarg=%u cfilt=%u acc=%u G0=%u G1=%u\r\n",
-            (unsigned int) debug_values_copy[11], (unsigned int) debug_values_copy[1],(unsigned int) debug_values_copy[12],
-             (unsigned int) debug_values_copy[3],(unsigned int) debug_values_copy[14],
-            (unsigned int) debug_values_copy[15],
-            (unsigned int) debug_values_copy[16]);
-    
-}
-void print_hall_pattern_debug(){
-        debug_values_copy[0] = debug_values[0] ; // ui8_svm_table_index
-        debug_values_copy[1] = debug_values[1] ; // ui8_g_duty_cycle;
-        debug_values_copy[2] = debug_values[2] ; // ui8_controller_adc_battery_current_target;
-        debug_values_copy[3] = debug_values[3] ; // ui8_adc_battery_current_filtered;
-        debug_values_copy[4] = debug_values[4] ; // ui8_motor_commutation_type;
-        debug_values_copy[5] = debug_values[5] ; // ui8_interpolation_angle ;
-        debug_values_copy[6] = debug_values[6] ; // enlapsed_time tick;
-        debug_values_copy[7] = debug_values[7] ; // compensated_enlapsed_time;
-        debug_values_copy[8] = debug_values[8] ; // ui16_hall_counter_total; 
-        debug_values_copy[9] = debug_values[9] ; // hall_pattern_error_counter;
-        debug_values_copy[10] = debug_values[10] ; // hall_pattern_valid_counter;
-        debug_values_copy[11] = debug_values[11] ;// ui8_controller_duty_cycle_target;
-        debug_values_copy[13]  = debug_values[13] ; //global_offset_angle;
-        uint32_t current_adc = (uint32_t) (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 12 ) & 0xFFFF); // current adc
-        // current_average (calculated based on the 2 VADC on pin 2.8) for the same value of hall debug offset 
-        // 6 ticks intervals between hall patern changes
-        SEGGER_RTT_WriteString(0, "SEGGER Real-Time-Terminal Sample\r\n\r\n");
-        printf("idx=%u dc=%u ct=%u cf=%u cty=%u ia=%u et=%u ct=%0u hct=%u hpe=%u hpv=%u dct=%u doa=%u cadc=%u cavg=%u, 1=%u 2=%u 3=%u 4=%u  5=%u  6=%u\r\n",
-            (unsigned int) debug_values_copy[0], (unsigned int) debug_values_copy[1],(unsigned int) debug_values_copy[2],
-            (unsigned int) debug_values_copy[3], (unsigned int) debug_values_copy[4] , (unsigned int) debug_values_copy[5],
-            (unsigned int) debug_values_copy[6], (unsigned int) debug_values_copy[7], (unsigned int) debug_values_copy[8],
-            (unsigned int) debug_values_copy[9], (unsigned int) debug_values_copy[10] ,(unsigned int) debug_values_copy[11] ,
-            (unsigned int)  debug_values_copy[13] , (unsigned int) current_adc, current_average,
-            (unsigned int) hall_pattern_intervals[1],(unsigned int) hall_pattern_intervals[2],(unsigned int) hall_pattern_intervals[3],
-            (unsigned int) hall_pattern_intervals[4],(unsigned int) hall_pattern_intervals[5],(unsigned int) hall_pattern_intervals[6] );
-        
-        /*
-        SEGGER_RTT_printf(0, "idx=%-3u dc=%-3u ct=%-4u cf=%-4u cty=%-4u ia=%-6u et=%-5u ct=%-10u hct=%-5u hpe=%-3u hpv=%-3u dct=%-3u doa=%-3u cadc=%-4u cavg=%-4u, 1=%-4u 2=%-4u 3=%-4u 4=%-4u  5=%-4u  6=%-4u\r\n",
-            debug_values_copy[0], debug_values_copy[1],debug_values_copy[2],
-            debug_values_copy[3], debug_values_copy[4] , debug_values_copy[5],
-            debug_values_copy[6], debug_values_copy[7], debug_values_copy[8],
-            debug_values_copy[9], debug_values_copy[10] ,debug_values_copy[11] , debug_values_copy[13] , current_adc, current_average,
-            hall_pattern_intervals[1],hall_pattern_intervals[2],hall_pattern_intervals[3],
-            hall_pattern_intervals[4],hall_pattern_intervals[5],hall_pattern_intervals[6] );
-        */    
-        // %[flags][FieldWidth][.Precision]ConversionSpecifier%
-        // c	one char , d signed integer, u unsigned integer , x	hexadecimal integer , s	string , p  pointer?  8-digit hexadecimal integer. (Argument shall be a pointer to void.)
-        printf("in irq0=%uus irq1=%uus irq1b=%uus irq1c=%uus irq1d=%uus irq1e=%uus\r\n", 
-            debug_time_ccu8_irq0 << 2,debug_time_ccu8_irq1 << 2,debug_time_ccu8_irq1b << 2,
-            debug_time_ccu8_irq1c << 2,debug_time_ccu8_irq1d << 2,debug_time_ccu8_irq1e << 2);
-        debug_time_ccu8_irq0 = 0;
-        debug_time_ccu8_irq1 = 0;
-        debug_time_ccu8_irq1b = 0;
-        debug_time_ccu8_irq1c = 0;
-        debug_time_ccu8_irq1d = 0;
-        debug_time_ccu8_irq1e = 0;
-        #ifdef XMC_ASSERT_ENABLE
-        printf("XMC_ASSERT_ENABLE\n\r");
-        #endif
-    
-}
-
-uint32_t first_debug_values[100][20];
-uint32_t first_debug_index = 0; 
-#define LINES 98
-void print_hall_pattern_debug2(){
-    
-    if (first_debug_index == LINES){
-        printf("Now since pattern angle delay d_c_t d_c cur_t curr      error valid com_t rot_ticks ofa refV\r\n");
-        for (uint32_t i = 0; i<LINES; i++){
-            for (uint32_t j = 0; j<15; j++){
-                printf("%u ", (unsigned int) first_debug_values[i][j]);
-                if (j == 8) {    // put a space before the error counter
-                    printf("    ");
-                }
-            }
-            printf("\r\n");
-        }
-    }
-}
 
 /* [] END OF FILE */

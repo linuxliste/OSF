@@ -12,6 +12,17 @@
 //#include <stdint.h>
 #include "main.h"
 
+// for debug
+extern uint8_t mstest1;
+extern uint8_t mstest2;
+extern uint8_t mstest3;
+extern uint8_t mstest4;
+extern uint8_t mstest5;
+extern uint8_t mstest6;
+extern uint8_t mstest7;
+extern uint8_t mstest8;
+extern uint8_t mstest9;
+
 // startup boost mode
 #define CADENCE					0
 #define SPEED						1

@@ -28,20 +28,6 @@
 #define WALK_ASSIST_MODE                          7
 #define TORQUE_SENSOR_CALIBRATION_MODE            8								   
 
-// error codes
-/*
-#define ERROR_OVERVOLTAGE							1 // E01 (E06 blinking for XH18)
-#define ERROR_TORQUE_SENSOR                       	2 // E02
-#define ERROR_CADENCE_SENSOR			          	3 // E03
-#define ERROR_MOTOR_BLOCKED                       	4 // E04
-#define ERROR_THROTTLE								5 // E05 (E03 blinking for XH18)
-#define ERROR_OVERTEMPERATURE						6 // E06
-#define ERROR_BATTERY_OVERCURRENT                 	7 // E07 (E04 blinking for XH18)
-#define ERROR_SPEED_SENSOR							8 // E08
-#define ERROR_WRITE_EEPROM  					  	9 // E09 shared (E08 blinking for XH18)
-#define ERROR_MOTOR_CHECK                       	9 // E09 shared (E08 blinking for XH18)
-// note: controller works with no less than 15 V so give error code if voltage is too low
-*/										   
 
 // walk assist
 //#define WALK_ASSIST_THRESHOLD_SPEED_X10           80  // 80 -> 8.0 kph, this is the maximum speed limit from which walk assist can be activated

@@ -108,16 +108,6 @@ void fillRxBuffer() {
 #define NO_FAULT									0
 #define NO_ERROR                                  	0 
 
-#define ERROR_OVERVOLTAGE							1 // E01 (E06 blinking for XH18)
-#define ERROR_TORQUE_SENSOR                       	2 // E02
-#define ERROR_CADENCE_SENSOR			          	3 // E03
-#define ERROR_MOTOR_BLOCKED                       	4 // E04
-#define ERROR_THROTTLE								5 // E05 (E03 blinking for XH18)
-#define ERROR_OVERTEMPERATURE						6 // E06
-#define ERROR_BATTERY_OVERCURRENT                 	7 // E07 (E04 blinking for XH18)
-#define ERROR_SPEED_SENSOR							8 // E08
-#define ERROR_WRITE_EEPROM  					  	9 // E09 shared (E08 blinking for XH18)
-#define ERROR_MOTOR_CHECK                       	9 // E09 shared (E08 blinking for XH18)
 
 void uart_receive_package() {  // once every 4*25 msec = 100 msec
 	uint8_t ui8_i;
@@ -834,14 +824,14 @@ void uart_receive_package() {  // once every 4*25 msec = 100 msec
 			else {
 				m_configuration_variables.ui8_wheel_speed_max = ui8_wheel_speed_max_array[m_configuration_variables.ui8_street_mode_enabled];
 			}
-			
+			/* moved to ebike_app.c because it is called more often and this occurs only if messages are received from display
 			// current limit with power limit
 			ui8_adc_battery_current_max_temp_2 = (uint8_t)((uint32_t)(ui32_adc_battery_power_max_x1000_array[m_configuration_variables.ui8_street_mode_enabled]
 				/ ui16_battery_voltage_filtered_x1000));
 			
 			// set max battery current
 			ui8_adc_battery_current_max = ui8_min(ui8_adc_battery_current_max_temp_1, ui8_adc_battery_current_max_temp_2);
-			
+			*/
 			// set pedal torque per 10_bit DC_step x100 advanced
 			ui8_pedal_torque_per_10_bit_ADC_step_x100 = ui8_pedal_torque_per_10_bit_ADC_step_x100_array[m_configuration_variables.ui8_torque_sensor_adv_enabled];
 		}
@@ -984,8 +974,7 @@ void uart_send_package(){
 		// blocked motor error has priority
 		if (ui8_system_state == ERROR_MOTOR_BLOCKED) {	
 			ui8_display_fault_code = ERROR_MOTOR_BLOCKED;
-		}
-		else {
+		} else {
 			if ((ui8_system_state != NO_ERROR)&&(ui8_display_fault_code == NO_FAULT)) {
 				ui8_display_fault_code = ui8_system_state;
 			}
