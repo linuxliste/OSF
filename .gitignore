@@ -19,7 +19,7 @@ libs/
 # .mtbLaunchConfigs/
 
 # ModusToolbox Configurator generated code
-GeneratedSource/
+#GeneratedSource/
 
 # ModusToolbox build system output
 build/
@@ -29,11 +29,11 @@ Release/
 
 # Visual Studio Code
 openocd.tcl
-.vscode/
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+#.vscode/
+#!.vscode/settings.json
+#!.vscode/tasks.json
+#!.vscode/launch.json
+#!.vscode/extensions.json
 
 # IAR Embedded Workbench files
 

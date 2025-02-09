@@ -11,14 +11,14 @@ Compare to the TSDZ8 original firmware there are some expected benefits:
 * The user can adapt many parameters to his preferences.
 * The display can show more data (without having to change the display firmware) and allow you to make a few changes to the setup.
 
-For more information, you can: 
+For more information on the TSDZ2 OSF version, you can: 
 * look at Endless Sphere forum reference thread: [endless-sphere.com.](https://endless-sphere.com/forums/viewtopic.php?f=30&t=110682).
 * see the [wiki](https://github.com/emmebrusa/TSDZ2-Smart-EBike-1/wiki) from mbrusa
 
-IMPORTANT : at this stage, this is just a beta version. It has even NOT been tested on a bike and there are probably some bugs.
+IMPORTANT : at this stage, this is just a beta version. It has NOT been tested on a bike and there are probably some bugs.
 Try it at your own risk!!!!
 
-Small limitation whith the current version. Like the TSDZ2 version, this version is supposed to let you change some setup parameters using the display keyboard. Still currently the changes done with the display are lost after a power off. This should be fixed in a future version.
+There is a small known limitation whith the current version. Like the TSDZ2 version, this version is supposed to let you change some setup parameters using the display keyboard. Still currently the changes done with the display are lost after a power off. This should be fixed in a future version.
 
 To use this firmware, you will have to:
 
@@ -27,6 +27,12 @@ To use this firmware, you will have to:
 * Use a Segger Jlink device and a cable (this device replace the Stlink used for TSDZ2)
 * Flash the compiled firmware on the TSDZ8 controller
 * Flash also the file containing your preferences
+
+If you have questions on this Tsdz8 project, you can ask on this forum:
+https://endless-sphere.com/sphere/threads/new-tsdz8-pswpower.120798/page-12
+
+If you find bugs, best is to open an issue in github : https://github.com/mstrens/OSF
+
 
 # 1.Download this firmware
 
