@@ -87,8 +87,8 @@ I expect (not tested yet) that it is also possible to use the part with the male
 To flash, you can follow the instructions from here: 
 https://ebikestuff.eu/en/content/18-tsdz8-firmware-update-using-j-link-jlink-v9-programming-kit
 
-The HEX file to upload is the one you downloaded at step 1. It is named "mtb-example-xmc-gpio-toggle.hex" in
-folder "test_gpio_in/build/tsdz8_for_GPIO_TEST/Debug" or in "test_gpio_in/build/last_config".
+The HEX file to upload is the one you downloaded from this github site at step 1.
+It is named OSF_TSDZ8_Vxx_xx.hex where xx.xx is a version number.
 
 Note: while flashing, the motor should not be powered by the battery. Disconnect it or at least power it OFF. In principe, the Jkink will provide power to the controller (at least if it is a Jlink clone device).
 It seems possible to keep the motor connected the display but do not press any button on the display.
@@ -113,7 +113,7 @@ If not, it will runs with default internal parameters. In the future, this would
 
 
 
-# Devepper
+# Developper
 
 If you want, you can look at the software and modify it.
 
@@ -152,3 +152,6 @@ Check if errors are generated. It is not abnormal to get quite many "Warnings" (
 This step created a HEX file that can be flashed in the controller.
  
 Note : it is also possible to flash the code directly from VS Code at the same time as you compile (e.g. to debug it) but this requires probably to modify some set up in .vscode/settings.json file in order to let VS Code knows the location of some Segger files (depend on the folder where you installed Segger Jlink).
+
+Note: if you compile the firmware yourself, the generated hex file to upload is named "mtb-example-xmc-gpio-toggle.hex" and is present in
+folder "test_gpio_in/build/tsdz8_for_GPIO_TEST/Debug" or in "test_gpio_in/build/last_config" (depending if you use the menu Run/start debugging or the menu Terminal/Run build task)

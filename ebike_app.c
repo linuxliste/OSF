@@ -300,7 +300,7 @@ void ebike_app_init(void)
                 (uint8_t) PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_DEFAULT,    // 73
                 (uint8_t) PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN);       // 9
 	
-	// Smooth start counter set
+	// Smooth start counter set ; counter is e.g. about 160
 	ui8_smooth_start_counter_set = map_ui8((uint8_t) m_config.smooth_start_set_percent, //35
 				(uint8_t) 0,
                 (uint8_t) 100,
@@ -514,7 +514,7 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
 	else {
 		ui8_duty_cycle_target = 0;
 	}
-	ui8_riding_mode_parameter =  20; // if it is set on on , it means that there is no assist and motor stays/goes off
+	ui8_riding_mode_parameter =  20; // if it is set on 0 , it means that there is no assist and motor stays/goes off
 	
 	#else // NORMAL PROCESS
 
@@ -728,12 +728,12 @@ static void apply_startup_boost(void)
 }
 
 
-// calculate smooth start & new pedal torque delta
-static void apply_smooth_start(void)
+// calculate smooth start & new pedal torque delta; increase progressively the torque delta value
+static void apply_smooth_start(void) 
 {
 	if ((!ui8_pedal_cadence_RPM)&&(!ui16_motor_speed_erps)) {
 		ui8_smooth_start_flag = 1;
-		ui8_smooth_start_counter = ui8_smooth_start_counter_set;
+		ui8_smooth_start_counter = ui8_smooth_start_counter_set; // counter is e.g 150 (so 150/25 = 6 sec)
 	}
 	else if (ui8_smooth_start_flag) {
 		if (ui8_smooth_start_counter > 0) {
@@ -742,7 +742,7 @@ static void apply_smooth_start(void)
 		else {
 			ui8_smooth_start_flag = 0;
 		}
-		// pedal torque delta & smooth start
+		// pedal torque delta & smooth start; temp begin at 100, and go progressively down to 0
 		uint16_t ui16_temp = 100 - ((ui8_smooth_start_counter * 100) / ui8_smooth_start_counter_set);
 		ui16_adc_pedal_torque_delta = (ui16_adc_pedal_torque_delta * ui16_temp) / 100;
 	}
@@ -900,10 +900,10 @@ static void apply_power_assist(void)
  static void apply_cadence_assist(void)
 {
     if (ui8_pedal_cadence_RPM) {
-		// simulated pedal torque delta
-		ui16_adc_pedal_torque_delta = (uint16_t)((ui8_riding_mode_parameter + ui8_pedal_cadence_RPM) >> 2);
+		// simulated pedal torque delta ; riding mode parameter is the value based on assist mode and assist level selected on the display
+		ui16_adc_pedal_torque_delta = (((uint16_t) ui8_riding_mode_parameter + (uint16_t) ui8_pedal_cadence_RPM) >> 2);
 		
-		// smooth start
+		// smooth start (increase progressively adc_pedal_torque_delta from 0 up to the asked value)
 		apply_smooth_start();
 		
         // set cadence assist current target
@@ -912,7 +912,7 @@ static void apply_power_assist(void)
 		// restore pedal torque delta
 		ui16_adc_pedal_torque_delta = ui16_adc_pedal_torque_delta_temp;
 		
-		// set motor acceleration / deceleration
+		// set motor acceleration / deceleration // calculate motor ramp depending on speed and cadence
 		set_motor_ramp();
 		
         // set battery current target

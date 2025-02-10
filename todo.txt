@@ -25,6 +25,26 @@ change some parameters (max current, battery volt,...)
 
 CCU4 slice 1 could be disabled in bps (it was used to capture the intervals between 2 hall pattern changes)
 
+add temperature sensor (at least the internal temp of the chip)
+This requires:
+/* Start the temperature measurement */
+    XMC_SCU_StartTempMeasurement();
+
+Then read with
+    /* Calculate temperature of the chip in Kelvin */
+        uint32_t temp_k = XMC_SCU_CalcTemperature();
+
+        /* Convert temperature to Celsius */
+        temp_C = temp_k - 273;
+
+Add on the display the temperature 
+
+
+in ebike.app, there is:
+ui16_adc_pedal_torque_delta = (uint16_t)((ui8_riding_mode_parameter + ui8_pedal_cadence_RPM) >> 2);
+I am not sure this is correct when the 2 parameters are more than 128 (sum exceed 255)
+
+
 
 After debugging : 
 - in ebike_app_controller, remove the code that force the current on a fixed value in order to enable the switch on riding mode
