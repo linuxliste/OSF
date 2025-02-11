@@ -249,11 +249,13 @@ extern uint8_t  ui8_riding_mode_parameter_array[8][5];
 //	{0, 0, 0, 0, 0}
 	
 
-
-//#define USE_CONFIG_FROM_COMPILATION (1)
 void init_extra_fields_config (){
-    #if (USE_CONFIG_FROM_COMPILATION != 1)
-    upload_m_config(); // try to get the user preference from flash at 0XC000;
+    #if (USE_CONFIG_FROM_COMPILATION != 1 ) 
+    upload_m_config(); // try to get the user preference from flash at 0X1000F000; 
+                        //When version is not compatible (not the same main version), setup is done with the values from compilation
+                        // Normally the motor is then blocked with an error code = E09.
+                        // still a define in main.h allows to let the motor run with the compilation config.
+                        // this can be usefull for testing/debugging (avoid changes in XLS) 
     #endif
     // battery
     ui16_actual_battery_capacity = (uint16_t)(((uint32_t) m_config.target_max_battery_capacity * m_config.actual_battery_capacity_percent ) / 100);
@@ -482,7 +484,7 @@ void upload_m_config(){
     uint16_t * pConfig = (uint16_t *) ADDRESS_OF_M_CONFIG_FLASH;  // point to the begin of user preference parameters in flash 
     if ( *pConfig != m_config.main_version) {
         return; // discard flash parameters (and use those from compilation) if the main version is different
-                            // set a flag to stop running the motor using ERROR_MOTOR_BLOCKED 
+                // in ebike_app.c there is another check that force an ERROR_MOTOR_CHECK to block the motor
     } else {           
         m_config.main_version = *pConfig++; // read the value given by the pointer, and afterward increment it
         m_config.sub_version = *pConfig++;

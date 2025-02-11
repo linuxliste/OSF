@@ -16,13 +16,18 @@
 
 #define DEBUG_ON_JLINK         (1)  // when 1, messages are generated on jlink; best is to connect only 3 wires (grnd + SWO and S???)
 
+
 #define NORMAL_OPERATIONS             0
-#define DETECT_HALL_SENSORS_POSITIONS 1 // rotate the motor in both directions very slowly and performs some calculation
+#define DETECT_HALL_SENSORS_POSITIONS 1 // rotate the motor in both directions very slowly and performs some calculations
 #define FIND_BEST_GLOBAL_HALL_OFFSET  2 // rotate the motor with progressive values of hall offset to find the best one
 #define TEST_WITH_FIXED_DUTY_CYCLE    3 // rotate the motor with fixed duty cycle and a max current target
 #define TEST_WITH_THROTTLE            4 // rotate the motor with a duty cycle based on throttle
 // this define selects the main way the firmware is used; select one of the 5 options here above
 #define PROCESS  NORMAL_OPERATIONS  
+
+#define USE_CONFIG_FROM_COMPILATION (0)  // this should normally be set on 0; set to 1 only if you want to give priority to
+                                         // the parameters defined in config.h and used for compilation
+                                         // this can be convenient for testing/debugging
 
 // ***************** setup to detect hall sensors positions -- to be done only once for a new motor
     // There may not be a load on the motor

@@ -84,7 +84,7 @@ I expect (not tested yet) that it is also possible to use the part with the male
 
 # 4.Flash the firmware
 
-To flash, you can follow the instructions from here: 
+To flash, you can follow the instructions from here to know how to use Jlink: 
 https://ebikestuff.eu/en/content/18-tsdz8-firmware-update-using-j-link-jlink-v9-programming-kit
 
 The HEX file to upload is the one you downloaded from this github site at step 1.

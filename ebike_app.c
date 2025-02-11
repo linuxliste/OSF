@@ -1796,7 +1796,13 @@ static uint8_t ui8_motor_check_goes_alone_timer = 0U;
 		ui8_system_state = ERROR_MOTOR_CHECK;
 	}
 
-
+	#if (USE_CONFIG_FROM_COMPILATION != 1)
+	// check that version in flash is compatible with this version defined when compiling 
+	uint16_t * pConfig = (uint16_t *) ADDRESS_OF_M_CONFIG_FLASH;  // point to the begin of user preference parameters in flash 
+	if (( *pConfig != m_config.main_version)){ // keep motor blocked error if the config main version is not the same as the version at compilation
+		ui8_system_state = ERROR_MOTOR_CHECK;	
+	}
+	#endif
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // E02 ERROR_TORQUE_SENSOR
     // check torque sensor
@@ -1940,11 +1946,7 @@ static uint8_t ui8_motor_check_goes_alone_timer = 0U;
             ui8_motor_blocked_counter = 0;
         }
     }
-	// check that version is flash is compatible with this version of firmware
-	uint16_t * pConfig = (uint16_t *) ADDRESS_OF_M_CONFIG_FLASH;  // point to the begin of user preference parameters in flash 
-	if (( *pConfig != m_config.main_version)){ // keep motor blocked error if the config main version is not the same as the version at compilation
-		ui8_system_state = ERROR_MOTOR_BLOCKED;	
-	}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // E05 ERROR_THROTTLE
 #define THROTTLE_CHECK_COUNTER_THRESHOLD		 20 // 20 * 100ms = 2.0 seconds
