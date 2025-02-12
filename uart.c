@@ -970,7 +970,18 @@ void uart_send_package(){
 			ui8_display_fault_code = ERROR_OVERTEMPERATURE;
 		}
 		#endif
-	
+
+// here new code added by mstrens
+    #define MAX_TEMPERATURE 80
+	/* Calculate temperature of the chip in Kelvin */
+        uint32_t temp_k = XMC_SCU_CalcTemperature();
+
+        /* Convert temperature to Celsius */
+        if ((temp_k - 273) > MAX_TEMPERATURE){
+			ui8_display_fault_code = ERROR_OVERTEMPERATURE;
+		}
+
+
 		// blocked motor error has priority
 		if (ui8_system_state == ERROR_MOTOR_BLOCKED) {	
 			ui8_display_fault_code = ERROR_MOTOR_BLOCKED;

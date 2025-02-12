@@ -12,8 +12,10 @@ in xls sheet,
 - there should be the possibility to use advance miles (and so to fill one more line)
 - there should also be some other values for display mode 2 and mode 3
 
+add calibration of torque sensor
+we could reuse some code to limit the cuurent if temperature is to high (between min and max) - code exist in original project
 
-//ERROR_SPEED_SENSOR in ebike_app.c has been commented for testing without speed sensor. It must be reactivated otherwise the motor stops after 12 sec
+
 
 Check in uart.c the ui16_display_data_factor because it is a ui16 but there is a multiplying factor of 1475 (so quite big)
 
@@ -24,20 +26,6 @@ change some parameters (max current, battery volt,...)
     - FOC_ANGLE_MULTIPLIER has probably to be adapted because L (inductance) is different (and also erps)
 
 CCU4 slice 1 could be disabled in bps (it was used to capture the intervals between 2 hall pattern changes)
-
-add temperature sensor (at least the internal temp of the chip)
-This requires:
-/* Start the temperature measurement */
-    XMC_SCU_StartTempMeasurement();
-
-Then read with
-    /* Calculate temperature of the chip in Kelvin */
-        uint32_t temp_k = XMC_SCU_CalcTemperature();
-
-        /* Convert temperature to Celsius */
-        temp_C = temp_k - 273;
-
-Add on the display the temperature 
 
 
 in ebike.app, there is:
@@ -130,3 +118,4 @@ done:
         -define ADC_10_BIT_MOTOR_PHASE_CURRENT_MAX			187	// 30 amps // 1 = 0.16 Amp
 - in config.h
     - ENABLE_THROTTLE has been set on 1 (test with throttle)        
+- in uart.c, I added an error on temperature based on the chip temperature.

@@ -29,9 +29,6 @@
 #include "eeprom.h"
 
 
-/* Define macro to enable/disable printing of debug messages */    // for debugging
-// this should be update to avoid use of uart for debugging (debug only with jlink)
-#define ENABLE_PRINT_SOME_DEBUG           (0)
 /*******************************************************************************
 * Macros
 *******************************************************************************/
@@ -58,18 +55,6 @@ uint32_t pas_1 = 0;
 uint32_t uart_rx = 0;
 uint32_t brake = 0;
 uint32_t unknown = 0;
-
-
-
-//Used to store some data from interrupt and print in main loop at regular interval with
-//               print_each_sec(uint32_t index, uint32_t value, uint32_t interval_ms)
-uint32_t debug_values[20] ; // 
-uint32_t debug_values_copy[20] = {0};
-    
-
-/* Declaration of array to store the message to be transmitted */
-const uint8_t message[] = "Hello world!!\r\n";
-const uint8_t clear_screen[] = "Hello from setup\r\n";
 
 
 extern volatile uint8_t ui8_received_package_flag ;
@@ -130,23 +115,6 @@ void SysTick_Handler(void)
     system_ticks++;
 }
 
-/*******************************************************************************
-* Function Name: sys_now
-********************************************************************************
-* Summary:
-* Returns the current time in milliseconds.
-*
-* Parameters:
-*  none
-*
-* Return:
-*  the current time in milliseconds
-*
-*******************************************************************************/
-//__STATIC_INLINE uint32_t sys_now(void)
-//{
-//    return system_ticks;
-//}
 
 #define CHANNEL_NUMBER_PIN_2_2              (7U) // Torque
 #define CHANNEL_NUMBER_PIN_2_3              (5U) // unknown
@@ -165,21 +133,9 @@ void SysTick_Handler(void)
 void jlink_print_system_state();
 
 
-/*******************************************************************************
-* Function Name: main
-********************************************************************************
-* Summary:
-* This is the main function. It sets up a timer to trigger a 
-* periodic interrupt. The main while loop checks for the elapsed time
-* and toggles an LED at 1Hz to create an LED blinky. 
-*
-* Parameters:
-*  none
-*
-* Return:
-*  int
-*
-*******************************************************************************/
+//*******************************************************************************
+// Function Name: main
+//********************************************************************************
 
 int main(void)
 {
@@ -208,8 +164,8 @@ int main(void)
     XMC_CCU8_SetSuspendMode(ccu8_0_HW, XMC_CCU8_SUSPEND_MODE_SAFE_STOP);
     XMC_CCU4_SetSuspendMode(ccu4_0_HW, XMC_CCU4_SUSPEND_MODE_SAFE_STOP);
 
-    /* Initialize printf retarget */
-    cy_retarget_io_init(CYBSP_DEBUG_UART_HW);
+    /* Initialize printf retarget  when printf on uart is used*/
+    //cy_retarget_io_init(CYBSP_DEBUG_UART_HW);
 
     /* System timer configuration */
     SysTick_Config(SystemCoreClock / TICKS_PER_SECOND);
@@ -220,50 +176,36 @@ int main(void)
      // we have to connect sr2 to vadc group1 queue, to activate trigering and to disable gating.
 
     //Here I overwite the config defined in device manage (and generated in cycfg_peripherals.c)     
-/*
- */
-const XMC_VADC_QUEUE_CONFIG_t vadc_0_group_0_queue_config2 =
-{
-    .conv_start_mode = (uint32_t) XMC_VADC_STARTMODE_WFS,
-    .req_src_priority = (uint32_t) XMC_VADC_GROUP_RS_PRIORITY_3,
-    .src_specific_result_reg = (uint32_t) 0,
-    .trigger_signal = (uint32_t) XMC_VADC_REQ_TR_P, // use gate set up
-    .trigger_edge = (uint32_t) XMC_VADC_TRIGGER_EDGE_ANY,
-    .gate_signal = (uint32_t) XMC_VADC_REQ_GT_E, //use CCU8_ST3A = when timer is at mid period counting up
-    .timer_mode = (uint32_t) false,
-    .external_trigger = (uint32_t) true,
-};
-    XMC_VADC_GROUP_QueueSetGatingMode(vadc_0_group_0_HW, (XMC_VADC_GATEMODE_t) XMC_VADC_GATEMODE_IGNORE);
-    XMC_VADC_GROUP_QueueInit(vadc_0_group_0_HW, &vadc_0_group_0_queue_config2);
-
-const XMC_VADC_QUEUE_CONFIG_t vadc_0_group_1_queue_config2 = {
-        .conv_start_mode = (uint32_t) XMC_VADC_STARTMODE_WFS,
-        .req_src_priority = (uint32_t) XMC_VADC_GROUP_RS_PRIORITY_2,
-        .src_specific_result_reg = (uint32_t) 0,
-        .trigger_signal = (uint32_t) XMC_VADC_REQ_TR_P,  // use gate set up
-        .trigger_edge = (uint32_t) XMC_VADC_TRIGGER_EDGE_ANY,
-        .gate_signal = (uint32_t) XMC_VADC_REQ_GT_E, ////use CCU8_ST3A = when timer is at mid period counting up
-        .timer_mode = (uint32_t) false,
-        .external_trigger = (uint32_t) true,
-    };
-    XMC_VADC_GROUP_QueueSetGatingMode(vadc_0_group_1_HW, (XMC_VADC_GATEMODE_t) XMC_VADC_GATEMODE_IGNORE);
-    XMC_VADC_GROUP_QueueInit(vadc_0_group_1_HW, &vadc_0_group_1_queue_config2);
-
-/*  
-    #define CCU8_SR2_GxREQTRI 8 // SR2 from CCU8 slice 2
-    const XMC_VADC_QUEUE_CONFIG_t vadc_0_group_1_queue_config2 = {
+    const XMC_VADC_QUEUE_CONFIG_t vadc_0_group_0_queue_config2 =
+    {
         .conv_start_mode = (uint32_t) XMC_VADC_STARTMODE_WFS,
         .req_src_priority = (uint32_t) XMC_VADC_GROUP_RS_PRIORITY_3,
         .src_specific_result_reg = (uint32_t) 0,
-        .trigger_signal = (uint32_t) CCU8_SR2_GxREQTRI,
-        .trigger_edge = (uint32_t) XMC_VADC_TRIGGER_EDGE_RISING,
-        .gate_signal = (uint32_t) 0X01, //DISCARD_VADC_GATING
+        .trigger_signal = (uint32_t) XMC_VADC_REQ_TR_P, // use gate set up
+        .trigger_edge = (uint32_t) XMC_VADC_TRIGGER_EDGE_ANY,
+        .gate_signal = (uint32_t) XMC_VADC_REQ_GT_E, //use CCU8_ST3A = when timer is at mid period counting up
         .timer_mode = (uint32_t) false,
         .external_trigger = (uint32_t) true,
     };
+    XMC_VADC_GROUP_QueueSetGatingMode(vadc_0_group_0_HW, (XMC_VADC_GATEMODE_t) XMC_VADC_GATEMODE_IGNORE);
+    XMC_VADC_GROUP_QueueInit(vadc_0_group_0_HW, &vadc_0_group_0_queue_config2);
+
+    const XMC_VADC_QUEUE_CONFIG_t vadc_0_group_1_queue_config2 = {
+            .conv_start_mode = (uint32_t) XMC_VADC_STARTMODE_WFS,
+            .req_src_priority = (uint32_t) XMC_VADC_GROUP_RS_PRIORITY_2,
+            .src_specific_result_reg = (uint32_t) 0,
+            .trigger_signal = (uint32_t) XMC_VADC_REQ_TR_P,  // use gate set up
+            .trigger_edge = (uint32_t) XMC_VADC_TRIGGER_EDGE_ANY,
+            .gate_signal = (uint32_t) XMC_VADC_REQ_GT_E, ////use CCU8_ST3A = when timer is at mid period counting up
+            .timer_mode = (uint32_t) false,
+            .external_trigger = (uint32_t) true,
+        };
     XMC_VADC_GROUP_QueueSetGatingMode(vadc_0_group_1_HW, (XMC_VADC_GATEMODE_t) XMC_VADC_GATEMODE_IGNORE);
     XMC_VADC_GROUP_QueueInit(vadc_0_group_1_HW, &vadc_0_group_1_queue_config2);
-*/    
+
+    /* Start the temperature measurement */
+    XMC_SCU_StartTempMeasurement();
+
     // **** load the config from flash
     XMC_WDT_Service();
     // todo should be adapted to get them from flash memory; currently we only use default)
@@ -272,9 +214,8 @@ const XMC_VADC_QUEUE_CONFIG_t vadc_0_group_1_queue_config2 = {
     // currently it is filled with parameters from user setup + some dummy values (e.g. for soc)
     m_configuration_init();
     // add some initialisation in ebike_app.init
-    XMC_WDT_Service();
     ebike_app_init();
-
+    XMC_WDT_Service();
     // set initial position of hall sensor and first next expected one in shadow and load immediately in real register
     //posif_init_position();
     get_hall_pattern();
@@ -284,7 +225,6 @@ const XMC_VADC_QUEUE_CONFIG_t vadc_0_group_1_queue_config2 = {
     // set interrupt 
     NVIC_SetPriority(CCU40_1_IRQn, 0U); //capture hall pattern and slice 2 time when a hall change occurs
 	NVIC_EnableIRQ(CCU40_1_IRQn);
-    
     /* CCU80_0_IRQn and CCU80_1_IRQn. slice 3 interrupt on counting up and down. at 19 khz to manage rotating flux*/
 	NVIC_SetPriority(CCU80_0_IRQn, 1U);
 	NVIC_EnableIRQ(CCU80_0_IRQn);
@@ -324,7 +264,7 @@ const XMC_VADC_QUEUE_CONFIG_t vadc_0_group_1_queue_config2 = {
         if (ui8_received_package_flag == 0) {
             fillRxBuffer();
         }
-        // to be activated for real production
+        // must be activated for real production
         // Here we should call a funtion every 25 msec (based on systick or on an interrupt based on a CCU4 timer)
         #if (PROCESS != DETECT_HALL_SENSORS_POSITIONS )
         if ((system_ticks - loop_25ms_ticks) > 25) { 
@@ -448,4 +388,4 @@ void jlink_print_system_state(){
     }
 }    
 
-/* [] END OF FILE */
+/* END OF FILE */
