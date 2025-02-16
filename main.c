@@ -98,8 +98,23 @@ extern uint16_t ui16_display_data_factor;
 extern uint8_t ui8_g_foc_angle;
 extern uint8_t ui8_throttle_adc_in;
 
+// to debug
+extern uint16_t saved_current_min ;
+extern uint16_t saved_current_max ;
+extern uint16_t saved_current_min_8 ;
+extern uint16_t saved_current_max_8 ;
+extern uint16_t saved_current_min_12 ;
+extern uint16_t saved_current_max_12 ;
+extern uint32_t calibration_offset_current_accumulated;
+extern uint32_t calibration_offset_current_accumulated_counter;
+
+
 #if (PROCESS == FIND_BEST_GLOBAL_HALL_OFFSET)
 extern uint16_t calibration_offset_current_average_to_display;
+extern uint32_t calibration_offset_current_min ;
+extern uint32_t calibration_offset_current_max ;
+
+
 extern uint16_t calibration_offset_angle_to_display;
 #endif
 extern uint8_t global_offset_angle;
@@ -306,16 +321,35 @@ int main(void)
         */
         // monitor results of find best global hall offset
         #if ( PROCESS == FIND_BEST_GLOBAL_HALL_OFFSET ) 
-        if( take_action(4 , 500)) SEGGER_RTT_printf(0,"offset=%u current=%u erps=%u foc%u   dctarg=%u dc=%u    ctarg=%u cfilt=%u\r\n",
-            (unsigned int) calibration_offset_angle_to_display ,
-            (unsigned int) calibration_offset_current_average_to_display,
-            (unsigned int) ui16_motor_speed_erps,
-            (unsigned int) ui8_g_foc_angle,
-            (unsigned int) ui8_controller_duty_cycle_target,
-            (unsigned int) ui8_g_duty_cycle,
-            (unsigned int) ui8_controller_adc_battery_current_target,
-            (unsigned int) ui8_adc_battery_current_filtered
-        );
+        if( take_action(4 , 200)) {
+            SEGGER_RTT_printf(0,"offset=%u current=%u erps=%u foc%u   dctarg=%u dc=%u    ctarg=%u cfilt=%u cMin=%u cMax=%u scMin=%u scMax=%u scMin8=%u scMax8=%u scMin12=%u scMax12=%u Acc=%u cnt=%u\r\n",
+                (unsigned int) calibration_offset_angle_to_display ,
+                (unsigned int) calibration_offset_current_average_to_display,
+                (unsigned int) ui16_motor_speed_erps,
+                (unsigned int) ui8_g_foc_angle,
+                (unsigned int) ui8_controller_duty_cycle_target,
+                (unsigned int) ui8_g_duty_cycle,
+                (unsigned int) ui8_controller_adc_battery_current_target,
+                (unsigned int) ui8_adc_battery_current_filtered,
+                calibration_offset_current_min,
+                calibration_offset_current_max,
+                (unsigned int) saved_current_min,
+                (unsigned int) saved_current_max,
+                (unsigned int) saved_current_min_8,
+                (unsigned int) saved_current_max_8,
+                (unsigned int) saved_current_min_12,
+                (unsigned int) saved_current_max_12,
+                (unsigned int) calibration_offset_current_accumulated,
+                (unsigned int) calibration_offset_current_accumulated_counter
+            ); // end print
+            saved_current_min= 0xFFFF;
+            saved_current_max=0;
+            saved_current_min_8= 0xFFFF;
+            saved_current_max_8=0;
+            saved_current_min_12= 0xFFFF;
+            saved_current_max_12=0;
+        
+        }
         #endif
         #if ( PROCESS == TEST_WITH_FIXED_DUTY_CYCLE ) || ( PROCESS == TEST_WITH_THROTTLE )
         if( take_action(5, 200)) {

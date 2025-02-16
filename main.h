@@ -23,7 +23,7 @@
 #define TEST_WITH_FIXED_DUTY_CYCLE    3 // rotate the motor with fixed duty cycle and a max current target
 #define TEST_WITH_THROTTLE            4 // rotate the motor with a duty cycle based on throttle
 // this define selects the main way the firmware is used; select one of the 5 options here above
-#define PROCESS  NORMAL_OPERATIONS  
+#define PROCESS                         FIND_BEST_GLOBAL_HALL_OFFSET  
 
 #define USE_CONFIG_FROM_COMPILATION (0)  // this should normally be set on 0; set to 1 only if you want to give priority to
                                          // the parameters defined in config.h and used for compilation
@@ -49,10 +49,10 @@
 // ************* Find best global hall offset
 //   this let the motor runs with different hall offset values and display for each the average current
 //   this allows to find the best offset and to fill it in global_offset_angle
-#define PWM_DUTY_CYCLE_MAX_FIND_BEST_GLOBAL_HALL_OFFSET 20 // max value during this process
-#define ADC_BATTERY_CURRENT_TARGET_FIND_BEST_GLOBAL_HALL_OFFSET 6 // 1 ADC step = 0,16A ; so 6 = 1A
-#define FIRST_OFFSET_ANGLE_FOR_CALIBRATION (47) // This is the first value used for calibration; it increases every 4 sec up to the max
-#define LAST_OFFSET_ANGLE_FOR_CALIBRATION (FIRST_OFFSET_ANGLE_FOR_CALIBRATION+8) // this is the max value to be tested; select a value that avoid increasing to much the current
+#define PWM_DUTY_CYCLE_MAX_FIND_BEST_GLOBAL_HALL_OFFSET 160 // max value during this process
+#define ADC_BATTERY_CURRENT_TARGET_FIND_BEST_GLOBAL_HALL_OFFSET 8 // 1 ADC step = 0,16A ; so 6 = 1A
+#define FIRST_OFFSET_ANGLE_FOR_CALIBRATION (64) // This is the first value used for calibration; it increases every 4 sec up to the max
+#define LAST_OFFSET_ANGLE_FOR_CALIBRATION (FIRST_OFFSET_ANGLE_FOR_CALIBRATION+6) // this is the max value to be tested; select a value that avoid increasing to much the current
 #define CALIBRATE_OFFSET_STEP 1    // 1// step used when increasing the global_offset_angle (normally 1; could be set to 0 for some kind of test)
 
 // ************* TEST WITH FIXED_DUTY_CYCLE *****************
@@ -67,7 +67,7 @@
 
 // this is the value provided by the find best hall sensor offset process
 // it is used for NORMAL_OPERATION, TEST_WITH_FIXED_DUTY_CYCLE and TEST_WITH_TROTTLE
-#define CALIBRATED_OFFSET_ANGLE 51   
+#define CALIBRATED_OFFSET_ANGLE 67  
 
 // for CCU4 slice 2
 #define HALL_COUNTER_FREQ                       250000U // 250KHz or 4us

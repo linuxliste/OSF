@@ -71,21 +71,6 @@ static const uint16_t ui16_svm_table[SVM_TABLE_LEN] = {
 1676,1674,1671,1668,1665,1661,1656,1651,1646,1640,1634,1627,1620,1612,1604,1595,1586,1576};
 
 
-
-/* it was first this table but there was a small bug in a formula (255 instead of 256)
-1569,1579,1588,1597,1606,1614,1622,1629,1636,1642,1648,1653,1658,1662,1666,1669,1672,1674,1676,
-1677,1678,1678,1678,1677,1676,1674,1672,1669,1666,1662,1658,1653,1648,1642,1636,1629,1622,1614,
-1606,1597,1588,1579,1569,1543,1511,1479,1447,1414,1381,1348,1314,1280,1246,1211,1177,1142,1107,
-1072,1036,1001,965,929,894,858,822,786,751,715,679,644,608,573,538,503,469,434,400,366,332,299,
-266,233,201,169,137,111,101,92,83,74,66,58,51,44,38,32,27,22,18,14,11,8,6,4,3,2,2,2,3,4,6,8,11,
-14,18,22,27,32,38,44,51,58,66,74,83,92,101,111,106,97,87,78,70,62,55,48,41,35,30,25,20,16,12,9,
-7,5,3,2,2,2,2,3,5,7,9,12,16,20,25,30,35,41,48,55,62,70,78,87,97,106,122,153,185,217,249,282,315,
-349,383,417,451,486,521,556,591,626,662,697,733,768,804,840,876,912,947,983,1018,1054,1089,1124,
-1159,1194,1229,1263,1297,1331,1365,1398,1431,1463,1495,1527,1558,1574,1583,1593,1602,1610,1618,
-1625,1632,1639,1645,1650,1655,1660,1664,1668,1671,1673,1675,1677,1678,1678,1678,1678,1677,1675,
-1673,1671,1668,1664,1660,1655,1650,1645,1639,1632,1625,1618,1610,1602,1593,1583,1574};
-*/
-
 // motor variables
 uint8_t ui8_hall_360_ref_valid = 0; // fill with a hall pattern to check sequence is correct
 uint8_t ui8_motor_commutation_type = BLOCK_COMMUTATION;
@@ -152,6 +137,18 @@ uint8_t  previous_hall_pattern = 7; // Invalid value, force execution of Hall co
 // Hall counter value of last Hall transition 
 uint16_t previous_360_ref_ticks ; 
 
+
+// to debug
+uint16_t saved_current= 0; 
+uint16_t saved_current_min = 0xFFFF;
+uint16_t saved_current_max = 0;
+uint16_t saved_current_8= 0;
+uint16_t saved_current_min_8 = 0xFFFF;
+uint16_t saved_current_max_8 = 0;
+uint16_t saved_current_12 = 0;
+uint16_t saved_current_min_12 = 0xFFFF;
+uint16_t saved_current_max_12 = 0;
+
 // ----------   end of copy from tsdz2 -------------------------
 
 uint8_t ui8_temp;
@@ -180,8 +177,11 @@ volatile uint16_t debug_time_ccu8_irq1e = 0;
 uint8_t global_offset_angle = FIRST_OFFSET_ANGLE_FOR_CALIBRATION ; 
 uint8_t global_offset_angle_prev ; // used to detect an increase and so calculate current average and offset providing the min current
 // for calibration process of the hall sensor offsets
+uint32_t calibration_offset_current = 0;
 uint32_t calibration_offset_current_accumulated = 0;
-uint16_t calibration_offset_current_accumulated_counter = 0;
+uint32_t calibration_offset_current_min = 0XFFFF;
+uint32_t calibration_offset_current_max = 0;
+uint32_t calibration_offset_current_accumulated_counter = 0;
 uint16_t calibration_offset_current_average_to_display = 0;
 uint16_t calibration_offset_angle_to_display =0; 
 //uint16_t calibration_offset_current_min = 0xFFFF;
@@ -263,61 +263,17 @@ uint8_t current_hall_pattern = 1;
 uint8_t current_hall_pattern_prev = 1;
 uint32_t capture_accumulated = 0 ;
 
-// added by mstrens to take care of error in the position of the hall sensor
-// see the calibration process in doc.txt
-#define CALIBRATED_HALL_ANGLE_PATTERN_1 0  // 90°
-#define CALIBRATED_HALL_ANGLE_PATTERN_2 -3 // 210
-#define CALIBRATED_HALL_ANGLE_PATTERN_3 -1 // 150
-#define CALIBRATED_HALL_ANGLE_PATTERN_4 0  // 330
-#define CALIBRATED_HALL_ANGLE_PATTERN_5 -2 // 30
-#define CALIBRATED_HALL_ANGLE_PATTERN_6 -1 // 270
-
-// that table results from the automaic detection of hall sensors positions algorithm 
 const uint8_t ui8_hall_ref_angles[8] = { // Sequence is 1, 3, 2 , 6, 4, 6; so angle are 39, 86, 127, 167, 216, 0 (256=360°)
         0,                     // error ; index must be between 1 and 6
-        39 , //   test gives angle = 39   for hall pattern 1
-        127, //   test gives angle = 127  for hall pattern 2  
-        86, //    test gives angle = 86   for hall pattern 3
-        216, //   test gives angle = 216  for hall pattern 4 
-        0 , //    test gives angle = 0    for hall pattern 5
-        167, //   test gives angle = 167  for hall pattern 6  
+        20 , //   test gives angle = 39   for hall pattern 1
+        113, //   test gives angle = 127  for hall pattern 2  
+        67, //    test gives angle = 86   for hall pattern 3
+        197, //   test gives angle = 216  for hall pattern 4 
+        242 , //    test gives angle = 0    for hall pattern 5
+        147, //   test gives angle = 167  for hall pattern 6  
         0                     // error ; index must be between 1 and 6
 };
 
-
-/* // this is the first table that was adapted from tsdz2 but that generates angles in the wrong direction
-const uint8_t ui8_hall_ref_angles[8] = { // for each angle, we substract 90 wich is in fact the value for 90°
-        0,                     // error ; index must be between 1 and 6
-        PHASE_ROTOR_ANGLE_210, // 151-64 = 87 : hall pattern 1
-        PHASE_ROTOR_ANGLE_90, // 2              hall pattern 2
-        PHASE_ROTOR_ANGLE_150, // 109-64 = 45   hall pattern 3
-        PHASE_ROTOR_ANGLE_330, // 237 - 64 = 173 hall patern 4
-        PHASE_ROTOR_ANGLE_270, // 194 -64 = 130 hall pattern 5
-        PHASE_ROTOR_ANGLE_30, // -40            hall pattern 6
-        0                     // error ; index must be between 1 and 6
-};
-*/
-/*    for TSDZ2
-volatile uint8_t ui8_hall_counter_offsets[8] = {
-    0,
-    HALL_COUNTER_OFFSET_DOWN, // 23  //210°
-    HALL_COUNTER_OFFSET_DOWN, // 23  // 90_
-    HALL_COUNTER_OFFSET_UP, //44     // 150°
-    HALL_COUNTER_OFFSET_DOWN, // 23  // 330°
-    HALL_COUNTER_OFFSET_UP, //44     // 270°
-    HALL_COUNTER_OFFSET_UP, //44     // 30°
-    0
-};
-*/
-
-// this is in theory a table to take care that the hall sensor has a delay to turn on/off
-// e.g. a datasheet gives a value of 16usec
-// when motor runs at 3000 rpm = 50 rps = 200 erps, it takes 5000 usec for 1 electric rotation
-// The counter runs at 250000Hz so 1 tick = 4 usec
-// So 1 electric rotation 5000/4 = 1250 ticks
-// a delay of 16 usec = 4 ticks represent an angle of 4/1250*360°= 1°
-// this should not really matter
-// todo :  test with values = 0
 const uint8_t ui8_hall_counter_offsets[8] = {0};
 /*
 volatile uint8_t ui8_hall_counter_offsets[8] = {
@@ -328,18 +284,6 @@ volatile uint8_t ui8_hall_counter_offsets[8] = {
     HALL_COUNTER_OFFSET_DOWN , // 23  // 330°   when Hall pattern = 4
     HALL_COUNTER_OFFSET_UP, //44     // 270°  when Hall pattern = 5
     HALL_COUNTER_OFFSET_UP , //44     // 30°  when Hall pattern = 6
-    0
-};
-*/
-/*
-volatile uint8_t ui8_hall_counter_offsets[8] = {
-    0,
-    33 , // 23  //210° when Hall pattern = 1
-    33 , // 23  // 90_    when Hall pattern = 2
-    33 , //44     // 150° when Hall pattern = 3
-    33 , // 23  // 330°   when Hall pattern = 4
-    33 , //44     // 270°  when Hall pattern = 5
-    33 , //44     // 30°  when Hall pattern = 6
     0
 };
 */
@@ -436,18 +380,38 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
     #if (PROCESS == FIND_BEST_GLOBAL_HALL_OFFSET)
     // measure the current and search the min; save the offset that provides the  min current
         // sum the 2 currents
-    calibration_offset_current_accumulated += (XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 8 ) & 0xFFFF) +
-                                 (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 12 ) & 0xFFFF);
+    uint16_t current = (XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 8 ) & 0x0FFF) +
+                                 (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 12 ) & 0x0FFF);
+    calibration_offset_current_accumulated += current;
+    if (calibration_offset_current_min > current ) calibration_offset_current_min = current;
+    if (calibration_offset_current_max < current ) calibration_offset_current_max = current;
+    if ( saved_current_min > saved_current) saved_current_min = saved_current;
+    if ( saved_current_max < saved_current) saved_current_max = saved_current;
+    if ( saved_current_min_8 > saved_current_8) saved_current_min_8 = saved_current_8;
+    if ( saved_current_max_8 < saved_current_8) saved_current_max_8 = saved_current_8;
+    if ( saved_current_min_12 > saved_current_12) saved_current_min_12 = saved_current_12;
+    if ( saved_current_max_12 < saved_current_12) saved_current_max_12 = saved_current_12;
+
     calibration_offset_current_accumulated_counter += 2;
     if ((system_ticks - calibration_offset_increase_counter)> 4000){ // increases every 4000 msec
         calibration_offset_increase_counter = system_ticks; // save current ticks for future test                     
         // calculate average
         calibration_offset_current_average_to_display = calibration_offset_current_accumulated / calibration_offset_current_accumulated_counter;
         calibration_offset_current_accumulated = 0;
+        calibration_offset_current_min = 0XFFFF;
+        calibration_offset_current_max = 0;
+        saved_current_min = 0XFFFF;
+        saved_current_max = 0 ;
+        saved_current_min_8 = 0XFFFF;
+        saved_current_max_8 = 0 ;
+        saved_current_min_12 = 0XFFFF;
+        saved_current_max_12 = 0 ;
         calibration_offset_current_accumulated_counter = 0;
         calibration_offset_angle_to_display = global_offset_angle;     
         if (global_offset_angle <=  LAST_OFFSET_ANGLE_FOR_CALIBRATION) {  // do not exceed the fixed limit for increasing
             global_offset_angle += CALIBRATE_OFFSET_STEP; // we increase (normally by 1)
+        } else {
+            global_offset_angle = FIRST_OFFSET_ANGLE_FOR_CALIBRATION; // Start again with perhaps a higher duty cycle due to ramp up
         }
     }    
     #endif
@@ -466,6 +430,7 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
             ui8_interpolation_angle = 21; // 21 is about 30° so mid position between 2 hall pattern changes
         }
     } 
+    // ------------ Calculate the rotor angle and use it as index in the table----------------- 
     uint8_t ui8_svm_table_index = ui8_interpolation_angle + ui8_motor_phase_absolute_angle + ui8_g_foc_angle + global_offset_angle;
     
     // Phase A is advanced 240 degrees over phase B
@@ -492,7 +457,7 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
         ui16_c = MIDDLE_SVM_TABLE - (((MIDDLE_SVM_TABLE - ui16_temp) * (uint16_t) ui8_g_duty_cycle)>>8);
     }
     // get the voltage ; done in irq0 because used in irq1 and irq0 takes less time
-    ui16_adc_voltage  = (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 4 ) & 0xFFFF) >> 2; // battery gr1 ch6 result 4   in bg
+    ui16_adc_voltage  = (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 4 ) & 0x0FFF) >> 2; // battery gr1 ch6 result 4   in bg
         
     //uint16_t temp  = XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW) ;
     //temp = temp - start_ticks;
@@ -532,24 +497,27 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
        // adc values are reduced to 10 bits instead of 12 bits to use the same resolution as tsdz2
        // note: per vadc group, the result number is the same as the pin number (except for group 1 current sensor)
         // next line has been moved in irq 0 to save time here
-        //ui16_adc_voltage  = (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 4 ) & 0xFFFF) >> 2; // battery gr1 ch6 result 4   in bg
+        //ui16_adc_voltage  = (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 4 ) & 0xFFF) >> 2; // battery gr1 ch6 result 4   in bg
         // next line has been moved to ebike_app.c to save time here
-        //ui16_adc_torque   = (XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 2 ) & 0xFFFF) >> 2; // torque gr0 ch7 result 2 in bg p2.2
+        //ui16_adc_torque   = (XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 2 ) & 0xFFF) >> 2; // torque gr0 ch7 result 2 in bg p2.2
         // next line has been moved to ebike_app.c to save time in this irq
-        //ui16_adc_throttle = (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 5 ) & 0xFFFF) >> 2; // throttle gr1 ch7 result 5  in bg  p2.5
+        //ui16_adc_throttle = (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 5 ) & 0xFFF) >> 2; // throttle gr1 ch7 result 5  in bg  p2.5
         
         //the resistance/gain in TSDZ8 is 4X smaller than in TSDZ2; still ADC is 12 bits instead of 10; so ADC 12bits TSDZ8 = ADC 10 bits TSDZ2
         // in TSDZ2, we used only the 8 lowest bits of adc; 1 adc step = 0,16A
         // In tsdz8, the resistance is (I expect) 0.003 Ohm ; So 1A => 0,003V => 0,03V (gain aop is 10)*4096/5Vcc = 24,576 steps
         //      SO 1 adc step = 1/24,576 = 0,040A
         // For 10 A, TSDZ2 should gives 10/0,16 = 62 steps
-        // For 10 A, TSDZ8 shoud give 10*24,576 steps
+        // For 10 A, TSDZ8 shoud give 10*24,576 steps = 246 steps
         // to convert TSDZ8 steps in the same units as TSDZ2, we shoud take ADC *62/245,76 = 0,25 and divide by 4 (or >>2)
         // current is available in gr0 ch1 result 8 in queue 0 p2.8 and/or in gr0 ch0 result in 12 (p2.8)
         // here we take the average of the 2 conversions and so use >>3 instead of >>2
-        uint16_t ui16_temp_current_X8 = ((XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 8 ) & 0x0FFF) +
-                                    (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 12 ) & 0x0FFF)) ; 
-        
+        saved_current_8 = (XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 8 ) & 0x0FFF);
+        saved_current_12 = (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 12 ) & 0x0FFF);
+        uint16_t ui16_temp_current_X8 = saved_current_8 + saved_current_12;
+        //uint16_t ui16_temp_current_X8 = ((XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 8 ) & 0x0FFF) +
+        //                            (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 12 ) & 0x0FFF)) ; 
+        saved_current = ui16_temp_current_X8; 
         ui16_adc_battery_current_acc_X8 = (ui16_temp_current_X8 + ui16_adc_battery_current_acc_X8)>> 1;
         ui16_adc_battery_current_filtered_X8 = (ui16_adc_battery_current_acc_X8 + ui16_adc_battery_current_filtered_X8) >>1;
         ui8_adc_battery_current_filtered = (uint8_t) (ui16_adc_battery_current_filtered_X8 >> 3); // divide by 8 to have the same value as tsdz2

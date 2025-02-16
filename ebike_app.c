@@ -437,12 +437,7 @@ void ebike_app_controller(void) // is called every 25ms by main()
 			check_battery_soc();
 			break;
 	}
-	/*
-    static uint8_t ui8_counter;
-	if (ui8_counter++ & 0x03) {
-		check_system(); // to be include in the switch here above when the first test are done and display is used
-	}
-	*/
+	
 	// use received data and sensor input to control motor
     ebike_control_motor();
 
@@ -557,8 +552,8 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
 	// to convert TSDZ8 steps in the same units as TSDZ2, we shoud take ADC *62/245,76 = 0,25 and divide by 4 (or >>2)
 	// current is available in gr0 ch1 result 8 in queue 0 p2.8 and/or in gr0 ch0 result in 12 (p2.8)
 	// here we take the average of the 2 conversions and so use >>3 instead of >>2
-	uint8_t ui8_temp_adc_current = ((XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 8 ) & 0x00FF) +
-    							    (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 12 ) & 0x00FF)) >>3  ;  
+	uint8_t ui8_temp_adc_current = ((XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 8 ) & 0x0FFF) +
+    							    (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 12 ) & 0x0FFF)) >>3  ;  
 	
     if ( ui8_temp_adc_current > ui8_adc_battery_overcurrent){ // 112+50 in tsdz2 (*0,16A) => 26A
         ui8_error_battery_overcurrent = ERROR_BATTERY_OVERCURRENT ;
@@ -1509,7 +1504,7 @@ static void apply_throttle(void)
 static void apply_temperature_limiting(void)
 {
     // next line has bee moved from motor.c to here to save time in irq 1
-	ui16_adc_throttle = (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 5 ) & 0xFFFF) >> 2; // throttle gr1 ch7 result 5  in bg  p2.5    
+	ui16_adc_throttle = (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 5 ) & 0xFFF) >> 2; // throttle gr1 ch7 result 5  in bg  p2.5    
 	// get ADC measurement
     uint16_t ui16_temp = ui16_adc_throttle;
 
@@ -1650,7 +1645,7 @@ static void get_battery_voltage(void)
 	static uint8_t toffset_cycle_counter = 0;
 	uint16_t ui16_temp = 0;
 	// this has been moved from motor.c to here in order to save time in the irq; >>2 is to go from ADC 12 bits to 10 bits like TSDZ2
-	ui16_adc_torque   = (XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 2 ) & 0xFFFF) >> 2; // torque gr0 ch7 result 2 in bg p2.2
+	ui16_adc_torque   = (XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 2 ) & 0xFFF) >> 2; // torque gr0 ch7 result 2 in bg p2.2
     if (toffset_cycle_counter < TOFFSET_CYCLES) {   // at start up get average on 3 sec
         uint16_t ui16_tmp = ui16_adc_torque; 
         ui16_adc_pedal_torque_offset_init = filter(ui16_tmp, ui16_adc_pedal_torque_offset_init, 2);
@@ -1954,7 +1949,7 @@ static uint8_t ui8_motor_check_goes_alone_timer = 0U;
 
     static uint8_t ui8_throttle_check_counter;
 	// next line has been copied from motor.c to save time in irq 1
-	ui16_adc_throttle = (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 5 ) & 0xFFFF) >> 2; // throttle gr1 ch7 result 5  in bg  p2.5    	
+	ui16_adc_throttle = (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 5 ) & 0xFFF) >> 2; // throttle gr1 ch7 result 5  in bg  p2.5    	
 	if (ui8_throttle_mode_array[m_configuration_variables.ui8_street_mode_enabled]) {
 		if (ui8_throttle_check_counter < THROTTLE_CHECK_COUNTER_THRESHOLD) { // 20 // so we have to wait 25 msec * 20 = 500msec
 			ui8_throttle_check_counter++;
