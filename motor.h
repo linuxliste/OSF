@@ -10,6 +10,8 @@
 #define BLOCK_COMMUTATION 			            0
 #define SINEWAVE_INTERPOLATION_60_DEGREES 	    0x80
 
+//to debug hall sensor positions
+#define INTERVAL_COUNTER (1 * 6);  // average on 128 electric rotations; * 6 because 6 hall patterns
 // power variables
 extern volatile uint8_t ui8_controller_duty_cycle_ramp_up_inverse_step;
 extern volatile uint8_t ui8_controller_duty_cycle_ramp_down_inverse_step;
@@ -23,7 +25,7 @@ extern volatile uint8_t ui8_field_weakening_enabled;
 extern volatile uint16_t ui16_hall_counter_total;    
 extern volatile uint8_t ui8_controller_duty_cycle_target;
 extern volatile uint16_t ui16_hall_calib_cnt[6];
-extern const uint8_t ui8_hall_ref_angles[8];  // was 6 in tsdz2
+extern uint8_t ui8_hall_ref_angles[8];  // was 6 in tsdz2
 extern const uint8_t ui8_hall_counter_offsets[8]; // was 6 in tsdz2
 extern volatile uint8_t ui8_hall_sensors_state;
 

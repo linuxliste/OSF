@@ -472,9 +472,9 @@
                         <Param id="capture1_function" value="XMC_CCU8_SLICE_EVENT_NONE"/>
                         <Param id="channel_dead_time_enable_0" value="true"/>
                         <Param id="channel_dead_time_enable_1" value="false"/>
-                        <Param id="channel_dead_time_falling_0" value="24"/>
+                        <Param id="channel_dead_time_falling_0" value="100"/>
                         <Param id="channel_dead_time_falling_1" value="0"/>
-                        <Param id="channel_dead_time_rising_0" value="24"/>
+                        <Param id="channel_dead_time_rising_0" value="100"/>
                         <Param id="channel_dead_time_rising_1" value="0"/>
                         <Param id="compare_counting_mode" value="XMC_CCU8_SLICE_TIMER_COUNT_MODE_CA"/>
                         <Param id="compare_down_event_sr_1" value="0"/>
@@ -590,9 +590,9 @@
                         <Param id="capture1_function" value="XMC_CCU8_SLICE_EVENT_NONE"/>
                         <Param id="channel_dead_time_enable_0" value="true"/>
                         <Param id="channel_dead_time_enable_1" value="false"/>
-                        <Param id="channel_dead_time_falling_0" value="24"/>
+                        <Param id="channel_dead_time_falling_0" value="100"/>
                         <Param id="channel_dead_time_falling_1" value="0"/>
-                        <Param id="channel_dead_time_rising_0" value="24"/>
+                        <Param id="channel_dead_time_rising_0" value="100"/>
                         <Param id="channel_dead_time_rising_1" value="0"/>
                         <Param id="compare_counting_mode" value="XMC_CCU8_SLICE_TIMER_COUNT_MODE_CA"/>
                         <Param id="compare_down_event_sr_1" value="0"/>
@@ -708,9 +708,9 @@
                         <Param id="capture1_function" value="XMC_CCU8_SLICE_EVENT_NONE"/>
                         <Param id="channel_dead_time_enable_0" value="true"/>
                         <Param id="channel_dead_time_enable_1" value="false"/>
-                        <Param id="channel_dead_time_falling_0" value="24"/>
+                        <Param id="channel_dead_time_falling_0" value="100"/>
                         <Param id="channel_dead_time_falling_1" value="0"/>
-                        <Param id="channel_dead_time_rising_0" value="24"/>
+                        <Param id="channel_dead_time_rising_0" value="100"/>
                         <Param id="channel_dead_time_rising_1" value="0"/>
                         <Param id="compare_counting_mode" value="XMC_CCU8_SLICE_TIMER_COUNT_MODE_CA"/>
                         <Param id="compare_down_event_sr_1" value="0"/>
@@ -1568,7 +1568,7 @@
                         <Param id="group_arbitration_slot_priority_id_0" value="3"/>
                         <Param id="group_arbitration_slot_priority_id_1" value="1"/>
                         <Param id="group_channels_result_register_id_0" value="6"/>
-                        <Param id="group_channels_result_register_id_1" value="8"/>
+                        <Param id="group_channels_result_register_id_1" value="15"/>
                         <Param id="group_channels_result_register_id_2" value="9"/>
                         <Param id="group_channels_result_register_id_3" value="10"/>
                         <Param id="group_channels_result_register_id_4" value="11"/>
@@ -1643,21 +1643,21 @@
                         <Param id="group_request_sources_external_trigger_event_id" value="XMC_VADC_TRIGGER_EDGE_NONE"/>
                         <Param id="group_request_sources_external_trigger_id" value="true"/>
                         <Param id="group_request_sources_gating_functionality_id" value="IGNORE"/>
-                        <Param id="group_request_sources_queue_input_id_0" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_1" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_2" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_3" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_4" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_5" value="None"/>
+                        <Param id="group_request_sources_queue_input_id_0" value="1"/>
+                        <Param id="group_request_sources_queue_input_id_1" value="1"/>
+                        <Param id="group_request_sources_queue_input_id_2" value="1"/>
+                        <Param id="group_request_sources_queue_input_id_3" value="1"/>
+                        <Param id="group_request_sources_queue_input_id_4" value="1"/>
+                        <Param id="group_request_sources_queue_input_id_5" value="1"/>
                         <Param id="group_request_sources_queue_input_id_6" value="7"/>
                         <Param id="group_request_sources_queue_input_id_7" value="1"/>
                         <Param id="group_request_sources_queue_specific_result_id" value="16"/>
-                        <Param id="group_request_sources_refill_id_0" value="false"/>
-                        <Param id="group_request_sources_refill_id_1" value="false"/>
-                        <Param id="group_request_sources_refill_id_2" value="false"/>
-                        <Param id="group_request_sources_refill_id_3" value="false"/>
-                        <Param id="group_request_sources_refill_id_4" value="false"/>
-                        <Param id="group_request_sources_refill_id_5" value="false"/>
+                        <Param id="group_request_sources_refill_id_0" value="true"/>
+                        <Param id="group_request_sources_refill_id_1" value="true"/>
+                        <Param id="group_request_sources_refill_id_2" value="true"/>
+                        <Param id="group_request_sources_refill_id_3" value="true"/>
+                        <Param id="group_request_sources_refill_id_4" value="true"/>
+                        <Param id="group_request_sources_refill_id_5" value="true"/>
                         <Param id="group_request_sources_refill_id_6" value="true"/>
                         <Param id="group_request_sources_refill_id_7" value="true"/>
                         <Param id="group_request_sources_scan_external_trigger_id" value="false"/>
@@ -1697,7 +1697,7 @@
                         <Param id="group_result_registers_configure_register_id_12" value="false"/>
                         <Param id="group_result_registers_configure_register_id_13" value="false"/>
                         <Param id="group_result_registers_configure_register_id_14" value="false"/>
-                        <Param id="group_result_registers_configure_register_id_15" value="false"/>
+                        <Param id="group_result_registers_configure_register_id_15" value="true"/>
                         <Param id="group_result_registers_configure_register_id_2" value="false"/>
                         <Param id="group_result_registers_configure_register_id_3" value="false"/>
                         <Param id="group_result_registers_configure_register_id_4" value="false"/>
@@ -1713,376 +1713,7 @@
                         <Param id="group_result_registers_dmm_id_12" value="REDUCTION"/>
                         <Param id="group_result_registers_dmm_id_13" value="REDUCTION"/>
                         <Param id="group_result_registers_dmm_id_14" value="REDUCTION"/>
-                        <Param id="group_result_registers_dmm_id_15" value="REDUCTION"/>
-                        <Param id="group_result_registers_dmm_id_2" value="REDUCTION"/>
-                        <Param id="group_result_registers_dmm_id_3" value="REDUCTION"/>
-                        <Param id="group_result_registers_dmm_id_4" value="REDUCTION"/>
-                        <Param id="group_result_registers_dmm_id_5" value="REDUCTION"/>
-                        <Param id="group_result_registers_dmm_id_6" value="REDUCTION"/>
-                        <Param id="group_result_registers_dmm_id_7" value="REDUCTION"/>
-                        <Param id="group_result_registers_dmm_id_8" value="REDUCTION"/>
-                        <Param id="group_result_registers_dmm_id_9" value="REDUCTION"/>
-                        <Param id="group_result_registers_enable_fifo_id_0" value="false"/>
-                        <Param id="group_result_registers_enable_fifo_id_1" value="false"/>
-                        <Param id="group_result_registers_enable_fifo_id_10" value="false"/>
-                        <Param id="group_result_registers_enable_fifo_id_11" value="false"/>
-                        <Param id="group_result_registers_enable_fifo_id_12" value="false"/>
-                        <Param id="group_result_registers_enable_fifo_id_13" value="false"/>
-                        <Param id="group_result_registers_enable_fifo_id_14" value="false"/>
-                        <Param id="group_result_registers_enable_fifo_id_15" value="false"/>
-                        <Param id="group_result_registers_enable_fifo_id_2" value="false"/>
-                        <Param id="group_result_registers_enable_fifo_id_3" value="false"/>
-                        <Param id="group_result_registers_enable_fifo_id_4" value="false"/>
-                        <Param id="group_result_registers_enable_fifo_id_5" value="false"/>
-                        <Param id="group_result_registers_enable_fifo_id_6" value="false"/>
-                        <Param id="group_result_registers_enable_fifo_id_7" value="false"/>
-                        <Param id="group_result_registers_enable_fifo_id_8" value="false"/>
-                        <Param id="group_result_registers_enable_fifo_id_9" value="false"/>
-                        <Param id="group_result_registers_enable_wfr_id_0" value="false"/>
-                        <Param id="group_result_registers_enable_wfr_id_1" value="false"/>
-                        <Param id="group_result_registers_enable_wfr_id_10" value="false"/>
-                        <Param id="group_result_registers_enable_wfr_id_11" value="false"/>
-                        <Param id="group_result_registers_enable_wfr_id_12" value="false"/>
-                        <Param id="group_result_registers_enable_wfr_id_13" value="false"/>
-                        <Param id="group_result_registers_enable_wfr_id_14" value="false"/>
-                        <Param id="group_result_registers_enable_wfr_id_15" value="false"/>
-                        <Param id="group_result_registers_enable_wfr_id_2" value="false"/>
-                        <Param id="group_result_registers_enable_wfr_id_3" value="false"/>
-                        <Param id="group_result_registers_enable_wfr_id_4" value="false"/>
-                        <Param id="group_result_registers_enable_wfr_id_5" value="false"/>
-                        <Param id="group_result_registers_enable_wfr_id_6" value="false"/>
-                        <Param id="group_result_registers_enable_wfr_id_7" value="false"/>
-                        <Param id="group_result_registers_enable_wfr_id_8" value="false"/>
-                        <Param id="group_result_registers_enable_wfr_id_9" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_0_0" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_0_1" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_0_2" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_0_3" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_10_0" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_10_1" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_10_2" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_10_3" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_11_0" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_11_1" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_11_2" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_11_3" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_12_0" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_12_1" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_12_2" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_12_3" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_13_0" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_13_1" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_13_2" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_13_3" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_14_0" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_14_1" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_14_2" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_14_3" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_15_0" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_15_1" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_15_2" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_15_3" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_1_0" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_1_1" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_1_2" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_1_3" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_2_0" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_2_1" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_2_2" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_2_3" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_3_0" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_3_1" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_3_2" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_3_3" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_4_0" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_4_1" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_4_2" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_4_3" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_5_0" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_5_1" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_5_2" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_5_3" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_6_0" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_6_1" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_6_2" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_6_3" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_7_0" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_7_1" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_7_2" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_7_3" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_8_0" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_8_1" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_8_2" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_8_3" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_9_0" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_9_1" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_9_2" value="false"/>
-                        <Param id="group_result_registers_external_event_enable_id_9_3" value="false"/>
-                        <Param id="group_result_registers_filter_type_id_0" value="0"/>
-                        <Param id="group_result_registers_filter_type_id_1" value="0"/>
-                        <Param id="group_result_registers_filter_type_id_10" value="0"/>
-                        <Param id="group_result_registers_filter_type_id_11" value="0"/>
-                        <Param id="group_result_registers_filter_type_id_12" value="0"/>
-                        <Param id="group_result_registers_filter_type_id_13" value="0"/>
-                        <Param id="group_result_registers_filter_type_id_14" value="0"/>
-                        <Param id="group_result_registers_filter_type_id_15" value="0"/>
-                        <Param id="group_result_registers_filter_type_id_2" value="0"/>
-                        <Param id="group_result_registers_filter_type_id_3" value="0"/>
-                        <Param id="group_result_registers_filter_type_id_4" value="0"/>
-                        <Param id="group_result_registers_filter_type_id_5" value="0"/>
-                        <Param id="group_result_registers_filter_type_id_6" value="0"/>
-                        <Param id="group_result_registers_filter_type_id_7" value="0"/>
-                        <Param id="group_result_registers_filter_type_id_8" value="0"/>
-                        <Param id="group_result_registers_filter_type_id_9" value="0"/>
-                        <Param id="group_result_registers_number_of_results_id_0" value="0"/>
-                        <Param id="group_result_registers_number_of_results_id_1" value="0"/>
-                        <Param id="group_result_registers_number_of_results_id_10" value="0"/>
-                        <Param id="group_result_registers_number_of_results_id_11" value="0"/>
-                        <Param id="group_result_registers_number_of_results_id_12" value="0"/>
-                        <Param id="group_result_registers_number_of_results_id_13" value="0"/>
-                        <Param id="group_result_registers_number_of_results_id_14" value="0"/>
-                        <Param id="group_result_registers_number_of_results_id_15" value="0"/>
-                        <Param id="group_result_registers_number_of_results_id_2" value="0"/>
-                        <Param id="group_result_registers_number_of_results_id_3" value="0"/>
-                        <Param id="group_result_registers_number_of_results_id_4" value="0"/>
-                        <Param id="group_result_registers_number_of_results_id_5" value="0"/>
-                        <Param id="group_result_registers_number_of_results_id_6" value="0"/>
-                        <Param id="group_result_registers_number_of_results_id_7" value="0"/>
-                        <Param id="group_result_registers_number_of_results_id_8" value="0"/>
-                        <Param id="group_result_registers_number_of_results_id_9" value="0"/>
-                        <Param id="group_result_registers_request_sources_only_id_0" value="false"/>
-                        <Param id="group_result_registers_request_sources_only_id_1" value="false"/>
-                        <Param id="group_result_registers_request_sources_only_id_10" value="false"/>
-                        <Param id="group_result_registers_request_sources_only_id_11" value="false"/>
-                        <Param id="group_result_registers_request_sources_only_id_12" value="false"/>
-                        <Param id="group_result_registers_request_sources_only_id_13" value="false"/>
-                        <Param id="group_result_registers_request_sources_only_id_14" value="false"/>
-                        <Param id="group_result_registers_request_sources_only_id_15" value="false"/>
-                        <Param id="group_result_registers_request_sources_only_id_2" value="false"/>
-                        <Param id="group_result_registers_request_sources_only_id_3" value="false"/>
-                        <Param id="group_result_registers_request_sources_only_id_4" value="false"/>
-                        <Param id="group_result_registers_request_sources_only_id_5" value="false"/>
-                        <Param id="group_result_registers_request_sources_only_id_6" value="false"/>
-                        <Param id="group_result_registers_request_sources_only_id_7" value="false"/>
-                        <Param id="group_result_registers_request_sources_only_id_8" value="false"/>
-                        <Param id="group_result_registers_request_sources_only_id_9" value="false"/>
-                        <Param id="group_result_registers_result_event_id_0" value="false"/>
-                        <Param id="group_result_registers_result_event_id_1" value="false"/>
-                        <Param id="group_result_registers_result_event_id_10" value="false"/>
-                        <Param id="group_result_registers_result_event_id_11" value="false"/>
-                        <Param id="group_result_registers_result_event_id_12" value="false"/>
-                        <Param id="group_result_registers_result_event_id_13" value="false"/>
-                        <Param id="group_result_registers_result_event_id_14" value="false"/>
-                        <Param id="group_result_registers_result_event_id_15" value="false"/>
-                        <Param id="group_result_registers_result_event_id_2" value="false"/>
-                        <Param id="group_result_registers_result_event_id_3" value="false"/>
-                        <Param id="group_result_registers_result_event_id_4" value="false"/>
-                        <Param id="group_result_registers_result_event_id_5" value="false"/>
-                        <Param id="group_result_registers_result_event_id_6" value="false"/>
-                        <Param id="group_result_registers_result_event_id_7" value="false"/>
-                        <Param id="group_result_registers_result_event_id_8" value="false"/>
-                        <Param id="group_result_registers_result_event_id_9" value="false"/>
-                        <Param id="inFlash" value="true"/>
-                    </Parameters>
-                </Personality>
-                <Personality template="xmc_vadc-ch" version="1.0">
-                    <Block location="vadc[0].group[0].ch[1]" locked="true">
-                        <Aliases>
-                            <Alias value="G0_CH1_CURRENT_P2_8"/>
-                        </Aliases>
-                    </Block>
-                    <Parameters>
-                        <Param id="group_channels_alias_value_for_conversion_requests_id" value="XMC_VADC_CHANNEL_ALIAS_DISABLED"/>
-                        <Param id="group_channels_assign_channel_to_group_request_id" value="false"/>
-                        <Param id="group_channels_broken_wire_detection_channel_id" value="XMC_VADC_CHANNEL_BWDCH_VAGND"/>
-                        <Param id="group_channels_enable_additional_preparation_phase_id" value="false"/>
-                        <Param id="group_channels_enable_alternate_reference_input_id" value="false"/>
-                        <Param id="group_channels_generate_channel_event_id" value="XMC_VADC_CHANNEL_EVGEN_OUTBOUND"/>
-                        <Param id="group_channels_input_class_id" value="XMC_VADC_CHANNEL_CONV_GROUP_CLASS0"/>
-                        <Param id="group_channels_lower_boundary_id" value="XMC_VADC_CHANNEL_BOUNDARY_GLOBAL_BOUND0"/>
-                        <Param id="group_channels_request_synchronized_conversion_id" value="false"/>
-                        <Param id="group_channels_result_target_background_source_id" value="0"/>
-                        <Param id="group_channels_store_results_id" value="XMC_VADC_RESULT_ALIGN_LEFT"/>
-                        <Param id="group_channels_upper_boundary_id" value="XMC_VADC_CHANNEL_BOUNDARY_GLOBAL_BOUND1"/>
-                        <Param id="inFlash" value="true"/>
-                    </Parameters>
-                </Personality>
-                <Personality template="xmc_vadc-ch" version="1.0">
-                    <Block location="vadc[0].group[0].ch[7]" locked="true">
-                        <Aliases>
-                            <Alias value="G0_CH7_TORQUE_P2_2"/>
-                        </Aliases>
-                    </Block>
-                    <Parameters>
-                        <Param id="group_channels_alias_value_for_conversion_requests_id" value="XMC_VADC_CHANNEL_ALIAS_DISABLED"/>
-                        <Param id="group_channels_assign_channel_to_group_request_id" value="false"/>
-                        <Param id="group_channels_broken_wire_detection_channel_id" value="XMC_VADC_CHANNEL_BWDCH_VAGND"/>
-                        <Param id="group_channels_enable_additional_preparation_phase_id" value="false"/>
-                        <Param id="group_channels_enable_alternate_reference_input_id" value="false"/>
-                        <Param id="group_channels_generate_channel_event_id" value="XMC_VADC_CHANNEL_EVGEN_NEVER"/>
-                        <Param id="group_channels_input_class_id" value="XMC_VADC_CHANNEL_CONV_GROUP_CLASS0"/>
-                        <Param id="group_channels_lower_boundary_id" value="XMC_VADC_CHANNEL_BOUNDARY_GROUP_BOUND0"/>
-                        <Param id="group_channels_request_synchronized_conversion_id" value="false"/>
-                        <Param id="group_channels_result_target_background_source_id" value="0"/>
-                        <Param id="group_channels_store_results_id" value="XMC_VADC_RESULT_ALIGN_LEFT"/>
-                        <Param id="group_channels_upper_boundary_id" value="XMC_VADC_CHANNEL_BOUNDARY_GROUP_BOUND0"/>
-                        <Param id="inFlash" value="true"/>
-                    </Parameters>
-                </Personality>
-                <Personality template="xmc_vadc-group" version="1.0">
-                    <Block location="vadc[0].group[1]" locked="true"/>
-                    <Parameters>
-                        <Param id="group_arbitration_slot_enable_id_0" value="true"/>
-                        <Param id="group_arbitration_slot_enable_id_1" value="false"/>
-                        <Param id="group_arbitration_slot_enable_id_2" value="true"/>
-                        <Param id="group_arbitration_slot_priority_id_0" value="3"/>
-                        <Param id="group_channels_result_register_id_0" value="12"/>
-                        <Param id="group_channels_result_register_id_1" value="7"/>
-                        <Param id="group_channels_result_register_id_2" value="14"/>
-                        <Param id="group_channels_result_register_id_3" value="15"/>
-                        <Param id="group_channels_result_register_id_4" value="13"/>
-                        <Param id="group_channels_result_register_id_5" value="3"/>
-                        <Param id="group_channels_result_register_id_6" value="4"/>
-                        <Param id="group_channels_result_register_id_7" value="5"/>
-                        <Param id="group_input_classes_emux_conv_mode_id_0" value="12BIT"/>
-                        <Param id="group_input_classes_emux_conv_mode_id_1" value="12BIT"/>
-                        <Param id="group_input_classes_phase_emux_conv_id_0" value="0"/>
-                        <Param id="group_input_classes_phase_emux_conv_id_1" value="0"/>
-                        <Param id="group_input_classes_phase_std_conv_id_0" value="31"/>
-                        <Param id="group_input_classes_phase_std_conv_id_1" value="31"/>
-                        <Param id="group_input_classes_std_conv_mode_id_0" value="12BIT"/>
-                        <Param id="group_input_classes_std_conv_mode_id_1" value="12BIT"/>
-                        <Param id="group_other_boundaries_flag_activation_id_0" value="ABOVE"/>
-                        <Param id="group_other_boundaries_flag_activation_id_1" value="ABOVE"/>
-                        <Param id="group_other_boundaries_flag_activation_id_2" value="ABOVE"/>
-                        <Param id="group_other_boundaries_flag_activation_id_3" value="ABOVE"/>
-                        <Param id="group_other_boundaries_flag_enable_id_0" value="false"/>
-                        <Param id="group_other_boundaries_flag_enable_id_1" value="false"/>
-                        <Param id="group_other_boundaries_flag_enable_id_2" value="false"/>
-                        <Param id="group_other_boundaries_flag_enable_id_3" value="false"/>
-                        <Param id="group_other_boundaries_flag_invert_id_0" value="false"/>
-                        <Param id="group_other_boundaries_flag_invert_id_1" value="false"/>
-                        <Param id="group_other_boundaries_flag_invert_id_2" value="false"/>
-                        <Param id="group_other_boundaries_flag_invert_id_3" value="false"/>
-                        <Param id="group_other_boundaries_flag_operation_id_0" value="XMC_VADC_GROUP_BOUNDARY_FLAG_MODE_ENABLED"/>
-                        <Param id="group_other_boundaries_flag_operation_id_1" value="XMC_VADC_GROUP_BOUNDARY_FLAG_MODE_ENABLED"/>
-                        <Param id="group_other_boundaries_flag_operation_id_2" value="XMC_VADC_GROUP_BOUNDARY_FLAG_MODE_ENABLED"/>
-                        <Param id="group_other_boundaries_flag_operation_id_3" value="XMC_VADC_GROUP_BOUNDARY_FLAG_MODE_ENABLED"/>
-                        <Param id="group_other_boundaries_value_id_0" value="0"/>
-                        <Param id="group_other_boundaries_value_id_1" value="0"/>
-                        <Param id="group_other_mux_channel_id_0" value="false"/>
-                        <Param id="group_other_mux_channel_id_1" value="false"/>
-                        <Param id="group_other_mux_channel_id_2" value="false"/>
-                        <Param id="group_other_mux_channel_id_3" value="false"/>
-                        <Param id="group_other_mux_channel_id_4" value="false"/>
-                        <Param id="group_other_mux_channel_id_5" value="false"/>
-                        <Param id="group_other_mux_channel_id_6" value="false"/>
-                        <Param id="group_other_mux_channel_id_7" value="false"/>
-                        <Param id="group_other_mux_coding_id" value="BINARY"/>
-                        <Param id="group_other_mux_mode_id" value="SWCTRL"/>
-                        <Param id="group_other_mux_sample_time_id" value="0"/>
-                        <Param id="group_other_mux_start_id" value="0"/>
-                        <Param id="group_other_sync_id" value="5"/>
-                        <Param id="group_request_sources_assigned_channel_id_0" value="false"/>
-                        <Param id="group_request_sources_assigned_channel_id_1" value="false"/>
-                        <Param id="group_request_sources_assigned_channel_id_2" value="false"/>
-                        <Param id="group_request_sources_assigned_channel_id_3" value="false"/>
-                        <Param id="group_request_sources_assigned_channel_id_4" value="false"/>
-                        <Param id="group_request_sources_assigned_channel_id_5" value="false"/>
-                        <Param id="group_request_sources_assigned_channel_id_6" value="false"/>
-                        <Param id="group_request_sources_assigned_channel_id_7" value="false"/>
-                        <Param id="group_request_sources_autoscan_enabled_id" value="false"/>
-                        <Param id="group_request_sources_background_assigned_channel_id_0" value="false"/>
-                        <Param id="group_request_sources_background_assigned_channel_id_1" value="false"/>
-                        <Param id="group_request_sources_background_assigned_channel_id_2" value="false"/>
-                        <Param id="group_request_sources_background_assigned_channel_id_3" value="false"/>
-                        <Param id="group_request_sources_background_assigned_channel_id_4" value="false"/>
-                        <Param id="group_request_sources_background_assigned_channel_id_5" value="false"/>
-                        <Param id="group_request_sources_background_assigned_channel_id_6" value="false"/>
-                        <Param id="group_request_sources_background_assigned_channel_id_7" value="false"/>
-                        <Param id="group_request_sources_event_id_0" value="false"/>
-                        <Param id="group_request_sources_event_id_1" value="false"/>
-                        <Param id="group_request_sources_event_id_2" value="false"/>
-                        <Param id="group_request_sources_event_id_3" value="false"/>
-                        <Param id="group_request_sources_event_id_4" value="false"/>
-                        <Param id="group_request_sources_event_id_5" value="false"/>
-                        <Param id="group_request_sources_event_id_6" value="false"/>
-                        <Param id="group_request_sources_event_id_7" value="false"/>
-                        <Param id="group_request_sources_external_trigger_edge_id" value="XMC_VADC_TRIGGER_EDGE_ANY"/>
-                        <Param id="group_request_sources_external_trigger_event_id" value="XMC_VADC_TRIGGER_EDGE_NONE"/>
-                        <Param id="group_request_sources_external_trigger_id" value="false"/>
-                        <Param id="group_request_sources_gating_functionality_id" value="IGNORE"/>
-                        <Param id="group_request_sources_queue_input_id_0" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_1" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_2" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_3" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_4" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_5" value="6"/>
-                        <Param id="group_request_sources_queue_input_id_6" value="7"/>
-                        <Param id="group_request_sources_queue_input_id_7" value="0"/>
-                        <Param id="group_request_sources_queue_specific_result_id" value="16"/>
-                        <Param id="group_request_sources_refill_id_0" value="false"/>
-                        <Param id="group_request_sources_refill_id_1" value="false"/>
-                        <Param id="group_request_sources_refill_id_2" value="false"/>
-                        <Param id="group_request_sources_refill_id_3" value="false"/>
-                        <Param id="group_request_sources_refill_id_4" value="false"/>
-                        <Param id="group_request_sources_refill_id_5" value="true"/>
-                        <Param id="group_request_sources_refill_id_6" value="true"/>
-                        <Param id="group_request_sources_refill_id_7" value="true"/>
-                        <Param id="group_request_sources_scan_external_trigger_id" value="false"/>
-                        <Param id="group_request_sources_scan_gating_functionality_id" value="BLOCK"/>
-                        <Param id="group_request_sources_scan_request_interrupt_id" value="false"/>
-                        <Param id="group_request_sources_scan_specific_result_id" value="16"/>
-                        <Param id="group_request_sources_scan_timer_mode_id" value="false"/>
-                        <Param id="group_request_sources_timer_mode_id" value="false"/>
-                        <Param id="group_request_sources_trigger_id_0" value="false"/>
-                        <Param id="group_request_sources_trigger_id_1" value="false"/>
-                        <Param id="group_request_sources_trigger_id_2" value="false"/>
-                        <Param id="group_request_sources_trigger_id_3" value="false"/>
-                        <Param id="group_request_sources_trigger_id_4" value="false"/>
-                        <Param id="group_request_sources_trigger_id_5" value="false"/>
-                        <Param id="group_request_sources_trigger_id_6" value="false"/>
-                        <Param id="group_request_sources_trigger_id_7" value="false"/>
-                        <Param id="group_result_registers_compare_ref_value_id_0" value="0"/>
-                        <Param id="group_result_registers_compare_ref_value_id_1" value="0"/>
-                        <Param id="group_result_registers_compare_ref_value_id_10" value="0"/>
-                        <Param id="group_result_registers_compare_ref_value_id_11" value="0"/>
-                        <Param id="group_result_registers_compare_ref_value_id_12" value="0"/>
-                        <Param id="group_result_registers_compare_ref_value_id_13" value="0"/>
-                        <Param id="group_result_registers_compare_ref_value_id_14" value="0"/>
-                        <Param id="group_result_registers_compare_ref_value_id_15" value="0"/>
-                        <Param id="group_result_registers_compare_ref_value_id_2" value="0"/>
-                        <Param id="group_result_registers_compare_ref_value_id_3" value="0"/>
-                        <Param id="group_result_registers_compare_ref_value_id_4" value="0"/>
-                        <Param id="group_result_registers_compare_ref_value_id_5" value="0"/>
-                        <Param id="group_result_registers_compare_ref_value_id_6" value="0"/>
-                        <Param id="group_result_registers_compare_ref_value_id_7" value="0"/>
-                        <Param id="group_result_registers_compare_ref_value_id_8" value="0"/>
-                        <Param id="group_result_registers_compare_ref_value_id_9" value="0"/>
-                        <Param id="group_result_registers_configure_register_id_0" value="false"/>
-                        <Param id="group_result_registers_configure_register_id_1" value="false"/>
-                        <Param id="group_result_registers_configure_register_id_10" value="false"/>
-                        <Param id="group_result_registers_configure_register_id_11" value="false"/>
-                        <Param id="group_result_registers_configure_register_id_12" value="false"/>
-                        <Param id="group_result_registers_configure_register_id_13" value="false"/>
-                        <Param id="group_result_registers_configure_register_id_14" value="false"/>
-                        <Param id="group_result_registers_configure_register_id_15" value="false"/>
-                        <Param id="group_result_registers_configure_register_id_2" value="false"/>
-                        <Param id="group_result_registers_configure_register_id_3" value="false"/>
-                        <Param id="group_result_registers_configure_register_id_4" value="false"/>
-                        <Param id="group_result_registers_configure_register_id_5" value="false"/>
-                        <Param id="group_result_registers_configure_register_id_6" value="false"/>
-                        <Param id="group_result_registers_configure_register_id_7" value="false"/>
-                        <Param id="group_result_registers_configure_register_id_8" value="false"/>
-                        <Param id="group_result_registers_configure_register_id_9" value="false"/>
-                        <Param id="group_result_registers_dmm_id_0" value="REDUCTION"/>
-                        <Param id="group_result_registers_dmm_id_1" value="REDUCTION"/>
-                        <Param id="group_result_registers_dmm_id_10" value="REDUCTION"/>
-                        <Param id="group_result_registers_dmm_id_11" value="REDUCTION"/>
-                        <Param id="group_result_registers_dmm_id_12" value="REDUCTION"/>
-                        <Param id="group_result_registers_dmm_id_13" value="REDUCTION"/>
-                        <Param id="group_result_registers_dmm_id_14" value="REDUCTION"/>
-                        <Param id="group_result_registers_dmm_id_15" value="REDUCTION"/>
+                        <Param id="group_result_registers_dmm_id_15" value="FILTERING"/>
                         <Param id="group_result_registers_dmm_id_2" value="REDUCTION"/>
                         <Param id="group_result_registers_dmm_id_3" value="REDUCTION"/>
                         <Param id="group_result_registers_dmm_id_4" value="REDUCTION"/>
@@ -2243,6 +1874,375 @@
                         <Param id="group_result_registers_result_event_id_13" value="false"/>
                         <Param id="group_result_registers_result_event_id_14" value="false"/>
                         <Param id="group_result_registers_result_event_id_15" value="false"/>
+                        <Param id="group_result_registers_result_event_id_2" value="false"/>
+                        <Param id="group_result_registers_result_event_id_3" value="false"/>
+                        <Param id="group_result_registers_result_event_id_4" value="false"/>
+                        <Param id="group_result_registers_result_event_id_5" value="false"/>
+                        <Param id="group_result_registers_result_event_id_6" value="false"/>
+                        <Param id="group_result_registers_result_event_id_7" value="false"/>
+                        <Param id="group_result_registers_result_event_id_8" value="false"/>
+                        <Param id="group_result_registers_result_event_id_9" value="false"/>
+                        <Param id="inFlash" value="true"/>
+                    </Parameters>
+                </Personality>
+                <Personality template="xmc_vadc-ch" version="1.0">
+                    <Block location="vadc[0].group[0].ch[1]" locked="true">
+                        <Aliases>
+                            <Alias value="G0_CH1_CURRENT_P2_8"/>
+                        </Aliases>
+                    </Block>
+                    <Parameters>
+                        <Param id="group_channels_alias_value_for_conversion_requests_id" value="XMC_VADC_CHANNEL_ALIAS_DISABLED"/>
+                        <Param id="group_channels_assign_channel_to_group_request_id" value="false"/>
+                        <Param id="group_channels_broken_wire_detection_channel_id" value="XMC_VADC_CHANNEL_BWDCH_VAGND"/>
+                        <Param id="group_channels_enable_additional_preparation_phase_id" value="false"/>
+                        <Param id="group_channels_enable_alternate_reference_input_id" value="false"/>
+                        <Param id="group_channels_generate_channel_event_id" value="XMC_VADC_CHANNEL_EVGEN_OUTBOUND"/>
+                        <Param id="group_channels_input_class_id" value="XMC_VADC_CHANNEL_CONV_GROUP_CLASS0"/>
+                        <Param id="group_channels_lower_boundary_id" value="XMC_VADC_CHANNEL_BOUNDARY_GLOBAL_BOUND0"/>
+                        <Param id="group_channels_request_synchronized_conversion_id" value="false"/>
+                        <Param id="group_channels_result_target_background_source_id" value="0"/>
+                        <Param id="group_channels_store_results_id" value="XMC_VADC_RESULT_ALIGN_LEFT"/>
+                        <Param id="group_channels_upper_boundary_id" value="XMC_VADC_CHANNEL_BOUNDARY_GLOBAL_BOUND1"/>
+                        <Param id="inFlash" value="true"/>
+                    </Parameters>
+                </Personality>
+                <Personality template="xmc_vadc-ch" version="1.0">
+                    <Block location="vadc[0].group[0].ch[7]" locked="true">
+                        <Aliases>
+                            <Alias value="G0_CH7_TORQUE_P2_2"/>
+                        </Aliases>
+                    </Block>
+                    <Parameters>
+                        <Param id="group_channels_alias_value_for_conversion_requests_id" value="XMC_VADC_CHANNEL_ALIAS_DISABLED"/>
+                        <Param id="group_channels_assign_channel_to_group_request_id" value="false"/>
+                        <Param id="group_channels_broken_wire_detection_channel_id" value="XMC_VADC_CHANNEL_BWDCH_VAGND"/>
+                        <Param id="group_channels_enable_additional_preparation_phase_id" value="false"/>
+                        <Param id="group_channels_enable_alternate_reference_input_id" value="false"/>
+                        <Param id="group_channels_generate_channel_event_id" value="XMC_VADC_CHANNEL_EVGEN_NEVER"/>
+                        <Param id="group_channels_input_class_id" value="XMC_VADC_CHANNEL_CONV_GROUP_CLASS0"/>
+                        <Param id="group_channels_lower_boundary_id" value="XMC_VADC_CHANNEL_BOUNDARY_GROUP_BOUND0"/>
+                        <Param id="group_channels_request_synchronized_conversion_id" value="false"/>
+                        <Param id="group_channels_result_target_background_source_id" value="0"/>
+                        <Param id="group_channels_store_results_id" value="XMC_VADC_RESULT_ALIGN_LEFT"/>
+                        <Param id="group_channels_upper_boundary_id" value="XMC_VADC_CHANNEL_BOUNDARY_GROUP_BOUND0"/>
+                        <Param id="inFlash" value="true"/>
+                    </Parameters>
+                </Personality>
+                <Personality template="xmc_vadc-group" version="1.0">
+                    <Block location="vadc[0].group[1]" locked="true"/>
+                    <Parameters>
+                        <Param id="group_arbitration_slot_enable_id_0" value="true"/>
+                        <Param id="group_arbitration_slot_enable_id_1" value="false"/>
+                        <Param id="group_arbitration_slot_enable_id_2" value="true"/>
+                        <Param id="group_arbitration_slot_priority_id_0" value="3"/>
+                        <Param id="group_channels_result_register_id_0" value="15"/>
+                        <Param id="group_channels_result_register_id_1" value="7"/>
+                        <Param id="group_channels_result_register_id_2" value="14"/>
+                        <Param id="group_channels_result_register_id_3" value="15"/>
+                        <Param id="group_channels_result_register_id_4" value="13"/>
+                        <Param id="group_channels_result_register_id_5" value="3"/>
+                        <Param id="group_channels_result_register_id_6" value="4"/>
+                        <Param id="group_channels_result_register_id_7" value="5"/>
+                        <Param id="group_input_classes_emux_conv_mode_id_0" value="12BIT"/>
+                        <Param id="group_input_classes_emux_conv_mode_id_1" value="12BIT"/>
+                        <Param id="group_input_classes_phase_emux_conv_id_0" value="0"/>
+                        <Param id="group_input_classes_phase_emux_conv_id_1" value="0"/>
+                        <Param id="group_input_classes_phase_std_conv_id_0" value="31"/>
+                        <Param id="group_input_classes_phase_std_conv_id_1" value="31"/>
+                        <Param id="group_input_classes_std_conv_mode_id_0" value="12BIT"/>
+                        <Param id="group_input_classes_std_conv_mode_id_1" value="12BIT"/>
+                        <Param id="group_other_boundaries_flag_activation_id_0" value="ABOVE"/>
+                        <Param id="group_other_boundaries_flag_activation_id_1" value="ABOVE"/>
+                        <Param id="group_other_boundaries_flag_activation_id_2" value="ABOVE"/>
+                        <Param id="group_other_boundaries_flag_activation_id_3" value="ABOVE"/>
+                        <Param id="group_other_boundaries_flag_enable_id_0" value="false"/>
+                        <Param id="group_other_boundaries_flag_enable_id_1" value="false"/>
+                        <Param id="group_other_boundaries_flag_enable_id_2" value="false"/>
+                        <Param id="group_other_boundaries_flag_enable_id_3" value="false"/>
+                        <Param id="group_other_boundaries_flag_invert_id_0" value="false"/>
+                        <Param id="group_other_boundaries_flag_invert_id_1" value="false"/>
+                        <Param id="group_other_boundaries_flag_invert_id_2" value="false"/>
+                        <Param id="group_other_boundaries_flag_invert_id_3" value="false"/>
+                        <Param id="group_other_boundaries_flag_operation_id_0" value="XMC_VADC_GROUP_BOUNDARY_FLAG_MODE_ENABLED"/>
+                        <Param id="group_other_boundaries_flag_operation_id_1" value="XMC_VADC_GROUP_BOUNDARY_FLAG_MODE_ENABLED"/>
+                        <Param id="group_other_boundaries_flag_operation_id_2" value="XMC_VADC_GROUP_BOUNDARY_FLAG_MODE_ENABLED"/>
+                        <Param id="group_other_boundaries_flag_operation_id_3" value="XMC_VADC_GROUP_BOUNDARY_FLAG_MODE_ENABLED"/>
+                        <Param id="group_other_boundaries_value_id_0" value="0"/>
+                        <Param id="group_other_boundaries_value_id_1" value="0"/>
+                        <Param id="group_other_mux_channel_id_0" value="false"/>
+                        <Param id="group_other_mux_channel_id_1" value="false"/>
+                        <Param id="group_other_mux_channel_id_2" value="false"/>
+                        <Param id="group_other_mux_channel_id_3" value="false"/>
+                        <Param id="group_other_mux_channel_id_4" value="false"/>
+                        <Param id="group_other_mux_channel_id_5" value="false"/>
+                        <Param id="group_other_mux_channel_id_6" value="false"/>
+                        <Param id="group_other_mux_channel_id_7" value="false"/>
+                        <Param id="group_other_mux_coding_id" value="BINARY"/>
+                        <Param id="group_other_mux_mode_id" value="SWCTRL"/>
+                        <Param id="group_other_mux_sample_time_id" value="0"/>
+                        <Param id="group_other_mux_start_id" value="0"/>
+                        <Param id="group_other_sync_id" value="5"/>
+                        <Param id="group_request_sources_assigned_channel_id_0" value="false"/>
+                        <Param id="group_request_sources_assigned_channel_id_1" value="false"/>
+                        <Param id="group_request_sources_assigned_channel_id_2" value="false"/>
+                        <Param id="group_request_sources_assigned_channel_id_3" value="false"/>
+                        <Param id="group_request_sources_assigned_channel_id_4" value="false"/>
+                        <Param id="group_request_sources_assigned_channel_id_5" value="false"/>
+                        <Param id="group_request_sources_assigned_channel_id_6" value="false"/>
+                        <Param id="group_request_sources_assigned_channel_id_7" value="false"/>
+                        <Param id="group_request_sources_autoscan_enabled_id" value="false"/>
+                        <Param id="group_request_sources_background_assigned_channel_id_0" value="false"/>
+                        <Param id="group_request_sources_background_assigned_channel_id_1" value="false"/>
+                        <Param id="group_request_sources_background_assigned_channel_id_2" value="false"/>
+                        <Param id="group_request_sources_background_assigned_channel_id_3" value="false"/>
+                        <Param id="group_request_sources_background_assigned_channel_id_4" value="false"/>
+                        <Param id="group_request_sources_background_assigned_channel_id_5" value="false"/>
+                        <Param id="group_request_sources_background_assigned_channel_id_6" value="false"/>
+                        <Param id="group_request_sources_background_assigned_channel_id_7" value="false"/>
+                        <Param id="group_request_sources_event_id_0" value="false"/>
+                        <Param id="group_request_sources_event_id_1" value="false"/>
+                        <Param id="group_request_sources_event_id_2" value="false"/>
+                        <Param id="group_request_sources_event_id_3" value="false"/>
+                        <Param id="group_request_sources_event_id_4" value="false"/>
+                        <Param id="group_request_sources_event_id_5" value="false"/>
+                        <Param id="group_request_sources_event_id_6" value="false"/>
+                        <Param id="group_request_sources_event_id_7" value="false"/>
+                        <Param id="group_request_sources_external_trigger_edge_id" value="XMC_VADC_TRIGGER_EDGE_ANY"/>
+                        <Param id="group_request_sources_external_trigger_event_id" value="XMC_VADC_TRIGGER_EDGE_NONE"/>
+                        <Param id="group_request_sources_external_trigger_id" value="false"/>
+                        <Param id="group_request_sources_gating_functionality_id" value="IGNORE"/>
+                        <Param id="group_request_sources_queue_input_id_0" value="0"/>
+                        <Param id="group_request_sources_queue_input_id_1" value="0"/>
+                        <Param id="group_request_sources_queue_input_id_2" value="7"/>
+                        <Param id="group_request_sources_queue_input_id_3" value="0"/>
+                        <Param id="group_request_sources_queue_input_id_4" value="0"/>
+                        <Param id="group_request_sources_queue_input_id_5" value="6"/>
+                        <Param id="group_request_sources_queue_input_id_6" value="0"/>
+                        <Param id="group_request_sources_queue_input_id_7" value="0"/>
+                        <Param id="group_request_sources_queue_specific_result_id" value="16"/>
+                        <Param id="group_request_sources_refill_id_0" value="true"/>
+                        <Param id="group_request_sources_refill_id_1" value="true"/>
+                        <Param id="group_request_sources_refill_id_2" value="true"/>
+                        <Param id="group_request_sources_refill_id_3" value="true"/>
+                        <Param id="group_request_sources_refill_id_4" value="true"/>
+                        <Param id="group_request_sources_refill_id_5" value="true"/>
+                        <Param id="group_request_sources_refill_id_6" value="true"/>
+                        <Param id="group_request_sources_refill_id_7" value="true"/>
+                        <Param id="group_request_sources_scan_external_trigger_id" value="false"/>
+                        <Param id="group_request_sources_scan_gating_functionality_id" value="BLOCK"/>
+                        <Param id="group_request_sources_scan_request_interrupt_id" value="false"/>
+                        <Param id="group_request_sources_scan_specific_result_id" value="16"/>
+                        <Param id="group_request_sources_scan_timer_mode_id" value="false"/>
+                        <Param id="group_request_sources_timer_mode_id" value="false"/>
+                        <Param id="group_request_sources_trigger_id_0" value="false"/>
+                        <Param id="group_request_sources_trigger_id_1" value="false"/>
+                        <Param id="group_request_sources_trigger_id_2" value="false"/>
+                        <Param id="group_request_sources_trigger_id_3" value="false"/>
+                        <Param id="group_request_sources_trigger_id_4" value="false"/>
+                        <Param id="group_request_sources_trigger_id_5" value="false"/>
+                        <Param id="group_request_sources_trigger_id_6" value="false"/>
+                        <Param id="group_request_sources_trigger_id_7" value="false"/>
+                        <Param id="group_result_registers_compare_ref_value_id_0" value="0"/>
+                        <Param id="group_result_registers_compare_ref_value_id_1" value="0"/>
+                        <Param id="group_result_registers_compare_ref_value_id_10" value="0"/>
+                        <Param id="group_result_registers_compare_ref_value_id_11" value="0"/>
+                        <Param id="group_result_registers_compare_ref_value_id_12" value="0"/>
+                        <Param id="group_result_registers_compare_ref_value_id_13" value="0"/>
+                        <Param id="group_result_registers_compare_ref_value_id_14" value="0"/>
+                        <Param id="group_result_registers_compare_ref_value_id_15" value="0"/>
+                        <Param id="group_result_registers_compare_ref_value_id_2" value="0"/>
+                        <Param id="group_result_registers_compare_ref_value_id_3" value="0"/>
+                        <Param id="group_result_registers_compare_ref_value_id_4" value="0"/>
+                        <Param id="group_result_registers_compare_ref_value_id_5" value="0"/>
+                        <Param id="group_result_registers_compare_ref_value_id_6" value="0"/>
+                        <Param id="group_result_registers_compare_ref_value_id_7" value="0"/>
+                        <Param id="group_result_registers_compare_ref_value_id_8" value="0"/>
+                        <Param id="group_result_registers_compare_ref_value_id_9" value="0"/>
+                        <Param id="group_result_registers_configure_register_id_0" value="false"/>
+                        <Param id="group_result_registers_configure_register_id_1" value="false"/>
+                        <Param id="group_result_registers_configure_register_id_10" value="false"/>
+                        <Param id="group_result_registers_configure_register_id_11" value="false"/>
+                        <Param id="group_result_registers_configure_register_id_12" value="false"/>
+                        <Param id="group_result_registers_configure_register_id_13" value="false"/>
+                        <Param id="group_result_registers_configure_register_id_14" value="false"/>
+                        <Param id="group_result_registers_configure_register_id_15" value="true"/>
+                        <Param id="group_result_registers_configure_register_id_2" value="false"/>
+                        <Param id="group_result_registers_configure_register_id_3" value="false"/>
+                        <Param id="group_result_registers_configure_register_id_4" value="false"/>
+                        <Param id="group_result_registers_configure_register_id_5" value="false"/>
+                        <Param id="group_result_registers_configure_register_id_6" value="false"/>
+                        <Param id="group_result_registers_configure_register_id_7" value="false"/>
+                        <Param id="group_result_registers_configure_register_id_8" value="false"/>
+                        <Param id="group_result_registers_configure_register_id_9" value="false"/>
+                        <Param id="group_result_registers_dmm_id_0" value="REDUCTION"/>
+                        <Param id="group_result_registers_dmm_id_1" value="REDUCTION"/>
+                        <Param id="group_result_registers_dmm_id_10" value="REDUCTION"/>
+                        <Param id="group_result_registers_dmm_id_11" value="REDUCTION"/>
+                        <Param id="group_result_registers_dmm_id_12" value="REDUCTION"/>
+                        <Param id="group_result_registers_dmm_id_13" value="REDUCTION"/>
+                        <Param id="group_result_registers_dmm_id_14" value="REDUCTION"/>
+                        <Param id="group_result_registers_dmm_id_15" value="FILTERING"/>
+                        <Param id="group_result_registers_dmm_id_2" value="REDUCTION"/>
+                        <Param id="group_result_registers_dmm_id_3" value="REDUCTION"/>
+                        <Param id="group_result_registers_dmm_id_4" value="REDUCTION"/>
+                        <Param id="group_result_registers_dmm_id_5" value="REDUCTION"/>
+                        <Param id="group_result_registers_dmm_id_6" value="REDUCTION"/>
+                        <Param id="group_result_registers_dmm_id_7" value="REDUCTION"/>
+                        <Param id="group_result_registers_dmm_id_8" value="REDUCTION"/>
+                        <Param id="group_result_registers_dmm_id_9" value="REDUCTION"/>
+                        <Param id="group_result_registers_enable_fifo_id_0" value="false"/>
+                        <Param id="group_result_registers_enable_fifo_id_1" value="false"/>
+                        <Param id="group_result_registers_enable_fifo_id_10" value="false"/>
+                        <Param id="group_result_registers_enable_fifo_id_11" value="false"/>
+                        <Param id="group_result_registers_enable_fifo_id_12" value="false"/>
+                        <Param id="group_result_registers_enable_fifo_id_13" value="false"/>
+                        <Param id="group_result_registers_enable_fifo_id_14" value="false"/>
+                        <Param id="group_result_registers_enable_fifo_id_15" value="false"/>
+                        <Param id="group_result_registers_enable_fifo_id_2" value="false"/>
+                        <Param id="group_result_registers_enable_fifo_id_3" value="false"/>
+                        <Param id="group_result_registers_enable_fifo_id_4" value="false"/>
+                        <Param id="group_result_registers_enable_fifo_id_5" value="false"/>
+                        <Param id="group_result_registers_enable_fifo_id_6" value="false"/>
+                        <Param id="group_result_registers_enable_fifo_id_7" value="false"/>
+                        <Param id="group_result_registers_enable_fifo_id_8" value="false"/>
+                        <Param id="group_result_registers_enable_fifo_id_9" value="false"/>
+                        <Param id="group_result_registers_enable_wfr_id_0" value="false"/>
+                        <Param id="group_result_registers_enable_wfr_id_1" value="false"/>
+                        <Param id="group_result_registers_enable_wfr_id_10" value="false"/>
+                        <Param id="group_result_registers_enable_wfr_id_11" value="false"/>
+                        <Param id="group_result_registers_enable_wfr_id_12" value="false"/>
+                        <Param id="group_result_registers_enable_wfr_id_13" value="false"/>
+                        <Param id="group_result_registers_enable_wfr_id_14" value="false"/>
+                        <Param id="group_result_registers_enable_wfr_id_15" value="false"/>
+                        <Param id="group_result_registers_enable_wfr_id_2" value="false"/>
+                        <Param id="group_result_registers_enable_wfr_id_3" value="false"/>
+                        <Param id="group_result_registers_enable_wfr_id_4" value="false"/>
+                        <Param id="group_result_registers_enable_wfr_id_5" value="false"/>
+                        <Param id="group_result_registers_enable_wfr_id_6" value="false"/>
+                        <Param id="group_result_registers_enable_wfr_id_7" value="false"/>
+                        <Param id="group_result_registers_enable_wfr_id_8" value="false"/>
+                        <Param id="group_result_registers_enable_wfr_id_9" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_0_0" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_0_1" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_0_2" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_0_3" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_10_0" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_10_1" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_10_2" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_10_3" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_11_0" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_11_1" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_11_2" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_11_3" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_12_0" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_12_1" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_12_2" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_12_3" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_13_0" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_13_1" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_13_2" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_13_3" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_14_0" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_14_1" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_14_2" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_14_3" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_15_0" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_15_1" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_15_2" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_15_3" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_1_0" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_1_1" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_1_2" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_1_3" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_2_0" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_2_1" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_2_2" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_2_3" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_3_0" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_3_1" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_3_2" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_3_3" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_4_0" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_4_1" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_4_2" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_4_3" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_5_0" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_5_1" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_5_2" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_5_3" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_6_0" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_6_1" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_6_2" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_6_3" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_7_0" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_7_1" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_7_2" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_7_3" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_8_0" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_8_1" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_8_2" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_8_3" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_9_0" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_9_1" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_9_2" value="false"/>
+                        <Param id="group_result_registers_external_event_enable_id_9_3" value="false"/>
+                        <Param id="group_result_registers_filter_type_id_0" value="0"/>
+                        <Param id="group_result_registers_filter_type_id_1" value="0"/>
+                        <Param id="group_result_registers_filter_type_id_10" value="0"/>
+                        <Param id="group_result_registers_filter_type_id_11" value="0"/>
+                        <Param id="group_result_registers_filter_type_id_12" value="0"/>
+                        <Param id="group_result_registers_filter_type_id_13" value="0"/>
+                        <Param id="group_result_registers_filter_type_id_14" value="0"/>
+                        <Param id="group_result_registers_filter_type_id_15" value="14"/>
+                        <Param id="group_result_registers_filter_type_id_2" value="0"/>
+                        <Param id="group_result_registers_filter_type_id_3" value="0"/>
+                        <Param id="group_result_registers_filter_type_id_4" value="0"/>
+                        <Param id="group_result_registers_filter_type_id_5" value="0"/>
+                        <Param id="group_result_registers_filter_type_id_6" value="0"/>
+                        <Param id="group_result_registers_filter_type_id_7" value="0"/>
+                        <Param id="group_result_registers_filter_type_id_8" value="0"/>
+                        <Param id="group_result_registers_filter_type_id_9" value="0"/>
+                        <Param id="group_result_registers_number_of_results_id_0" value="0"/>
+                        <Param id="group_result_registers_number_of_results_id_1" value="0"/>
+                        <Param id="group_result_registers_number_of_results_id_10" value="0"/>
+                        <Param id="group_result_registers_number_of_results_id_11" value="0"/>
+                        <Param id="group_result_registers_number_of_results_id_12" value="0"/>
+                        <Param id="group_result_registers_number_of_results_id_13" value="0"/>
+                        <Param id="group_result_registers_number_of_results_id_14" value="0"/>
+                        <Param id="group_result_registers_number_of_results_id_15" value="0"/>
+                        <Param id="group_result_registers_number_of_results_id_2" value="0"/>
+                        <Param id="group_result_registers_number_of_results_id_3" value="0"/>
+                        <Param id="group_result_registers_number_of_results_id_4" value="0"/>
+                        <Param id="group_result_registers_number_of_results_id_5" value="0"/>
+                        <Param id="group_result_registers_number_of_results_id_6" value="0"/>
+                        <Param id="group_result_registers_number_of_results_id_7" value="0"/>
+                        <Param id="group_result_registers_number_of_results_id_8" value="0"/>
+                        <Param id="group_result_registers_number_of_results_id_9" value="0"/>
+                        <Param id="group_result_registers_request_sources_only_id_0" value="false"/>
+                        <Param id="group_result_registers_request_sources_only_id_1" value="false"/>
+                        <Param id="group_result_registers_request_sources_only_id_10" value="false"/>
+                        <Param id="group_result_registers_request_sources_only_id_11" value="false"/>
+                        <Param id="group_result_registers_request_sources_only_id_12" value="false"/>
+                        <Param id="group_result_registers_request_sources_only_id_13" value="false"/>
+                        <Param id="group_result_registers_request_sources_only_id_14" value="false"/>
+                        <Param id="group_result_registers_request_sources_only_id_15" value="false"/>
+                        <Param id="group_result_registers_request_sources_only_id_2" value="false"/>
+                        <Param id="group_result_registers_request_sources_only_id_3" value="false"/>
+                        <Param id="group_result_registers_request_sources_only_id_4" value="false"/>
+                        <Param id="group_result_registers_request_sources_only_id_5" value="false"/>
+                        <Param id="group_result_registers_request_sources_only_id_6" value="false"/>
+                        <Param id="group_result_registers_request_sources_only_id_7" value="false"/>
+                        <Param id="group_result_registers_request_sources_only_id_8" value="false"/>
+                        <Param id="group_result_registers_request_sources_only_id_9" value="false"/>
+                        <Param id="group_result_registers_result_event_id_0" value="false"/>
+                        <Param id="group_result_registers_result_event_id_1" value="false"/>
+                        <Param id="group_result_registers_result_event_id_10" value="false"/>
+                        <Param id="group_result_registers_result_event_id_11" value="false"/>
+                        <Param id="group_result_registers_result_event_id_12" value="false"/>
+                        <Param id="group_result_registers_result_event_id_13" value="false"/>
+                        <Param id="group_result_registers_result_event_id_14" value="false"/>
+                        <Param id="group_result_registers_result_event_id_15" value="true"/>
                         <Param id="group_result_registers_result_event_id_2" value="false"/>
                         <Param id="group_result_registers_result_event_id_3" value="false"/>
                         <Param id="group_result_registers_result_event_id_4" value="false"/>

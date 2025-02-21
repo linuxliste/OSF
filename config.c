@@ -473,8 +473,11 @@ void init_extra_fields_config (){
     // used for special tests
     #if (PROCESS == FIND_BEST_GLOBAL_HALL_OFFSET)  
     ui8_pwm_duty_cycle_max = PWM_DUTY_CYCLE_MAX_FIND_BEST_GLOBAL_HALL_OFFSET;        
+    #elif (PROCESS == FIND_BEST_ONE_HALL_PATTERN_OFFSET)
+    ui8_pwm_duty_cycle_max = PWM_DUTY_CYCLE_MAX_FOR_ONE_HALL_PATTERN;
     #elif (PROCESS == TEST_WITH_FIXED_DUTY_CYCLE)
     ui8_pwm_duty_cycle_max = PWM_DUTY_CYCLE_MAX_TEST_WITH_FIXED_DUTY_CYCLE;
+    
     #else
     ui8_pwm_duty_cycle_max = PWM_DUTY_CYCLE_MAX_NORMAL_OPERATIONS;	//max duty cycle for normal operations       
     #endif

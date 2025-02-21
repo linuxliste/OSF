@@ -17,13 +17,14 @@
 #define DEBUG_ON_JLINK         (1)  // when 1, messages are generated on jlink; best is to connect only 3 wires (grnd + SWO and S???)
 
 
-#define NORMAL_OPERATIONS             0
-#define DETECT_HALL_SENSORS_POSITIONS 1 // rotate the motor in both directions very slowly and performs some calculations
+#define NORMAL_OPERATIONS             0  // set PROCESS to this option to run the motor in the exxpected way
+#define DETECT_HALL_SENSORS_POSITIONS 1 // rotate the motor in one direction very slowly and detect hall sensors positions
 #define FIND_BEST_GLOBAL_HALL_OFFSET  2 // rotate the motor with progressive values of hall offset to find the best one
-#define TEST_WITH_FIXED_DUTY_CYCLE    3 // rotate the motor with fixed duty cycle and a max current target
-#define TEST_WITH_THROTTLE            4 // rotate the motor with a duty cycle based on throttle
-// this define selects the main way the firmware is used; select one of the 5 options here above
-#define PROCESS                         FIND_BEST_GLOBAL_HALL_OFFSET  
+#define FIND_BEST_ONE_HALL_PATTERN_OFFSET  3 // rotate the motor with progressive values of hall offset 1 to find the best one
+#define TEST_WITH_FIXED_DUTY_CYCLE    4 // rotate the motor with fixed duty cycle and a max current target
+#define TEST_WITH_THROTTLE            5 // rotate the motor with a duty cycle based on throttle
+// this define selects the main way the firmware is used; select one of the 6 options here above
+#define PROCESS                         TEST_WITH_FIXED_DUTY_CYCLE  
 
 #define USE_CONFIG_FROM_COMPILATION (0)  // this should normally be set on 0; set to 1 only if you want to give priority to
                                          // the parameters defined in config.h and used for compilation
@@ -38,26 +39,36 @@
     // We never call the main loop during this test
     // during this test, do not forget to enable debug messages on Jlink ; #define DEBUG_ON_JLINK (1)
 // 0 is the code for production (run the motor detecting hall pattern changes and adapating flux for rotation)
-#define DUTY_CYLE_CAL_HALL_SENSORS_POSITIONS_1 30 // 255 is 100% and is unsecure; max seems to be 35 with delay 5 ; 30 is good for 36V
+#define DUTY_CYLE_CAL_HALL_SENSORS_POSITIONS_1 50// 255 is 100% and is unsecure; max seems to be 35 with delay 5 ; 30 is good for 36V, 25V for 48V
 #define WAIT_TIME_MS_CAL_HALL_SENSORS_POSITIONS_1 5 // could be e.g. up to 10 when duty cycle is lower
-#define DUTY_CYLE_CAL_HALL_SENSORS_POSITIONS_2 20 // max was 40 with wait = 1 ; 20 is good with 36V
-#define WAIT_TIME_MS_CAL_HALL_SENSORS_POSITIONS_2 5 // it was first tested with 10
-#define MAX_CURRENT_A_CAL_HALL_SENSORS_POSITIONS 6  // max current in A that is allowed during this test (6 seems more than eneough)
-#define NUMBER_OF_ROTATION_CAL_SENSORS_POSITIONS 16  // number of electrical rotations to do to get average (if magnets are OK there are no big differences)
+#define DUTY_CYLE_CAL_HALL_SENSORS_POSITIONS_2 30 // max was 40 with wait = 1 ; 20 is good with 36V ; 15 for 48V
+#define WAIT_TIME_MS_CAL_HALL_SENSORS_POSITIONS_2 10 // it was first tested with 10
+#define MAX_CURRENT_A_CAL_HALL_SENSORS_POSITIONS 4  // max current in A that is allowed during this test (6 seems more than eneough)
+#define NUMBER_OF_ROTATION_CAL_SENSORS_POSITIONS 8  // number of electrical rotations to do to get average (if magnets are OK there are no big differences)
 // Note!!!! using to high duty cycles and/or wait time and or max current or rotation could damage the motor/controller (heating)
 
 // ************* Find best global hall offset
 //   this let the motor runs with different hall offset values and display for each the average current
 //   this allows to find the best offset and to fill it in global_offset_angle
-#define PWM_DUTY_CYCLE_MAX_FIND_BEST_GLOBAL_HALL_OFFSET 160 // max value during this process
-#define ADC_BATTERY_CURRENT_TARGET_FIND_BEST_GLOBAL_HALL_OFFSET 8 // 1 ADC step = 0,16A ; so 6 = 1A
-#define FIRST_OFFSET_ANGLE_FOR_CALIBRATION (64) // This is the first value used for calibration; it increases every 4 sec up to the max
-#define LAST_OFFSET_ANGLE_FOR_CALIBRATION (FIRST_OFFSET_ANGLE_FOR_CALIBRATION+6) // this is the max value to be tested; select a value that avoid increasing to much the current
+#define PWM_DUTY_CYCLE_MAX_FIND_BEST_GLOBAL_HALL_OFFSET 150 // max value during this process (max is 254)
+#define ADC_BATTERY_CURRENT_TARGET_FIND_BEST_GLOBAL_HALL_OFFSET 10 // max current in adc step ; 1 ADC step = 0,16A ; so 6 = 1A ; 18= 3A
+#define FIRST_OFFSET_ANGLE_FOR_CALIBRATION (66) // This is the first value used for calibration; it increases every 4 sec up to the max
+#define LAST_OFFSET_ANGLE_FOR_CALIBRATION (FIRST_OFFSET_ANGLE_FOR_CALIBRATION+8) // this is the max value to be tested; select a value that avoid increasing to much the current
 #define CALIBRATE_OFFSET_STEP 1    // 1// step used when increasing the global_offset_angle (normally 1; could be set to 0 for some kind of test)
 
+// ************* Find best angle for only one hall pattern
+//   this let the motor runs with different hall offset values and display for each the average current
+#define OPTIMISE_HALL_PATTERN 6 // can be 1...6 ; select the hall patern to test
+#define PWM_DUTY_CYCLE_MAX_FOR_ONE_HALL_PATTERN 240 // max duty cycle during this process (max is 254)
+#define ADC_BATTERY_CURRENT_TARGET_FOR_ONE_HALL_PATTERN 10 // max current in adc step : 1 ADC step = 0,16A ; so 6 = 1A ; 18= 3A
+#define GLOBAL_OFFSET_ANGLE_FOR_ONE_HALL_PATTERN (64) // This is the first value used for calibration; it increases every 4 sec up to the max
+#define FIRST_ADDITIONAL_OFFSET_ANGLE_FOR_ONE_HALL_PATTERN -5
+#define LAST_ADDITIONAL_OFFSET_ANGLE_FOR_ONE_HALL_PATTERN +5
+ 
+
 // ************* TEST WITH FIXED_DUTY_CYCLE *****************
-#define PWM_DUTY_CYCLE_MAX_TEST_WITH_FIXED_DUTY_CYCLE 20 // max is 254 !!!
-#define ADC_BATTERY_CURRENT_TARGET_TEST_WITH_FIXED_DUTY_CYCLE (6) // 1 adc step = 0,16A; so 6 = 1A
+#define PWM_DUTY_CYCLE_MAX_TEST_WITH_FIXED_DUTY_CYCLE 120 // max is 254 !!!
+#define ADC_BATTERY_CURRENT_TARGET_TEST_WITH_FIXED_DUTY_CYCLE (10) // 1 adc step = 0,16A; so 6 = 1A
         
 // ************* TEST WITH THROTTLE *****************
 // pwm_duty_cycle = 255 (set in ebike_app.c)
@@ -67,7 +78,7 @@
 
 // this is the value provided by the find best hall sensor offset process
 // it is used for NORMAL_OPERATION, TEST_WITH_FIXED_DUTY_CYCLE and TEST_WITH_TROTTLE
-#define CALIBRATED_OFFSET_ANGLE 67  
+#define CALIBRATED_OFFSET_ANGLE 68
 
 // for CCU4 slice 2
 #define HALL_COUNTER_FREQ                       250000U // 250KHz or 4us
@@ -118,8 +129,11 @@
 #define MOTOR_SPEED_FIELD_WEAKENING_MIN				980
 
 // foc angle multiplier
-// 48 volt motor
-#define FOC_ANGLE_MULTIPLIER					39   // 39 for TSDZ2 48V, still to check for TSDZ8 because it depends on L
+// TSDZ2 48 volt motor has inductance = 135uH and 8 poles;
+// It seems TSDZ8 motor has an inductance of 180 uH and 4 poles
+// So, TSDZ2 uses a multiplier = 39, TSDZ8 should use 39 * 180 / 135 * 4 / 8 = 26  (foc is based on erps*L*I/V) 
+// I reduce it because erps should be 2X lower due to the reduced number of poles
+#define FOC_ANGLE_MULTIPLIER					26
 
 
 // cadence
@@ -248,11 +262,11 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 
 // adc current
 //#define ADC_10_BIT_BATTERY_EXTRACURRENT		38  //  6 amps
-#define ADC_10_BIT_BATTERY_EXTRACURRENT			10//50 // value for TSDZ2=50; should be OK for TSDZ8 too  // 50 = 50*0.16= 8 amps
-#define ADC_10_BIT_BATTERY_CURRENT_MAX			50//112 // value for Tsdz2= 112;  should be ok for TSDZ8; 112 = 18 amps // 1 = 0.16 Amp
+#define ADC_10_BIT_BATTERY_EXTRACURRENT			50//50 // value for TSDZ2=50; should be OK for TSDZ8 too  // 50 = 50*0.16= 8 amps
+#define ADC_10_BIT_BATTERY_CURRENT_MAX			112//112 // value for Tsdz2= 112;  should be ok for TSDZ8; 112 = 18 amps // 1 = 0.16 Amp
 //#define ADC_10_BIT_BATTERY_CURRENT_MAX		124	// 20 amps // 1 = 0.16 Amp
 //#define ADC_10_BIT_BATTERY_CURRENT_MAX		136	// 22 amps // 1 = 0.16 Amp
-#define ADC_10_BIT_MOTOR_PHASE_CURRENT_MAX		100//187 // value for tsdz2 = 187 ; :187 = 30 amps // 1 = 0.16 Amp
+#define ADC_10_BIT_MOTOR_PHASE_CURRENT_MAX		187//187 // value for tsdz2 = 187 ; :187 = 30 amps // 1 = 0.16 Amp
 /*---------------------------------------------------------
  NOTE: regarding ADC battery current max
 

@@ -1,0 +1,185 @@
+for testing tsdz8
+1) before reflashing
+ok- test the motor without changing anything
+OK- backup the current firmware with jlink (not connected to display nor battery) (done in folder data/tsdz8/original TSDZ8 firmware (in HEX and BIN)
+ok- note : the display works and generates an error (ok) when motor is powered with 12V (easier for testing with a small lipo)
+ok- find how is the xmc is powered on.
+	There is this link
+	https://github.com/OpenSourceEBike/TSDZ2_wiki/blob/master/TSDZ2_8Pin_Connector_Higo_B8_Cable_Map_2.jpg
+	The blue wire is connected to the battery plus. (checked with ohm meter)
+	So, the red wire is provided by the display: 0V when LCD is off, and nearly battery voltage when LCD is on
+- measure the voltage on each pin of the display connector and on the controller connector when display is connected and not connected: see result below)
+- find which pin on the display connector is the uart TX from the xmc. This can perhaps be found using a datascope on tx and rx pin.
+	It is documented here :https://github.com/hurzhurz/tsdz2/blob/master/serial-communication.md
+	Not sure if this can be done when display is not connected because the display provides probably the signal to power the xmc on
+	Frame from motor to lcd begins with 43 and has 9 bytes ; it is sent 8 X per sec. It is the brown wire of the cable
+	Frame from lcd to motor begin with 59 and has 7 bytes; it is sent 10 X per sec. It is the yellow wire of the cable
+	On this link, https://opensourceebikefirmware.bitbucket.io/development_tsdz2/About_Tongsheng_TSDZ2_mid_drive_motors--LCD_-_VLCD5.html,
+		it is said that brown is TX from controller but the color does not tottally match
+		
+	
+1c) look at the signals from the controller for (when display is ON)
+	- the hall sensors :
+		black is grnd and is common
+		red id Vcc and 4.25V
+		2 of the 3 hall give 4.68V and 1 nearly 0V (so OK)
+		what is the voltage for hall Vcc
+		what is the voltage when hall is ON and OFF
+	- the PAD for cadence sensor
+		black is grnd
+		red = 4.3V
+		2 others = 4.99V or 0V depending on position of pedal (OK)
+	- look at the torque sensor signal with oscillo
+		- it seems black is nearly ground
+		- red wire has a signal wich is positif and negatif (probably via a capacitor) it is about 15V (when powered with 12V battery)
+		- there is a pulse of 3usec once every 20 usec and then some oscillations (when there is no torque)
+		
+	- try to connect oscillo between one motor wire and gnd and look when motor is running and not running
+		When display is on but motor not running, voltage between the 3 wires and grnd is 3,89V
+		Even with oscillo, the voltage is constant.
+		Adding a resistor of 10k between motor wire and ground let dop the voltage.
+		So the 2 mosfet are OFF when motorr is not running
+		
+1d) try to read the memory with jlink for the peripheral registers (probably use j-mem.exe program)
+	I can't read directly with j-mem.exe.
+	It is possible to read the peripheral but it requires:
+	- power the controller with the battery (and disconnect vref from jlink)
+	- use j-link-commander.exe (in the folder with seeger; it is proposed in windows search box)
+	- inside it, enter connect, select (default) device XMC1302-0064, SWG and a speed of 2000.
+	- enter mem32 0x40040010,1 (e.g. to get a 32 bit register)
+	
+	Note : I used partly  this link (not tested with gdb
+		https://stackoverflow.com/questions/35365105/reading-peripheral-register-of-cortex-m0-mcu-using-jlink-and-gdb
+		Gpio port 0 is at 4004 0000H / 4004 00FFH
+		P1 is at 4004 0100H / 4004 01FFH
+		P2 is at 4004 0200H / 4004 02FFH
+	It seems that it is not possible to read gpio with jkink (only the flash)
+	I used partly  this link 
+		https://stackoverflow.com/questions/35365105/reading-peripheral-register-of-cortex-m0-mcu-using-jlink-and-gdb
+	
+	I was able to write a script to automatise reading all registers of some peripheral.
+	The process is explained in "instruction for testing compiling.txt"
+	The script are in doc folder with the extension jlink. There is one per peripheral.
+	
+	With jlink, I read the peripheral when display is on.
+	In folder data/tsdz8/doc there are some scripts.
+	Open a windows command in the folder programs (x86)/segger/jlink_v612a.
+	then run the commands     jlink.exe -CommandFile C:\data\tsdz8\JLinkCommandFile_GPIO.jlink  (GPIO can be changed by VADC, CCU4, CCU8, POSI)
+	the results should be written in log files in the same folder.
+	
+
+	Note: to know the address of the register to read, I did the following
+	- extract some page from the datasheet (because pdf is to big) with a online tool;  https://www.ilovepdf.com/fr/diviser_pdf#split,range
+	- convert reduced pdf to xls with online tool: https://www.ilovepdf.com/fr/pdf_en_excel
+	- openit in google chart and arrange the tab
+	- add some formula to calculate all address and generate mem32 xxxxxxx commands to be used with jlink
+	- this xls file is in google sheet under the name TSDZ8_registers
+	- copy paste the mem32 xxxxx columns to the command file used for jlink
+	
+	Then I import the logfile back in a google sheet in order to put the values close to the register name.
+	
+	The list of registers, their meaning and how they are filled in the original firmware is explained in an xls stored on google sheet (named TSDZ8_registers)
+	This clarifies e.g. the way gpio are used and also relation between CCU4 and POSIF
+
+	
+2) write a program to read each pins that are supposed to be an input (brake, hall sensors, speed) and check first in debug if it is OK
+	I tested it with PAS_1 (when I turn the pedal, 0.5 changes
+	I tested it with brake on 0.10
+	It does not work with 0.4 which is supposed to be a speed sensor with input pull up. There is perhaps a filter and a transistor in between. With internal pull up, it reads always 1(=HIGH level).
+	
+	for selected wires, I used a resistor of 10k connected to Vcc and to Grnd and check the value in the debugger.
+
+	Note : it is possible to let the program run without external battery and without setting the display on ON. In this case jlink must provide the power.
+	It is also possible to disconect Vref from Jlink and let it runs from the batttery but only when display is ON.
+
+3) flash a hello word program just to test the uart
+		Disconnect the display.
+		Try to run the progam just with the mcu powered from jlink (no battery, no display).
+		Note: it seems that UART_RX has to be defined too. I did it.
+		
+		Connect a data analyser to the foreseen wire
+		If ftdi RX is used , do not use the ftdi to power the xmc or the (use the jlink for powering)
+		This test has been done and is OK.
+		
+4) write a program to read ADC on several pins and check with uart if ok
+	It has been tested wit 2.6 (that is about 5V) and I get indeed a quite good value (0XFCB= nearly the max)
+	
+	It has been tested for all analog pins and it seems OK (e.g. mid point for all current phases except total which is 0)
+	Result are in the sheet TSDZ8_registers on google in tab _VADC.
+	
+	This test shows that pin 2.5 is used for Throttle. At full throttle, ADC is 0XFFF
+	
+
+5) write a program to put a pin as output (e.g. on light wire) with a level; 
+5.1) on light pin:
+- connect to battery and display; disconnect JLink Vcc
+- I tested with voltmeter on wire Light and I get nearly 6V as expected from pin 1.5.
+
+5.2) on fet inverter
+- disconnect the motor
+- connect a resistor (e.g. 1k) between the 3 high pins and grnd and 3 resistors between battery and low side 
+- use this to check the high and low level of each phase.
+- use this to check the pin used for the light (this could be used later on in the testing process if we connect a led on it). Check if it is pin 1.5 as documented in tsdz2
+  It has been tested on phase U Low side (green motor wire)
+  It is ok;  voltage switch from 5.5V  (mid point of resitors) to 0V
+- I connected a lamp between 12V source and a phase of the controller and I measured the currents with voltmeter and ADC when low driver was forced to conduct (via GPIO = HIGH)
+I noticed that current is 1.1A (voltmeter) (for a lamp of 18W)
+ADC per phase changes e.g. from 0X808 up to 0X8CC when current draw = a delta of about 0XC0 = 192D
+ADC is 4096 steps (12bits); So max current to measure in one direction would be about 200O ADC steps = 2000/192*1.1A = 11,5A
+This seems quite low.
+48V*11.5 = 550W while the motor is supposed to provide 750W.????
+ADC for total current changes from 0X12 to 0X4A so 0X38 = 60D
+4096/60*1,1A = 75A which is OK
+
+
+6) check if the controller uses a chip with an enable pin to drive the mos.
+	Probably it is P1.4
+	This is "expected" because firmware use a TRAP signal
+	To test it disconnect the 3 wires to the motor and  connect one of the wire from the controller to 2 resistors (one connected to GND and one to the battery.
+	Measure the voltage when display is not on and program not running. Voltage should be 50% of the battery
+	Then run the program that set e.g. the pin for phase U High and check the voltage.
+	If it does not change, then probably that ENABLE pin must be managed.
+	I expect that there is no ENABLE pin because voltage changes when we only change the LOW side
+
+
+
+
+7) add the picoprobe function to help for debugging
+
+
+
+8) check that pins are correct in the config for foc program
+	adapt it if enable pin must be managed. 
+	set it to use a fix current.
+	Check if motor runs (without hall sensors)	on a RC motor first
+	
+	
+	
+
+---------- Result of measurements with original firmware on the cable to display -------------------------------
+- blue wire = Battery = 11,45V with a 12,45V battery (display on or off)
+- red wire = 11,25V when display is connected  and ON, OV in other cases (so this power the controller)
+- orange wire = Throttle; when display is ON, 0V when trottle is off, 3,5V when throttle is at 100%; OV when display is OFF
+- Green wire = Brake; Normally closed , open when braking;
+	When display pin is connected and display OFF, floating voltage (1mv) when NOT braking, 0V when braking
+									display ON, 4.7V when NOT braking and 0,004V when braking
+	
+	When this pin from display is not connected, display OFF : display side ; floating when NOT braking ,  0V  when braking	
+																motor side; floating when NOT braking ,   floating when braking
+												 display ON  : display side ; floating when NOT braking ,  4mv when braking	
+																motor side; 4.73 when NOT braking ,   4.73 when braking
+	So, there is probably a pull up on controller side and there is a logic to force a low level when braking.
+- white wire : 5V? : 
+	when display is connected and display is OFF :  goes to 0V (capa has to unload)
+								and display is ON, 4.3V
+	When pin is not connected and display is OFF : on display side :  0V
+													on motor side : 0V
+	When pin is not connected and display is ON : on display side : 4mv
+													on motor side 4,97V
+	So, voltage is supplied by controller (but drop a little when this pin is connected; so current is used by the display)
+- yellow wire = UART RX on controller side ; frame begin with 59H, is short and is sent once every 100msec by the display
+- Bruin wire = UART TX on controller side; frame begin with 43H, is longer and is sent once every 125 msec (about) by the controller
+- black wire = Ground.
+
+																
+												

@@ -1,20 +1,18 @@
 
-There seems to be quite huge current variations (at least when motor runs without load)
-There seems also to be quite huge variations of the enlapsed time between 2 hall pattern changes.
-I am not sure that the hall sensors are really placed at 120°
-A test with slow rotation seem to show that the hall sensor are not at regular interval.
-Currently, I used the average of forward and backward runs to set up the positions.
-It could be that it is better to use only the forward values.
-The differences between forward and average is about 20. This is also about the value require to match 90° (currently we use an offset of 50; with 20 more, we would be close to 64 = 90°)
+A test with slow rotation seems to show that the hall sensors are not at regular interval.
+Currently, I used the average of forward run to set up the positions.
+There is a difference of about 10 ° between the positions when running forward and backward.
+In the firmware, there is some offset added in the interpolation to take care that:
+- the hall sensors have a switching delay of probably 16 us (datasheet of a sensor from infineon- not sure it is the same)
+- the delay bewteen the capture of the ticks in one IRQ and the application of the new PWM setting (it is abour 39 us = 3/4 of 52us = timer period)
+In theory, there should also be a delay because the capture of the hall position is delayed by CCU4 Slice 0 but it is only about 15*5 ns.
 
-
-in xls sheet, 
+in xls configurator sheet, 
 - there should be the possibility to use advance miles (and so to fill one more line)
 - there should also be some other values for display mode 2 and mode 3
 
 add calibration of torque sensor
-we could reuse some code to limit the cuurent if temperature is to high (between min and max) - code exist in original project
-
+we could reuse some code to limit the current if temperature is to high (between min and max) - code exist in original project
 
 
 Check in uart.c the ui16_display_data_factor because it is a ui16 but there is a multiplying factor of 1475 (so quite big)

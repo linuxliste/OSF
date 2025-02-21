@@ -93,7 +93,6 @@ extern volatile uint16_t debug_time_ccu8_irq1e; // to debug time in irq0 CCU8 (s
 
 extern volatile uint8_t ui8_adc_battery_current_filtered;
 extern uint8_t ui8_battery_current_filtered_x10;
-extern uint16_t ui16_adc_battery_current_acc_X8;
 extern uint16_t ui16_display_data_factor; 
 extern uint8_t ui8_g_foc_angle;
 extern uint8_t ui8_throttle_adc_in;
@@ -101,22 +100,58 @@ extern uint8_t ui8_throttle_adc_in;
 // to debug
 extern uint16_t saved_current_min ;
 extern uint16_t saved_current_max ;
-extern uint16_t saved_current_min_8 ;
-extern uint16_t saved_current_max_8 ;
-extern uint16_t saved_current_min_12 ;
-extern uint16_t saved_current_max_12 ;
-extern uint32_t calibration_offset_current_accumulated;
-extern uint32_t calibration_offset_current_accumulated_counter;
+//extern volatile uint32_t real_ticks_interval[8];  // real interval between 2 hall patterns
+//extern volatile uint32_t expected_ticks_interval[8]; // expected interval based on the defined sensor positions and number ot tick for one electric rotation 
+//extern volatile uint32_t interval_counter;
+//uint32_t real_ticks_interval_avg[8]= {0};  // real interval between 2 hall patterns
+//uint32_t expected_ticks_interval_avg[8] = {0}; // expected interval based on the defined sensor positions and number ot tick for one electric rotation 
+//int32_t  tick_error_avg[8] = {0};
+//int32_t  angle_error_avg[8] = {0} ;
+
+// to debug
+extern uint8_t current_hall_pattern_log;
+extern uint16_t last_hall_pattern_change_ticks_log;
+extern uint16_t previous_360_ref_ticks_log;
+extern uint16_t ui16_hall_counter_total_log;
+extern uint32_t ui32_angle_per_tick_X16shift_log;
+extern uint16_t ui16_measured_angle_X16bits_log;
+extern uint8_t best_ref_angle_log;
+extern uint8_t ui8_hall_ref_angles_log;
+extern volatile bool new_log_flag;
+uint8_t test1 ;
+uint8_t test2 ;
+uint8_t test3 ;
+uint8_t test4 ;
+            
+
+
+
+
+extern volatile uint8_t best_ref_angle[8] ;
+extern uint32_t best_ref_angle_X16bits[8] ;
+
+
+
+extern uint16_t ui16_adc_motor_phase_current;
+extern volatile uint8_t ui8_adc_motor_phase_current_max;
+extern volatile uint16_t ui16_hall_counter_total;
+extern volatile uint16_t ui16_adc_voltage;
+extern volatile uint16_t ui16_adc_voltage_cut_off;
 
 
 #if (PROCESS == FIND_BEST_GLOBAL_HALL_OFFSET)
-extern uint16_t calibration_offset_current_average_to_display;
-extern uint32_t calibration_offset_current_min ;
-extern uint32_t calibration_offset_current_max ;
-
-
+extern uint16_t calibration_offset_current_average_to_display_12b;
+extern uint32_t calibration_offset_current_min_12b ;
+extern uint32_t calibration_offset_current_max_12b ;
 extern uint16_t calibration_offset_angle_to_display;
 #endif
+#if (PROCESS == FIND_BEST_ONE_HALL_PATTERN_OFFSET)
+extern uint32_t one_hall_pattern_offset_current_average_to_display_12b;
+extern uint32_t one_hall_pattern_offset_current_min_12b ;
+extern uint32_t one_hall_pattern_offset_current_max_12b ;
+extern int32_t one_hall_pattern_offset_angle_to_display;
+#endif
+
 extern uint8_t global_offset_angle;
 /*******************************************************************************
 * Function Name: SysTick_Handler
@@ -166,6 +201,12 @@ int main(void)
     {
         CY_ASSERT(0);
     }
+    
+    // fill table used for knowing the best hall pattern positions
+    for (uint8_t i = 0; i<8 ; i++) { 
+        best_ref_angle[i] = ui8_hall_ref_angles[i];
+        best_ref_angle_X16bits[i] = ui8_hall_ref_angles[i] << 8;
+    } // init best value with reference values.
 
     #if(uCPROBE_GUI_OSCILLOSCOPE == MY_ENABLED)
     ProbeScope_Init(20000);
@@ -293,15 +334,42 @@ int main(void)
         #endif
         
         // for debug
+        
         #if (DEBUG_ON_JLINK == 1)
          // do debug if communication with display is working
         //if( take_action(1, 250)) SEGGER_RTT_printf(0,"Light is= %u\r\n", (unsigned int) ui8_lights_button_flag);
         if (ui8_system_state) { // print a message when there is an error detected
             if( take_action(1,200)) jlink_print_system_state();
         }
-//        if( take_action(2, 500)) SEGGER_RTT_printf(0,"Adc current= %u adcX8=%u  current_Ax10=%u  factor=%u\r\n", 
+
+        if (new_log_flag){
+                       
+            test1 = (uint8_t) 4 - (uint8_t) 2;
+            test2 = (uint8_t) 2 - (uint8_t) 4;
+            test3 = (uint8_t) 255 - (uint8_t) 2;
+            test4 = (uint8_t) 2 - (uint8_t) 255;
+
+            SEGGER_RTT_printf(0,"chp=%u lhpct=%u    prt=%u hct=%u apt=%u  ma=%u bra%u hra=%u \r\n",
+                (unsigned int) current_hall_pattern_log,
+                (unsigned int) last_hall_pattern_change_ticks_log,
+                (unsigned int) previous_360_ref_ticks_log,
+                (unsigned int) ui16_hall_counter_total_log,
+                (unsigned int) ui32_angle_per_tick_X16shift_log,
+                (unsigned int) ui16_measured_angle_X16bits_log,
+                (unsigned int) best_ref_angle_log,
+                (unsigned int) ui8_hall_ref_angles_log
+                //(unsigned int) test1,
+                //(unsigned int) test2,
+                //(unsigned int) test3,
+                //(unsigned int) test4
+            );
+            new_log_flag = false;
+        }    
+
+
+
+//        if( take_action(2, 500)) SEGGER_RTT_printf(0,"Adc current= %u  current_Ax10=%u  factor=%u\r\n", 
 //            (unsigned int) ui8_adc_battery_current_filtered ,
-//            (unsigned int) ui16_adc_battery_current_acc_X8 ,
 //            (unsigned int) ui8_battery_current_filtered_x10 , 
 //            (unsigned int) ui16_display_data_factor
 //            );
@@ -322,37 +390,56 @@ int main(void)
         // monitor results of find best global hall offset
         #if ( PROCESS == FIND_BEST_GLOBAL_HALL_OFFSET ) 
         if( take_action(4 , 200)) {
-            SEGGER_RTT_printf(0,"offset=%u current=%u erps=%u foc%u   dctarg=%u dc=%u    ctarg=%u cfilt=%u cMin=%u cMax=%u scMin=%u scMax=%u scMin8=%u scMax8=%u scMin12=%u scMax12=%u Acc=%u cnt=%u\r\n",
+            // to understand why duty_cycle goes down
+            //SEGGER_RTT_printf(0,"pc=%u pcm=%u hct=%u adcV=%u  adcVco=%u ",
+            //    (unsigned int)  ui16_adc_motor_phase_current,
+            //    (unsigned int)  ui8_adc_motor_phase_current_max,
+            //    (unsigned int)  ui16_hall_counter_total,
+            //    (unsigned int)  ui16_adc_voltage,
+            //    (unsigned int)  ui16_adc_voltage_cut_off
+            //);
+            SEGGER_RTT_printf(0,"offset=%u current12bits=%u erps=%u foc%u   dctarg=%u dc=%u  ctarg=%u cfilt10bits=%u cMin=%u cMax=%u\r\n",
                 (unsigned int) calibration_offset_angle_to_display ,
-                (unsigned int) calibration_offset_current_average_to_display,
+                (unsigned int) calibration_offset_current_average_to_display_12b,
                 (unsigned int) ui16_motor_speed_erps,
                 (unsigned int) ui8_g_foc_angle,
                 (unsigned int) ui8_controller_duty_cycle_target,
                 (unsigned int) ui8_g_duty_cycle,
                 (unsigned int) ui8_controller_adc_battery_current_target,
                 (unsigned int) ui8_adc_battery_current_filtered,
-                calibration_offset_current_min,
-                calibration_offset_current_max,
-                (unsigned int) saved_current_min,
-                (unsigned int) saved_current_max,
-                (unsigned int) saved_current_min_8,
-                (unsigned int) saved_current_max_8,
-                (unsigned int) saved_current_min_12,
-                (unsigned int) saved_current_max_12,
-                (unsigned int) calibration_offset_current_accumulated,
-                (unsigned int) calibration_offset_current_accumulated_counter
+                calibration_offset_current_min_12b,
+                calibration_offset_current_max_12b
             ); // end print
-            saved_current_min= 0xFFFF;
-            saved_current_max=0;
-            saved_current_min_8= 0xFFFF;
-            saved_current_max_8=0;
-            saved_current_min_12= 0xFFFF;
-            saved_current_max_12=0;
-        
+        }
+        #endif
+        // monitor results of find best global hall offset
+        #if ( PROCESS == FIND_BEST_ONE_HALL_PATTERN_OFFSET ) 
+        if( take_action(4 , 200)) {
+            // to understand why duty_cycle goes down
+            //SEGGER_RTT_printf(0,"pc=%u pcm=%u hct=%u adcV=%u  adcVco=%u ",
+            //    (unsigned int)  ui16_adc_motor_phase_current,
+            //    (unsigned int)  ui8_adc_motor_phase_current_max,
+            //    (unsigned int)  ui16_hall_counter_total,
+            //    (unsigned int)  ui16_adc_voltage,
+            //    (unsigned int)  ui16_adc_voltage_cut_off
+            //);
+            SEGGER_RTT_printf(0,"HallOff=%d current12bits=%u GenOff=%u erps=%u foc%u   dctarg=%u dc=%u  ctarg=%u cfilt10bits=%u cMin=%u cMax=%u\r\n",
+                (int) one_hall_pattern_offset_angle_to_display ,
+                (unsigned int) one_hall_pattern_offset_current_average_to_display_12b,
+                (unsigned int) global_offset_angle,
+                (unsigned int) ui16_motor_speed_erps,
+                (unsigned int) ui8_g_foc_angle,
+                (unsigned int) ui8_controller_duty_cycle_target,
+                (unsigned int) ui8_g_duty_cycle,
+                (unsigned int) ui8_controller_adc_battery_current_target,
+                (unsigned int) ui8_adc_battery_current_filtered,
+                one_hall_pattern_offset_current_min_12b,
+                one_hall_pattern_offset_current_max_12b
+            ); // end print
         }
         #endif
         #if ( PROCESS == TEST_WITH_FIXED_DUTY_CYCLE ) || ( PROCESS == TEST_WITH_THROTTLE )
-        if( take_action(5, 200)) {
+        if( take_action(5, 40000)) {
             uint16_t adc_throttle = XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 5 ) & 0x0FFF;
             SEGGER_RTT_printf(0,
             "trotl=%u  bcT=%u cbcT=%u bcF=%u   dcT=%u cdcT=%u  gdc=%u   erps=%u foc%u  moEn=%u t1=%u t2=%u t3=%u t4=%u t5=%u t6=%u m1=%u m2=%u thr=%u\r\n",
@@ -383,7 +470,32 @@ int main(void)
                 );
         }        
         #endif
-        #endif    
+        #define DEBUG_HALL_POSITIONS (1)
+        #if (DEBUG_HALL_POSITIONS == (1) )
+        if( take_action(6, 100)) {
+            //for (uint8_t i = 1; i<7; i++){
+            //    real_ticks_interval_avg[i]= real_ticks_interval[i] *6 / INTERVAL_COUNTER;  // real interval between 2 hall patterns
+            //    expected_ticks_interval_avg[i] = expected_ticks_interval[i] *6 / INTERVAL_COUNTER; // expected interval based on the defined sensor positions and number ot tick for one electric rotation 
+            //    tick_error_avg[i] = (int32_t) expected_ticks_interval_avg[i] - (int32_t) real_ticks_interval_avg[i];
+            //    angle_error_avg[i] = tick_error_avg[i] * 256 / ui16_hall_counter_total ;
+            //}
+
+            SEGGER_RTT_printf(0,
+            "c10b=%u  dc=%u erps=%u t360=%u  best1=%u best2=%u best3=%u best4=%u best5=%u best6=%u\r\n",
+                (unsigned int) ui8_adc_battery_current_filtered,
+                (unsigned int) ui8_g_duty_cycle,
+                (unsigned int) ui16_motor_speed_erps,
+                (unsigned int) ui16_hall_counter_total,
+                best_ref_angle[1], best_ref_angle[2], best_ref_angle[3], best_ref_angle[4], best_ref_angle[5], best_ref_angle[6]
+            );
+            //for (uint8_t i = 1; i<7; i++){
+            //    real_ticks_interval[i] = 0 ;  // reset real interval between 2 hall patterns
+            //    expected_ticks_interval[i] = 0; // reset expected interval based on the defined sensor positions and number ot tick for one electric rotation 
+            //}
+            //interval_counter = INTERVAL_COUNTER; // allow next measurement    
+        }
+        #endif
+        #endif    // end DEBUG_ON_JLINK
        
     } // end while main loop
 }

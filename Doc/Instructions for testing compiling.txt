@@ -5,7 +5,6 @@ https://www.infineon.com/dgdl/Infineon-Visual-Studio-Code-user-guide-UserManual-
 It explains also how to debug with jlink in vscode
 
 
-
 To create an bsp
 	open modustoolbox dashbord
 	click on edit a bsp
@@ -74,7 +73,7 @@ and press the [Enter] key.
 ------ Changing the pin being used ------------------
 It is possible in an application in vscode to open the modustoolbox (an icon in left panel)
 Then there is a list of options; one is bsp/device configurator X.x.
-Selecting it allows to configure other pins, peripherals.
+Selecting it allows to select an edit and configure other pins, peripherals.
 When those changes are saved, the vscode application is automatically updated in config/generatedSource.
 It is then possible to edit the source (main.c, ...) using the new names defined in the configurator.
 Note: in the device configurator, in tab pin, there is (on the right) a tab Code preview that allows to find the names defined by the configurator (for e.g. the port, the pin, ...)
@@ -84,13 +83,14 @@ Note: in the device configurator, in tab pin, there is (on the right) a tab Code
 
 To do
 
-Check how the controller is powered on/off with a signal from the Display
+Check how the controller is powered on/off with a signal from the Display:
+Rs: The display get always the 36/48V from the battery via the controller.
+Still the controller is not really ON.
+Pressing the power on the display let the display sending back the 36/48V to the controller (via another wire) and this power the controller ON
 
-Check uart RX and TX pin (not clear is RX is from XMC or display point of vue)
-Check the levels on the 3 phases pins when motor does not run
 
-
-
+// *********** to test the infineon foc sensorless firmware ***********
+// note : I tested it but I did not succeeded *******************
 Create own config files
 Currently Configure for an open loop Voltage (or based on the speed) (is this based on define SETTING_TARGET_SPEED)
 
@@ -122,6 +122,8 @@ Check if it is possible to use group 0 Chanel 1 for DC current measurement when 
 If not, current must probaly be assigned to the default group (not group 0 or 1) or DC current sensor must be disabled
 Disable vdac potentiometer for a first test ; afterward we can connect the tsdz8 throtle.
 
+
+//********* General info 
 MCU is a xmc1302-t038x0064 (38 pins, 64k flash, 16k ram, 32Mhz clock , 64Mz for peripherals clocks)
 Functions of pins of xmc13 is in datasheet pg 1252
 Here the pins descriptions from github TSDZ2_motor_controller_v2-test_bldc
@@ -272,7 +274,7 @@ here a link on using jlink to read peripherals https://stackoverflow.com/questio
  https://wiki.segger.com/J-Link_Visual_Studio_Code
  
  
- --------------VADC du xmc13-------------
+ --------------VADC du xmc13-- noted when I tried to understand -----------
  La conversion peut etre demandée par 3 (request) sources différentes: group0 (0), group1 (1) et background(2)
  Pour celles commandées via un group 0 ou 1, il peut y avoir un ou plusieurs channels (max 8 par group) définis dans une queue ou en scan mode (du plus haut numéro au plus petit)
  Pour le background, c'est toujours en scan mode mais on peut y associer des channels des 2 groupes
@@ -438,6 +440,15 @@ Note:  in pmsm infineon project,
 	"mtbDefaultIncludePath": having "ProbeScope"
 
 
+------------  how to flash memory with some config
+ here a link with an example
+ https://community.infineon.com/t5/XMC/XMC1302-flash-read-and-write-with-Dave-4/td-p/785684
+ 
+ There is also this example
+ https://github.com/Infineon/mtb-example-xmc-flash-program
+
+------------- for VADC --------------------
+Do not forget to enable arbitration for the desired slot (0 queue, 1 scan, 2 background) and this in each desired group.
 
 
  

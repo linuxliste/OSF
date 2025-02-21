@@ -365,7 +365,7 @@ void ebike_app_init(void)
 
 	// calculate max adc battery current from the received battery current limit // 13*100/16 = 81
 	ui8_adc_battery_current_max_temp_1 = (uint8_t)((uint16_t)(m_configuration_variables.ui8_battery_current_max * 100U) 
-		/ BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100); //16 means 0,16A per adc step (so for TSDZ2 it was 13 * 100 /16 = 81 adc steps)
+				/ BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100); //16 means 0,16A per adc step (so for TSDZ2 it was 13 * 100 /16 = 81 adc steps)
 
 	// calculate the max adc battery power from the power limit received in offroad mode // 500 *100*1000/16
 	ui32_adc_battery_power_max_x1000_array[OFFROAD_MODE] = (uint32_t)((uint32_t) m_config.target_max_battery_power * 100U * 1000U) //   TARGET_MAX_BATTERY_POWER
@@ -479,13 +479,15 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
 	} //#endif
 	 // ********************* here the 2 main ways to run the motor (one for test/calibration, the other for normal use) *****************
 	// for testing, we force the 4 parameters used to control the motor
-	#if (PROCESS == FIND_BEST_GLOBAL_HALL_OFFSET ) || ( PROCESS == TEST_WITH_FIXED_DUTY_CYCLE) || ( PROCESS == TEST_WITH_THROTTLE) 
+	#if (PROCESS == FIND_BEST_GLOBAL_HALL_OFFSET ) || ( PROCESS == TEST_WITH_FIXED_DUTY_CYCLE) || ( PROCESS == TEST_WITH_THROTTLE) || (PROCESS == FIND_BEST_ONE_HALL_PATTERN_OFFSET )
 	ui8_duty_cycle_ramp_up_inverse_step = PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_DEFAULT;     // 194
     ui8_duty_cycle_ramp_down_inverse_step = PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_DEFAULT;  //73
     // Note : this code suppose that Throttle is connected 
 	
 	#if (PROCESS == FIND_BEST_GLOBAL_HALL_OFFSET )
 		ui8_adc_battery_current_target = ADC_BATTERY_CURRENT_TARGET_FIND_BEST_GLOBAL_HALL_OFFSET;
+	#elif (PROCESS == FIND_BEST_ONE_HALL_PATTERN_OFFSET )
+		ui8_adc_battery_current_target = ADC_BATTERY_CURRENT_TARGET_FOR_ONE_HALL_PATTERN;
 	#elif (PROCESS == TEST_WITH_FIXED_DUTY_CYCLE )
 		ui8_adc_battery_current_target = ADC_BATTERY_CURRENT_TARGET_TEST_WITH_FIXED_DUTY_CYCLE;
 	#elif ( PROCESS == TEST_WITH_THROTTLE)
@@ -552,10 +554,10 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
 	// to convert TSDZ8 steps in the same units as TSDZ2, we shoud take ADC *62/245,76 = 0,25 and divide by 4 (or >>2)
 	// current is available in gr0 ch1 result 8 in queue 0 p2.8 and/or in gr0 ch0 result in 12 (p2.8)
 	// here we take the average of the 2 conversions and so use >>3 instead of >>2
-	uint8_t ui8_temp_adc_current = ((XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 8 ) & 0x0FFF) +
-    							    (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 12 ) & 0x0FFF)) >>3  ;  
-	
-    if ( ui8_temp_adc_current > ui8_adc_battery_overcurrent){ // 112+50 in tsdz2 (*0,16A) => 26A
+	// Still due to IIR filtering, we have to add >>2 because it is returned in 14 bits instead of 12
+	uint8_t ui8_temp_adc_current = ((XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 15 ) & 0xFFFF) +
+    							    (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 15 ) & 0xFFFF)) >>5  ;  
+	if ( ui8_temp_adc_current > ui8_adc_battery_overcurrent){ // 112+50 in tsdz2 (*0,16A) => 26A
         ui8_error_battery_overcurrent = ERROR_BATTERY_OVERCURRENT ;
     }    
     /*
@@ -1854,13 +1856,14 @@ static uint8_t ui8_motor_check_goes_alone_timer = 0U;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // E08 ERROR_SPEED_SENSOR
+#if (PROCESS == NORMAL_OPERATIONS ) 
 #define CHECK_SPEED_SENSOR_COUNTER_THRESHOLD          125 // 125 * 100ms = 12.5 seconds
-#define MOTOR_ERPS_SPEED_THRESHOLD	                  180
+#define MOTOR_ERPS_SPEED_THRESHOLD	                  90 // 180 for TSDZ2; should be 2 X less for TSDZ8 because 4 poles instead of 8
 	static uint16_t ui16_check_speed_sensor_counter;
 	static uint16_t ui16_error_speed_sensor_counter;
 	
 	// check speed sensor
-	if ((ui16_motor_speed_erps > MOTOR_ERPS_SPEED_THRESHOLD)  // 180
+	if ((ui16_motor_speed_erps > MOTOR_ERPS_SPEED_THRESHOLD)  // 180 in TSDZ2; should be 2X less for TSDZ8
 	  &&(m_configuration_variables.ui8_riding_mode != WALK_ASSIST_MODE)
 	  &&(m_configuration_variables.ui8_riding_mode != CRUISE_MODE)
 	  &&(!m_configuration_variables.ui8_assist_with_error_enabled)) {
@@ -1892,7 +1895,7 @@ static uint8_t ui8_motor_check_goes_alone_timer = 0U;
             }
 		}
 	}
-
+#endif // error speed sensor
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // E04 ERROR_MOTOR_BLOCKED
 // define moved ih CONFIG.H

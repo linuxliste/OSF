@@ -194,9 +194,9 @@ const XMC_CCU8_SLICE_DEAD_TIME_CONFIG_t PHASE_U_TIMER_dead_time_config =
     .channel1_inv_st_path = true,
     .channel2_inv_st_path = false,
     .div = XMC_CCU8_SLICE_DTC_DIV_1,
-    .channel1_st_rising_edge_counter = 24,
+    .channel1_st_rising_edge_counter = 100,
     .channel2_st_rising_edge_counter = 0,
-    .channel1_st_falling_edge_counter = 24,
+    .channel1_st_falling_edge_counter = 100,
     .channel2_st_falling_edge_counter = 0,
 };
 const XMC_CCU8_SLICE_EVENT_CONFIG_t PHASE_U_TIMER_event0_config =
@@ -252,9 +252,9 @@ const XMC_CCU8_SLICE_DEAD_TIME_CONFIG_t PHASE_V_TIMER_dead_time_config =
     .channel1_inv_st_path = true,
     .channel2_inv_st_path = false,
     .div = XMC_CCU8_SLICE_DTC_DIV_1,
-    .channel1_st_rising_edge_counter = 24,
+    .channel1_st_rising_edge_counter = 100,
     .channel2_st_rising_edge_counter = 0,
-    .channel1_st_falling_edge_counter = 24,
+    .channel1_st_falling_edge_counter = 100,
     .channel2_st_falling_edge_counter = 0,
 };
 const XMC_CCU8_SLICE_EVENT_CONFIG_t PHASE_V_TIMER_event0_config =
@@ -310,9 +310,9 @@ const XMC_CCU8_SLICE_DEAD_TIME_CONFIG_t PHASE_W_TIMER_dead_time_config =
     .channel1_inv_st_path = true,
     .channel2_inv_st_path = false,
     .div = XMC_CCU8_SLICE_DTC_DIV_1,
-    .channel1_st_rising_edge_counter = 24,
+    .channel1_st_rising_edge_counter = 100,
     .channel2_st_rising_edge_counter = 0,
-    .channel1_st_falling_edge_counter = 24,
+    .channel1_st_falling_edge_counter = 100,
     .channel2_st_falling_edge_counter = 0,
 };
 const XMC_CCU8_SLICE_EVENT_CONFIG_t PHASE_W_TIMER_event0_config =
@@ -476,6 +476,48 @@ const XMC_VADC_BACKGROUND_CONFIG_t vadc_0_background_scan_config =
     .enable_auto_scan = (uint32_t) true,
     .load_mode = (uint32_t) XMC_VADC_SCAN_LOAD_OVERWRITE,
 };
+const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_0_queue_entries_0 =
+{
+    .channel_num = (uint8_t)1,
+    .refill_needed = (uint32_t)true,
+    .generate_interrupt = (uint32_t)false,
+    .external_trigger = (uint32_t)false,
+};
+const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_0_queue_entries_1 =
+{
+    .channel_num = (uint8_t)1,
+    .refill_needed = (uint32_t)true,
+    .generate_interrupt = (uint32_t)false,
+    .external_trigger = (uint32_t)false,
+};
+const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_0_queue_entries_2 =
+{
+    .channel_num = (uint8_t)1,
+    .refill_needed = (uint32_t)true,
+    .generate_interrupt = (uint32_t)false,
+    .external_trigger = (uint32_t)false,
+};
+const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_0_queue_entries_3 =
+{
+    .channel_num = (uint8_t)1,
+    .refill_needed = (uint32_t)true,
+    .generate_interrupt = (uint32_t)false,
+    .external_trigger = (uint32_t)false,
+};
+const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_0_queue_entries_4 =
+{
+    .channel_num = (uint8_t)1,
+    .refill_needed = (uint32_t)true,
+    .generate_interrupt = (uint32_t)false,
+    .external_trigger = (uint32_t)false,
+};
+const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_0_queue_entries_5 =
+{
+    .channel_num = (uint8_t)1,
+    .refill_needed = (uint32_t)true,
+    .generate_interrupt = (uint32_t)false,
+    .external_trigger = (uint32_t)false,
+};
 const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_0_queue_entries_6 =
 {
     .channel_num = (uint8_t)7,
@@ -490,10 +532,10 @@ const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_0_queue_entries_7 =
     .generate_interrupt = (uint32_t)false,
     .external_trigger = (uint32_t)false,
 };
-const XMC_VADC_RESULT_CONFIG_t vadc_0_group_0_result_8_config =
+const XMC_VADC_RESULT_CONFIG_t vadc_0_group_0_result_15_config =
 {
-    .data_reduction_control = (uint32_t) 0,
-    .post_processing_mode = (uint32_t) XMC_VADC_DMM_REDUCTION_MODE,
+    .data_reduction_control = (uint32_t) 14,
+    .post_processing_mode = (uint32_t) XMC_VADC_DMM_FILTERING_MODE,
     .wait_for_read_mode = (uint32_t) false,
     .part_of_fifo = (uint32_t) false,
     .event_gen_enable = false,
@@ -539,7 +581,7 @@ const XMC_VADC_CHANNEL_CONFIG_t G0_CH1_CURRENT_P2_8_config =
     .event_gen_criteria = (uint32_t) XMC_VADC_CHANNEL_EVGEN_OUTBOUND,
     .sync_conversion = (uint32_t) false,
     .alternate_reference = (uint32_t) XMC_VADC_CHANNEL_REF_INTREF,
-    .result_reg_number = (uint32_t) 8,
+    .result_reg_number = (uint32_t) 15,
     .use_global_result = (uint32_t) 0,
     .result_alignment = (uint32_t) XMC_VADC_RESULT_ALIGN_LEFT,
     .broken_wire_detect_channel = (uint32_t) XMC_VADC_CHANNEL_BWDCH_VAGND,
@@ -563,6 +605,41 @@ const XMC_VADC_CHANNEL_CONFIG_t G0_CH7_TORQUE_P2_2_config =
     .channel_priority = (bool) false,
     .alias_channel = (int8_t) XMC_VADC_CHANNEL_ALIAS_DISABLED,
 };
+const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_1_queue_entries_0 =
+{
+    .channel_num = (uint8_t)0,
+    .refill_needed = (uint32_t)true,
+    .generate_interrupt = (uint32_t)false,
+    .external_trigger = (uint32_t)false,
+};
+const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_1_queue_entries_1 =
+{
+    .channel_num = (uint8_t)0,
+    .refill_needed = (uint32_t)true,
+    .generate_interrupt = (uint32_t)false,
+    .external_trigger = (uint32_t)false,
+};
+const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_1_queue_entries_2 =
+{
+    .channel_num = (uint8_t)7,
+    .refill_needed = (uint32_t)true,
+    .generate_interrupt = (uint32_t)false,
+    .external_trigger = (uint32_t)false,
+};
+const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_1_queue_entries_3 =
+{
+    .channel_num = (uint8_t)0,
+    .refill_needed = (uint32_t)true,
+    .generate_interrupt = (uint32_t)false,
+    .external_trigger = (uint32_t)false,
+};
+const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_1_queue_entries_4 =
+{
+    .channel_num = (uint8_t)0,
+    .refill_needed = (uint32_t)true,
+    .generate_interrupt = (uint32_t)false,
+    .external_trigger = (uint32_t)false,
+};
 const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_1_queue_entries_5 =
 {
     .channel_num = (uint8_t)6,
@@ -572,7 +649,7 @@ const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_1_queue_entries_5 =
 };
 const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_1_queue_entries_6 =
 {
-    .channel_num = (uint8_t)7,
+    .channel_num = (uint8_t)0,
     .refill_needed = (uint32_t)true,
     .generate_interrupt = (uint32_t)false,
     .external_trigger = (uint32_t)false,
@@ -584,13 +661,13 @@ const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_1_queue_entries_7 =
     .generate_interrupt = (uint32_t)false,
     .external_trigger = (uint32_t)false,
 };
-const XMC_VADC_RESULT_CONFIG_t vadc_0_group_1_result_12_config =
+const XMC_VADC_RESULT_CONFIG_t vadc_0_group_1_result_15_config =
 {
-    .data_reduction_control = (uint32_t) 0,
-    .post_processing_mode = (uint32_t) XMC_VADC_DMM_REDUCTION_MODE,
+    .data_reduction_control = (uint32_t) 14,
+    .post_processing_mode = (uint32_t) XMC_VADC_DMM_FILTERING_MODE,
     .wait_for_read_mode = (uint32_t) false,
     .part_of_fifo = (uint32_t) false,
-    .event_gen_enable = false,
+    .event_gen_enable = true,
 };
 const XMC_VADC_RESULT_CONFIG_t vadc_0_group_1_result_4_config =
 {
@@ -639,7 +716,7 @@ const XMC_VADC_CHANNEL_CONFIG_t G1_CH0_CURRENT_P2_8_config =
     .event_gen_criteria = (uint32_t) XMC_VADC_CHANNEL_EVGEN_OUTBOUND,
     .sync_conversion = (uint32_t) false,
     .alternate_reference = (uint32_t) XMC_VADC_CHANNEL_REF_INTREF,
-    .result_reg_number = (uint32_t) 12,
+    .result_reg_number = (uint32_t) 15,
     .use_global_result = (uint32_t) 0,
     .result_alignment = (uint32_t) XMC_VADC_RESULT_ALIGN_LEFT,
     .broken_wire_detect_channel = (uint32_t) XMC_VADC_CHANNEL_BWDCH_VAGND,
@@ -870,10 +947,16 @@ void init_cycfg_peripherals(void)
                                vadc_0_group_0_ICLASS_1);
     
     /* RESULT init. */
-    XMC_VADC_GROUP_ResultInit(vadc_0_group_0_HW, (uint32_t)8, &vadc_0_group_0_result_8_config);
+    XMC_VADC_GROUP_ResultInit(vadc_0_group_0_HW, (uint32_t)15, &vadc_0_group_0_result_15_config);
     XMC_VADC_GROUP_ResultInit(vadc_0_group_0_HW, (uint32_t)2, &vadc_0_group_0_result_2_config);
     
     /* Insert channels into the background request sources. */
+    XMC_VADC_GROUP_QueueInsertChannel(vadc_0_group_0_HW, vadc_0_group_0_queue_entries_0);
+    XMC_VADC_GROUP_QueueInsertChannel(vadc_0_group_0_HW, vadc_0_group_0_queue_entries_1);
+    XMC_VADC_GROUP_QueueInsertChannel(vadc_0_group_0_HW, vadc_0_group_0_queue_entries_2);
+    XMC_VADC_GROUP_QueueInsertChannel(vadc_0_group_0_HW, vadc_0_group_0_queue_entries_3);
+    XMC_VADC_GROUP_QueueInsertChannel(vadc_0_group_0_HW, vadc_0_group_0_queue_entries_4);
+    XMC_VADC_GROUP_QueueInsertChannel(vadc_0_group_0_HW, vadc_0_group_0_queue_entries_5);
     XMC_VADC_GROUP_QueueInsertChannel(vadc_0_group_0_HW, vadc_0_group_0_queue_entries_6);
     XMC_VADC_GROUP_QueueInsertChannel(vadc_0_group_0_HW, vadc_0_group_0_queue_entries_7);
     /* Channel init. */
@@ -907,11 +990,16 @@ void init_cycfg_peripherals(void)
                                vadc_0_group_1_ICLASS_1);
     
     /* RESULT init. */
-    XMC_VADC_GROUP_ResultInit(vadc_0_group_1_HW, (uint32_t)12, &vadc_0_group_1_result_12_config);
+    XMC_VADC_GROUP_ResultInit(vadc_0_group_1_HW, (uint32_t)15, &vadc_0_group_1_result_15_config);
     XMC_VADC_GROUP_ResultInit(vadc_0_group_1_HW, (uint32_t)4, &vadc_0_group_1_result_4_config);
     XMC_VADC_GROUP_ResultInit(vadc_0_group_1_HW, (uint32_t)5, &vadc_0_group_1_result_5_config);
     
     /* Insert channels into the background request sources. */
+    XMC_VADC_GROUP_QueueInsertChannel(vadc_0_group_1_HW, vadc_0_group_1_queue_entries_0);
+    XMC_VADC_GROUP_QueueInsertChannel(vadc_0_group_1_HW, vadc_0_group_1_queue_entries_1);
+    XMC_VADC_GROUP_QueueInsertChannel(vadc_0_group_1_HW, vadc_0_group_1_queue_entries_2);
+    XMC_VADC_GROUP_QueueInsertChannel(vadc_0_group_1_HW, vadc_0_group_1_queue_entries_3);
+    XMC_VADC_GROUP_QueueInsertChannel(vadc_0_group_1_HW, vadc_0_group_1_queue_entries_4);
     XMC_VADC_GROUP_QueueInsertChannel(vadc_0_group_1_HW, vadc_0_group_1_queue_entries_5);
     XMC_VADC_GROUP_QueueInsertChannel(vadc_0_group_1_HW, vadc_0_group_1_queue_entries_6);
     XMC_VADC_GROUP_QueueInsertChannel(vadc_0_group_1_HW, vadc_0_group_1_queue_entries_7);
