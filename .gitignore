@@ -80,10 +80,10 @@ Backup*
 *.dep
 
 # Compiled Binaries
-#*.bin
-*.elf
-*.hex
-#*.map
+*.bin
+#*.elf
+#*.hex
+*.map
 
 # Trash files
 *.bak
