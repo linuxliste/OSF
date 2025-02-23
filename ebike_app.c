@@ -14,18 +14,6 @@
 #include "common.h"
 #include "uart.h"
 
-// for debug
-uint8_t mstest1=0;
-uint8_t mstest2=0;
-uint8_t mstest3=0;
-uint8_t mstest4=0;
-uint8_t mstest5=0;
-uint8_t mstest6=0;
-uint8_t mstest7=0;
-uint8_t mstest8=0;
-uint8_t mstest9=0;
-
-
 volatile struct_configuration_variables m_configuration_variables;
 
 // display menu
@@ -206,7 +194,6 @@ uint8_t ui8_startup_counter = 0;
 
  uint8_t ui8_default_flash_state;
 
-
 /* this part of definition has been commented for debugging because there is already a uart.c file with some definitions (used for first tests)
 // UART
 volatile uint8_t ui8_received_package_flag = 0;
@@ -266,7 +253,16 @@ static void check_battery_soc(void);
 
 uint16_t calc_battery_soc_x10(uint16_t ui16_battery_soc_offset_x10, uint16_t ui16_battery_soc_step_x10, uint16_t ui16_cell_volts_max_x100, uint16_t ui16_cell_volts_min_x100);
 
-uint8_t ui8_pwm_duty_cycle_max;
+uint8_t ui8_pwm_duty_cycle_max = PWM_DUTY_CYCLE_MAX;	//max duty cycle for normal operations
+// added for using testing mode
+uint8_t ui8_test_mode_flag = DEFAULT_TEST_MODE_FLAG ; // can be changed in uc_probe
+uint8_t ui8_battery_current_target_testing = DEFAULT_BATTERY_CURRENT_TARGET_TESTING_A ; // value is in A ; this is a default value that can be changed with uc_probe
+uint8_t ui8_duty_cycle_target_testing = DEFAULT_DUTY_CYCLE_TARTGET_TESTING; // max is 245, this is a default value that can be changed with uc_probe
+#define AVERAGING_CNT 40 // 25 msec per cycle; 40 = 1 sec
+uint32_t ui32_adc_battery_current_filtered_15b_accumulated =0;
+uint32_t ui32_adc_battery_current_filtered_15b_cnt = AVERAGING_CNT;
+uint32_t ui32_battery_current_filtered_avg_mA ;
+	
 
 // ********************* init ******************************
 void ebike_app_init(void)
@@ -382,6 +378,7 @@ void ebike_app_init(void)
 	if (ui8_adc_motor_phase_current_max > ADC_10_BIT_MOTOR_PHASE_CURRENT_MAX) { //187
 		ui8_adc_motor_phase_current_max = ADC_10_BIT_MOTOR_PHASE_CURRENT_MAX;  //187
 	}
+	global_offset_angle = m_config.global_offset_angle ; 
 }
 
 
@@ -454,7 +451,7 @@ void ebike_app_controller(void) // is called every 25ms by main()
 
 static void ebike_control_motor(void) // is called every 25ms by ebike_app_controller()
 {
-    // reset control variables (safety)
+    // reset control variables (safety) that are set_up in ebike_app.c and used in motor.c
     ui8_duty_cycle_ramp_up_inverse_step = PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_DEFAULT;     // 194
     ui8_duty_cycle_ramp_down_inverse_step = PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_DEFAULT;  //73
     ui8_adc_battery_current_target = 0;
@@ -478,56 +475,35 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
 		}
 	} //#endif
 	 // ********************* here the 2 main ways to run the motor (one for test/calibration, the other for normal use) *****************
-	// for testing, we force the 4 parameters used to control the motor
-	#if (PROCESS == FIND_BEST_GLOBAL_HALL_OFFSET ) || ( PROCESS == TEST_WITH_FIXED_DUTY_CYCLE) || ( PROCESS == TEST_WITH_THROTTLE) || (PROCESS == FIND_BEST_ONE_HALL_PATTERN_OFFSET )
-	ui8_duty_cycle_ramp_up_inverse_step = PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_DEFAULT;     // 194
-    ui8_duty_cycle_ramp_down_inverse_step = PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_DEFAULT;  //73
-    // Note : this code suppose that Throttle is connected 
-	
-	#if (PROCESS == FIND_BEST_GLOBAL_HALL_OFFSET )
-		ui8_adc_battery_current_target = ADC_BATTERY_CURRENT_TARGET_FIND_BEST_GLOBAL_HALL_OFFSET;
-	#elif (PROCESS == FIND_BEST_ONE_HALL_PATTERN_OFFSET )
-		ui8_adc_battery_current_target = ADC_BATTERY_CURRENT_TARGET_FOR_ONE_HALL_PATTERN;
-	#elif (PROCESS == TEST_WITH_FIXED_DUTY_CYCLE )
-		ui8_adc_battery_current_target = ADC_BATTERY_CURRENT_TARGET_TEST_WITH_FIXED_DUTY_CYCLE;
-	#elif ( PROCESS == TEST_WITH_THROTTLE)
-	//uint8_t adc_throttle_for_test = ((XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 5 ) & 0x0FFF) >> 4); // throttle gr1 ch7 result 5   pin 2.5
-	
-	//if (( adc_throttle_for_test < 5) || (adc_throttle_for_test > 50) ) {// throttle gr1 ch7 result 5   pin 2.5
-	if ( ui8_throttle_adc_in) {
-		ui8_adc_battery_current_target = ADC_BATTERY_CURRENT_TARGET_TEST_WITH_THROTTLE ; // set on 8 for testing but does not really matter because we do not reach this value									
-		
-	} else {
-		ui8_adc_battery_current_target =  0;
+	if (ui8_test_mode_flag == NORMAL_RUNNING_MODE) {
+		// select riding mode and calculate ui8_adc_battery_current_target and ui8_duty_cycle_target is 255 (or 0)
+		//        It also adapt the ramp up and down inverse step that has an impact on how fast the motor react to a change.
+		switch (m_configuration_variables.ui8_riding_mode) {
+			case POWER_ASSIST_MODE: apply_power_assist(); break;
+			case TORQUE_ASSIST_MODE: apply_torque_assist(); break;
+			case CADENCE_ASSIST_MODE: apply_cadence_assist(); break;
+			case eMTB_ASSIST_MODE: apply_emtb_assist(); break;
+			case HYBRID_ASSIST_MODE: apply_hybrid_assist(); break;
+			case CRUISE_MODE: apply_cruise(); break;
+			case WALK_ASSIST_MODE: apply_walk_assist(); break;
+			case TORQUE_SENSOR_CALIBRATION_MODE: apply_torque_sensor_calibration(); break;
+		}
+	} else { // we are in testing mode 
+		// for testing, we force the 4 parameters used to control the motor
+		ui8_duty_cycle_ramp_up_inverse_step = PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_DEFAULT;     // 194
+		ui8_duty_cycle_ramp_down_inverse_step = PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_DEFAULT;  //73
+		// Note : this code suppose that Throttle is connected ?? 
+		// set current target to the testing value and check with max
+		ui8_adc_battery_current_target = (uint16_t) ui8_battery_current_target_testing *100 / BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100;
+		if (ui8_adc_battery_current_target > ADC_10_BIT_BATTERY_CURRENT_MAX)
+				ui8_adc_battery_current_target = ADC_10_BIT_BATTERY_CURRENT_MAX;
+		// set duty cycle target to the tesing value and check against max
+		ui8_duty_cycle_target = ui8_duty_cycle_target_testing;
+		if (ui8_duty_cycle_target >= ui8_pwm_duty_cycle_max ) {
+			ui8_duty_cycle_target = ui8_pwm_duty_cycle_max;  
+		}
+		ui8_riding_mode_parameter =  50; // if it is set on 0 , it means that there is no assist and motor stays/goes off in safety checks
 	}
-	#endif
-	mstest1 = ui8_adc_battery_current_target;
-	//ui8_adc_battery_current_target = (1); // set on 8 for testing but does not really matter because we do not reach this value									
-	
-	// set duty cycle target
-	if (ui8_adc_battery_current_target) {
-		ui8_duty_cycle_target = ui8_pwm_duty_cycle_max;  
-	}
-	else {
-		ui8_duty_cycle_target = 0;
-	}
-	ui8_riding_mode_parameter =  20; // if it is set on 0 , it means that there is no assist and motor stays/goes off
-	
-	#else // NORMAL PROCESS
-
-    // select riding mode and calculate ui8_adc_battery_current_target and ui8_duty_cycle_target is 255 (or 0)
-    //        It also adapt the ramp up and down inverse step that has an impact on how fast the motor react to a change.
-	switch (m_configuration_variables.ui8_riding_mode) {
-		case POWER_ASSIST_MODE: apply_power_assist(); break;
-		case TORQUE_ASSIST_MODE: apply_torque_assist(); break;
-		case CADENCE_ASSIST_MODE: apply_cadence_assist(); break;
-		case eMTB_ASSIST_MODE: apply_emtb_assist(); break;
-		case HYBRID_ASSIST_MODE: apply_hybrid_assist(); break;
-		case CRUISE_MODE: apply_cruise(); break;
-		case WALK_ASSIST_MODE: apply_walk_assist(); break;
-		case TORQUE_SENSOR_CALIBRATION_MODE: apply_torque_sensor_calibration(); break;
-    }
-	#endif
 
     // select optional ADC function
 	//#if (OPTIONAL_ADC_FUNCTION == THROTTLE_CONTROL)   // in some cases, it can increase the target current and change duty_cyle and ramp up/down
@@ -556,10 +532,20 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
 	// here we take the average of the 2 conversions and so use >>3 instead of >>2
 	// Still due to IIR filtering, we have to add >>2 because it is returned in 14 bits instead of 12
 	uint8_t ui8_temp_adc_current = ((XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 15 ) & 0xFFFF) +
-    							    (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 15 ) & 0xFFFF)) >>5  ;  
+    							    (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 15 ) & 0xFFFF)) >>5  ;  // >>2 for IIR, >>2 for ADC12 to ADC10 , >>1 for averaging
 	if ( ui8_temp_adc_current > ui8_adc_battery_overcurrent){ // 112+50 in tsdz2 (*0,16A) => 26A
         ui8_error_battery_overcurrent = ERROR_BATTERY_OVERCURRENT ;
-    }    
+    }
+	// calculate an average current in mA (to find parameters giving lowest current)
+	
+	ui32_adc_battery_current_filtered_15b_accumulated += ui32_adc_battery_current_filtered_15b;
+	ui32_adc_battery_current_filtered_15b_cnt--;
+	if (ui32_adc_battery_current_filtered_15b_cnt == 0){
+		ui32_battery_current_filtered_avg_mA = (ui32_adc_battery_current_filtered_15b_accumulated  *1000 
+				/ AVERAGING_CNT / BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100) >> 5;
+		ui32_adc_battery_current_filtered_15b_cnt = AVERAGING_CNT ;
+		ui32_adc_battery_current_filtered_15b_accumulated = 0;
+	}
     /*
     // Read in assembler to ensure data consistency (conversion overrun)
 	// E07 (E04 blinking for XH18)
@@ -605,8 +591,7 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
         if (ui8_adc_battery_current_target > ui8_adc_battery_current_max) {
             ui8_adc_battery_current_target = ui8_adc_battery_current_max;
         }
-		mstest2= ui8_adc_battery_current_target;
-        // limit target duty cycle ramp up inverse step if lower than min value (safety)
+		// limit target duty cycle ramp up inverse step if lower than min value (safety)
         if (ui8_duty_cycle_ramp_up_inverse_step < PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN) {  // 24
             ui8_duty_cycle_ramp_up_inverse_step = PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN;    // 24
         }
@@ -656,8 +641,6 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
 	
 	// set max battery current
 	ui8_adc_battery_current_max = ui8_min(ui8_adc_battery_current_max_temp_1, ui8_adc_battery_current_max_temp_2);
-			
-	mstest6=ui8_adc_battery_current_target;
 }
 
 
@@ -1427,7 +1410,6 @@ static void apply_torque_sensor_calibration(void)  // when used, this is called 
 
 static void apply_throttle(void)
 {
-    mstest3=ui8_adc_battery_current_target;
 	// map adc value from 0 to 255
 	//Next line has been moved from motor.c to here to save time in irq 1 ; >>2 because we use 10 bits instead of 12 bits
 	ui16_adc_throttle = (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 5 ) & 0x0FFF) >> 2; // throttle gr1 ch7 result 5  in bg  p2.5
@@ -1474,7 +1456,7 @@ static void apply_throttle(void)
         if (ui16_wheel_speed_x10 >= 255) {  // when more than 25 km/h set 
             ui8_duty_cycle_ramp_up_inverse_step = THROTTLE_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN; // 48
             ui8_duty_cycle_ramp_down_inverse_step = PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN; // 9
-        }  // those tests are not required because the map function already set the limits
+        }  
 		else {
             ui8_duty_cycle_ramp_up_inverse_step = map_ui8((uint8_t) ui16_wheel_speed_x10,
                     (uint8_t) 40,
@@ -1499,7 +1481,6 @@ static void apply_throttle(void)
 		// set duty cycle target
 		ui8_duty_cycle_target = ui8_pwm_duty_cycle_max;
     }// end of current_target_trottle > current_target
-	mstest4=ui8_adc_battery_current_target;
 }
 
 /*
@@ -1554,9 +1535,7 @@ static void apply_speed_limit(void)
 		if (ui16_wheel_speed_x10 > speed_limit_high) {
 			ui8_duty_cycle_target = 0;
 		}
-    }
-	mstest5=ui8_adc_battery_current_target;
-        
+    }   
 }
 
 
@@ -1856,9 +1835,9 @@ static uint8_t ui8_motor_check_goes_alone_timer = 0U;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // E08 ERROR_SPEED_SENSOR
-#if (PROCESS == NORMAL_OPERATIONS ) 
 #define CHECK_SPEED_SENSOR_COUNTER_THRESHOLD          125 // 125 * 100ms = 12.5 seconds
 #define MOTOR_ERPS_SPEED_THRESHOLD	                  90 // 180 for TSDZ2; should be 2 X less for TSDZ8 because 4 poles instead of 8
+if (ui8_test_mode_flag == NORMAL_RUNNING_MODE) {  // check only in normal running mode ; not when
 	static uint16_t ui16_check_speed_sensor_counter;
 	static uint16_t ui16_error_speed_sensor_counter;
 	
@@ -1895,7 +1874,7 @@ static uint8_t ui8_motor_check_goes_alone_timer = 0U;
             }
 		}
 	}
-#endif // error speed sensor
+} // error speed sensor
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // E04 ERROR_MOTOR_BLOCKED
 // define moved ih CONFIG.H

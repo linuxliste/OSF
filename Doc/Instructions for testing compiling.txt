@@ -194,7 +194,7 @@ For the display connector I also used an extension cable (from bafang - T14 with
 The pin out is given at : https://github.com/OpenSourceEBike/TSDZ2_wiki/blob/master/TSDZ2_8Pin_Connector_Higo_B8_Cable_Map_2.jpg
 - Black = Gnd = mid pin
 - White= 4.3V when display is ON
-- Blue = battery (used to power the display with 48V; is present even display is off = direct connection with the battery
+- Blue = battery (used to power the display with 48V); is present even display is off = direct connection with the battery
 - Read = 48V but only when display is ON; it is used to power the controller it self
 - Yellow = short frames beginning with 0X59: = UART RX from controller point of view
 - Orange = Throttle = voltage between 0 and 3.5 V (100%)

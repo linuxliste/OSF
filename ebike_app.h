@@ -12,17 +12,6 @@
 //#include <stdint.h>
 #include "main.h"
 
-// for debug
-extern uint8_t mstest1;
-extern uint8_t mstest2;
-extern uint8_t mstest3;
-extern uint8_t mstest4;
-extern uint8_t mstest5;
-extern uint8_t mstest6;
-extern uint8_t mstest7;
-extern uint8_t mstest8;
-extern uint8_t mstest9;
-
 // startup boost mode
 #define CADENCE					0
 #define SPEED						1
@@ -64,6 +53,10 @@ typedef struct  _configuration_variables
   uint8_t ui8_torque_sensor_adv_enabled; 
   uint8_t ui8_soc_percent_calculation;
 } struct_configuration_variables;
+
+extern uint8_t ui8_test_mode_flag ;
+extern volatile uint32_t ui32_adc_battery_current_filtered_15b; // value in 12 +2 +1 = 15 bits (ADC + IIR + average)
+extern uint8_t global_offset_angle ; 
 
 void ebike_app_controller(void);
 struct_configuration_variables* get_configuration_variables(void);
