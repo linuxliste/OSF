@@ -476,9 +476,8 @@ void init_extra_fields_config (){
 
 void upload_m_config(){
     uint16_t * pConfig = (uint16_t *) ADDRESS_OF_M_CONFIG_FLASH;  // point to the begin of user preference parameters in flash 
-    uint8_t content_of_pConfig = * pConfig;
+    //uint8_t content_of_pConfig = * pConfig;
     if ( *pConfig != m_config.main_version) {
-        if (content_of_pConfig) content_of_pConfig++;
         return; // discard flash parameters (and use those from compilation) if the main version is different
                 // in ebike_app.c there is another check that force an ERROR_MOTOR_CHECK to block the motor
     } else {           
