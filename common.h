@@ -14,7 +14,7 @@
 #include "cy_utils.h"
 
 #include "SEGGER_RTT.h"
-#include "config.h"
+#include "config_tsdz8.h"
 
 
 // riding modes
@@ -45,9 +45,6 @@
 //#define ADVANCED_MODE                             1
 //#define CALIBRATION_MODE                          2
 
-extern volatile uint32_t system_ticks ;
-extern struct_config m_config ;
-
 
 
 
@@ -57,7 +54,13 @@ uint8_t ui8_max(uint8_t value_a, uint8_t value_b);
 uint8_t ui8_min(uint8_t value_a, uint8_t value_b);
 uint16_t filter(uint16_t ui16_new_value, uint16_t ui16_old_value, uint8_t ui8_alpha);
 void crc16(uint8_t ui8_data, uint16_t *ui16_crc);
+
+
 void lights_set_state(uint8_t ui8_state) ; // moved by mstrens from another tsdz2 file
+
+extern volatile uint32_t system_ticks ;
+extern struct_config m_config ;
+
 
 bool take_action(uint32_t index, uint32_t interval);
 void wait_ms(uint32_t time);

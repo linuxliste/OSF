@@ -84,7 +84,7 @@ static uint8_t ui8_counter_duty_cycle_ramp_down = 0;
 // FOC angle
 static uint8_t ui8_foc_angle_accumulated;
 static uint8_t ui8_foc_flag;
-uint8_t ui8_g_foc_angle = 0;
+volatile uint8_t ui8_g_foc_angle = 0;
 static uint8_t ui8_foc_angle_multiplier = FOC_ANGLE_MULTIPLIER; //39 for 48V motor
 static uint8_t ui8_adc_foc_angle_current = 0;
 
@@ -124,12 +124,6 @@ uint8_t  previous_hall_pattern = 7; // Invalid value, force execution of Hall co
 // Hall counter value of last Hall transition 
 uint16_t previous_360_ref_ticks ; 
 
-
-// to debug
-uint16_t saved_current= 0; 
-uint16_t saved_current_min = 0xFFFF;
-uint16_t saved_current_max = 0;
-
 // ----------   end of copy from tsdz2 -------------------------
 
 uint8_t ui8_temp;
@@ -148,7 +142,7 @@ uint8_t global_offset_angle = CALIBRATED_OFFSET_ANGLE ; // This value is pre-def
 //volatile uint32_t posif_SR0 = 0; // count hall valid transition 
 //volatile uint32_t posif_SR1 = 0; // count hall transition (before check if valid or not)
 
-// to debug time spent in irqà and irq1
+//// to debug time spent in irq0 and irq1
 //volatile uint16_t debug_time_ccu8_irq0 = 0;
 //volatile uint16_t debug_time_ccu8_irq1 = 0;
 //volatile uint16_t debug_time_ccu8_irq1b = 0;
@@ -308,7 +302,6 @@ uint32_t ui32_angle_per_tick_X16shift_log;
 uint16_t ui16_measured_angle_X16bits_log;
 uint8_t best_ref_angle_log;
 uint8_t ui8_hall_ref_angles_log;
-volatile bool new_log_flag = false;
 
 
 
@@ -375,21 +368,7 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
                     best_ref_angle[current_hall_pattern] = (filtering + 128 )>> 8; // +128 for rounding
                     ui8_hall_ref_angles[current_hall_pattern] = best_ref_angle[current_hall_pattern] ;
                 }
-                /* to debug
-                if ((best_ref_angle[current_hall_pattern] > (ui8_hall_ref_angles[current_hall_pattern] + 5) ) ||
-                    (best_ref_angle[current_hall_pattern] < (ui8_hall_ref_angles[current_hall_pattern] - 5) ) ){
-                        current_hall_pattern_log = current_hall_pattern;
-                        last_hall_pattern_change_ticks_log = last_hall_pattern_change_ticks;
-                        previous_360_ref_ticks_log = previous_360_ref_ticks;
-                        ui16_hall_counter_total_log = ui16_hall_counter_total;
-                        ui32_angle_per_tick_X16shift_log = ui32_angle_per_tick_X16shift;
-                        ui16_measured_angle_X16bits_log = ui16_measured_angle_X16bits;
-                        best_ref_angle_log = best_ref_angle[current_hall_pattern];
-                        ui8_hall_ref_angles_log = ui8_hall_ref_angles[current_hall_pattern];
-                        new_log_flag = true;
-
-                }
-                */
+                
                 //ui8_hall_ref_angles[current_hall_pattern] = filtering >> 8; // update the table
                 
                 //best_ref_angle[current_hall_pattern] = ui8_measured_angle;
@@ -402,8 +381,6 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
                 ui16_hall_counter_total_previous = ui16_hall_counter_total; // save previous counter (to check if erps is stable)
             }
             previous_last_hall_pattern_change_ticks = last_hall_pattern_change_ticks; 
-            //hall_pattern_valid_counter++;     // count the valid frame for debuging
-            //hall_pattern_intervals[current_hall_pattern]  = last_hall_pattern_change_ticks - last_hall_pattern_change_ticks_prev; // save the interval between 2 changes
         }
         previous_hall_pattern = current_hall_pattern; // saved to detect future change
         // set rotor angle based on hall patern
@@ -753,7 +730,6 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
 }  // end of CCU8_1_IRQ
 
 
-
 void motor_enable_pwm(void) { //set posif with current position & restart the timers
     get_hall_pattern(); // refresh hall pattern in hall_pattern_irq
     
@@ -865,7 +841,7 @@ void update_shadow_pattern(uint8_t current_pattern){
     XMC_POSIF_HSC_SetCurrentPattern(HALL_POSIF_HW, current_pattern);
     XMC_POSIF_HSC_SetExpectedPattern(HALL_POSIF_HW, expected_pattern_table[current_pattern]);
 }
-_*/
+*/
 
 
 /*

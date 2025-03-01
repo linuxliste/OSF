@@ -23,7 +23,6 @@
 #include "ProbeScope/probe_scope.h"
 #endif
 
-#include "uart.h"
 #include "motor.h"
 #include "ebike_app.h"
 #include "eeprom.h"
@@ -94,19 +93,9 @@ extern volatile uint16_t debug_time_ccu8_irq1e; // to debug time in irq0 CCU8 (s
 extern volatile uint8_t ui8_adc_battery_current_filtered;
 extern uint8_t ui8_battery_current_filtered_x10;
 extern uint16_t ui16_display_data_factor; 
-extern uint8_t ui8_g_foc_angle;
+extern volatile uint8_t ui8_g_foc_angle;
 extern uint8_t ui8_throttle_adc_in;
 
-// to debug
-extern uint16_t saved_current_min ;
-extern uint16_t saved_current_max ;
-//extern volatile uint32_t real_ticks_interval[8];  // real interval between 2 hall patterns
-//extern volatile uint32_t expected_ticks_interval[8]; // expected interval based on the defined sensor positions and number ot tick for one electric rotation 
-//extern volatile uint32_t interval_counter;
-//uint32_t real_ticks_interval_avg[8]= {0};  // real interval between 2 hall patterns
-//uint32_t expected_ticks_interval_avg[8] = {0}; // expected interval based on the defined sensor positions and number ot tick for one electric rotation 
-//int32_t  tick_error_avg[8] = {0};
-//int32_t  angle_error_avg[8] = {0} ;
 
 // to debug
 extern uint8_t current_hall_pattern_log;
@@ -117,11 +106,8 @@ extern uint32_t ui32_angle_per_tick_X16shift_log;
 extern uint16_t ui16_measured_angle_X16bits_log;
 extern uint8_t best_ref_angle_log;
 extern uint8_t ui8_hall_ref_angles_log;
-extern volatile bool new_log_flag;
-uint8_t test1 ;
-uint8_t test2 ;
-uint8_t test3 ;
-uint8_t test4 ;
+
+
     
 
 extern volatile uint8_t best_ref_angle[8] ;
@@ -246,12 +232,11 @@ int main(void)
 
     // **** load the config from flash
     XMC_WDT_Service();
-    // todo should be adapted to get them from flash memory; currently we only use default)
-    init_extra_fields_config (); // get the user parameters (
+    init_extra_fields_config (); // get the user parameters from flash
     // todo : change when eeprom is coded properly add some initialisation (e.g. m_configuration_init() and ebike_app.init)
     // currently it is filled with parameters from user setup + some dummy values (e.g. for soc)
-    m_configuration_init();
-    // add some initialisation in ebike_app.init
+    m_configuration_init(); // get parameters used to manage the display
+    // add some initialisation in ebike_app.init (e.g. fields calculated based on config parameters)
     ebike_app_init();
     XMC_WDT_Service();
     // set initial position of hall sensor and first next expected one in shadow and load immediately in real register
@@ -303,8 +288,7 @@ int main(void)
             loop_25ms_ticks = system_ticks;
             ebike_app_controller();  // this performs some checks and update some variable every 25 msec
         }
-
-              
+   
         #if (uCPROBE_GUI_OSCILLOSCOPE == MY_ENABLED)
         ProbeScope_Sampling(); // this should be moved e.g. in a interrupt that run faster
         #endif
@@ -317,26 +301,6 @@ int main(void)
         if (ui8_system_state) { // print a message when there is an error detected
             if( take_action(1,200)) jlink_print_system_state();
         }
-
-        if (new_log_flag){
-            SEGGER_RTT_printf(0,"chp=%u lhpct=%u    prt=%u hct=%u apt=%u  ma=%u bra%u hra=%u \r\n",
-                (unsigned int) current_hall_pattern_log,
-                (unsigned int) last_hall_pattern_change_ticks_log,
-                (unsigned int) previous_360_ref_ticks_log,
-                (unsigned int) ui16_hall_counter_total_log,
-                (unsigned int) ui32_angle_per_tick_X16shift_log,
-                (unsigned int) ui16_measured_angle_X16bits_log,
-                (unsigned int) best_ref_angle_log,
-                (unsigned int) ui8_hall_ref_angles_log
-                //(unsigned int) test1,
-                //(unsigned int) test2,
-                //(unsigned int) test3,
-                //(unsigned int) test4
-            );
-            new_log_flag = false;
-        }    
-
-
 
 //        if( take_action(2, 500)) SEGGER_RTT_printf(0,"Adc current= %u  current_Ax10=%u  factor=%u\r\n", 
 //            (unsigned int) ui8_adc_battery_current_filtered ,

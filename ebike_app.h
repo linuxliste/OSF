@@ -20,20 +20,21 @@
 extern volatile uint8_t ui8_system_state;
 
 // cadence sensor
-extern volatile uint16_t ui16_cadence_ticks_count_min_speed_adj;
+extern uint16_t ui16_cadence_ticks_count_min_speed_adj;
 
 // Torque sensor coaster brake engaged threshold value
-extern volatile uint16_t ui16_adc_coaster_brake_threshold;
+extern uint16_t ui16_adc_coaster_brake_threshold;
 
 // ADC motor phase current max
 extern volatile uint8_t ui8_adc_motor_phase_current_max;
 
 // Motor enabled
-extern volatile uint8_t ui8_motor_enabled;
+extern uint8_t ui8_motor_enabled;
 
 typedef struct  _configuration_variables
 {
   //uint8_t ui8_motor_power_x10; // not used
+  uint32_t version;                 // added by mstrens to check the validity of configuration in flash; 32bits to use readWord
   uint8_t ui8_battery_current_max; // from  ebike_app.c
   uint16_t ui16_battery_low_voltage_cut_off_x10;
   uint16_t ui16_wheel_perimeter;
@@ -69,6 +70,9 @@ uint16_t read_battery_soc(void);
 //static void ebike_control_lights(void);
 
 
+void fillRxBuffer();
+void uart_receive_package();
+void uart_send_package();
 
 
 #endif /* _EBIKE_APP_H_ */

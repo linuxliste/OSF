@@ -1,13 +1,11 @@
 #include "eeprom.h"
+#include <string.h> 
 
 #include "main.h"
-#include "config.h"
-#include "eeprom.h"
+#include "config_tsdz8.h"
 #include "ebike_app.h"
+#include "xmc1_flash.h"
 
-#define EEPROM_BYTES_STORED                             20
-#define EEPROM_BYTES_STORED_OEM_DISPLAY					11
-#define EEPROM_BYTES_INIT_OEM_DISPLAY					EEPROM_BYTES_STORED - EEPROM_BYTES_STORED_OEM_DISPLAY
 
 extern struct_configuration_variables m_configuration_variables ; 
 
@@ -38,60 +36,22 @@ static const uint8_t ui8_default_array[EEPROM_BYTES_STORED] =
 };
 */
 
-// riding modes for documentation (define is done in common.h)
-//#define OFF_MODE                                  0 // not used
-//#define POWER_ASSIST_MODE                         1
-//#define TORQUE_ASSIST_MODE                        2
-//#define CADENCE_ASSIST_MODE                       3
-//#define eMTB_ASSIST_MODE                          4
-//#define HYBRID_ASSIST_MODE						            5
-//#define CRUISE_MODE                               6
-//#define WALK_ASSIST_MODE                          7
-//#define TORQUE_SENSOR_CALIBRATION_MODE            8								   
-
-/*
-void m_configuration_init(void){
- // added by mstrens in order to fill m-configuration_variables with default before having eeprom functions
-    //The default values are in an array 
-    uint16_t ui16_temp ;
-    uint8_t ui8_temp;
-    m_configuration_variables.ui8_battery_current_max = ui8_default_array[1];
-	  
-    ui16_temp = ui8_default_array[2]; //FLASH_ReadByte(ADDRESS_BATTERY_LOW_VOLTAGE_CUT_OFF_X10_0);
-    ui8_temp = ui8_default_array[3];  //FLASH_ReadByte(ADDRESS_BATTERY_LOW_VOLTAGE_CUT_OFF_X10_1);
-    ui16_temp += (((uint16_t) ui8_temp << 8) & 0xff00);
-    m_configuration_variables.ui16_battery_low_voltage_cut_off_x10 = ui16_temp;
-    
-    ui16_temp = ui8_default_array[4]; //FLASH_ReadByte(ADDRESS_WHEEL_PERIMETER_0);
-    ui8_temp = ui8_default_array[5];  //FLASH_ReadByte(ADDRESS_WHEEL_PERIMETER_1);
-    ui16_temp += (((uint16_t) ui8_temp << 8) & 0xff00);
-    m_configuration_variables.ui16_wheel_perimeter = ui16_temp;
-
-    m_configuration_variables.ui8_wheel_speed_max = ui8_default_array[6]; //FLASH_ReadByte(ADDRESS_WHEEL_SPEED_MAX);
-
-    m_configuration_variables.ui8_motor_type = ui8_default_array[7]; //FLASH_ReadByte(ADDRESS_MOTOR_TYPE);
-    
-    m_configuration_variables.ui8_avaiable_for_future_use = ui8_default_array[8]; //FLASH_ReadByte(ADDRESS_AVAIABLE_FOR_FUTURE_USE);
-    // for oem display
-    m_configuration_variables.ui8_assist_without_pedal_rotation_enabled = ui8_default_array[9]; //FLASH_ReadByte(ADDRESS_MOTOR_ASSISTANCE_WITHOUT_PEDAL_ROTATION);
-    
-    m_configuration_variables.ui8_assist_with_error_enabled = ui8_default_array[10]; //FLASH_ReadByte(ADDRESS_MOTOR_ASSISTANCE_WITH_ERROR_ENABLED);
-    m_configuration_variables.ui8_battery_SOC_percentage_8b = ui8_default_array[11]; //FLASH_ReadByte(ADDRESS_BATTERY_SOC);
-    m_configuration_variables.ui8_set_parameter_enabled = ui8_default_array[12]; //FLASH_ReadByte(ADDRESS_SET_PARAMETER_ON_STARTUP);
-    m_configuration_variables.ui8_street_mode_enabled = ui8_default_array[13]; //FLASH_ReadByte(ADDRESS_STREET_MODE_ON_STARTUP);
-    m_configuration_variables.ui8_riding_mode = ui8_default_array[14]; //FLASH_ReadByte(ADDRESS_RIDING_MODE_ON_STARTUP);
-    m_configuration_variables.ui8_lights_configuration = ui8_default_array[15]; //FLASH_ReadByte(ADDRESS_LIGHTS_CONFIGURATION_ON_STARTUP);
-    m_configuration_variables.ui8_startup_boost_enabled = ui8_default_array[16]; //FLASH_ReadByte(ADDRESS_STARTUP_BOOST_ON_STARTUP);
-    m_configuration_variables.ui8_auto_display_data_enabled = ui8_default_array[17]; //FLASH_ReadByte(ADDRESS_ENABLE_AUTO_DATA_DISPLAY);
-    m_configuration_variables.ui8_soc_percent_calculation = ui8_default_array[18]; //FLASH_ReadByte(ADDRESS_SOC_PERCENT_CALC);
-    
-    m_configuration_variables.ui8_torque_sensor_adv_enabled = ui8_default_array[19]; //FLASH_ReadByte(ADDRESS_TORQUE_SENSOR_ADV_ON_STARTUP);
-}
-*/
-
+// Fill m_configuration_variables with saved flash or with default
 void m_configuration_init(void){
  // added by mstrens in order to fill m-configuration_variables with the variables from m_config before having eeprom functions
- // This has to be called AFTER that m_config fas been filled   
+ // This has to be called AFTER that m_config fas been filled
+  // pointer to m_configuration_variables
+  struct_configuration_variables *p_configuration_variables = &m_configuration_variables;
+  // 32 bytes to use as buffer  
+  uint32_t ui32_temp[8] = {0};  //reserve 32 bytes = 2 bloks of 16 bytes
+  // flash address being used
+  uint32_t * pAddress32 = (uint32_t *) ADDRESS_OF_M_CONFIGURATION_VARIABLES;
+  // read version in flash
+  uint32_t ui32_saved_key = XMC_FLASH_ReadWord(pAddress32);
+  
+  // when saved_key is not valid, fill m_configuration_variables with default from general settings
+  if (ui32_saved_key != VERSION_OF_M_CONFIGURATION_VARIABLES) {
+    m_configuration_variables.version = VERSION_OF_M_CONFIGURATION_VARIABLES;  
     m_configuration_variables.ui8_battery_current_max = m_config.battery_current_max;
     m_configuration_variables.ui16_battery_low_voltage_cut_off_x10 = m_config.battery_low_voltage_cut_off * 10;
     m_configuration_variables.ui16_wheel_perimeter = m_config.wheel_perimeter;
@@ -110,4 +70,23 @@ void m_configuration_init(void){
     m_configuration_variables.ui8_auto_display_data_enabled = m_config.enable_auto_data_display;
     m_configuration_variables.ui8_soc_percent_calculation = m_config.soc_percent_calc;
     m_configuration_variables.ui8_torque_sensor_adv_enabled = m_config.torque_sensor_adv_on_startup;
+    //copy config in ui32_temp[8] nad save ui32_temp into flash, so it can be changed and reused
+    memcpy( ui32_temp, p_configuration_variables , (uint32_t) sizeof(m_configuration_variables) ); // dest, source, number)
+    XMC_FLASH_WriteBlocks	(	pAddress32, ui32_temp, 2, false);	 // flash adr, source, number of blocks of 16 bytes, verify   
+  }
+  else { // when saved_key is valid, use flash data
+    // read config (32 bytes) into ui32_temp and copy the right number of bytes into m_configuration_variable
+    XMC_FLASH_ReadBlocks	(	pAddress32, ui32_temp , 2); // we read 2 X 16 bytes (24 are normally enough)
+    memcpy( p_configuration_variables , ui32_temp , sizeof(m_configuration_variables) ); // dest , source, number
+  }
+}
+
+void EEPROM_write()
+{
+  struct_configuration_variables *p_configuration_variables = &m_configuration_variables;  
+  uint32_t * pAddress32 = (uint32_t *) ADDRESS_OF_M_CONFIGURATION_VARIABLES;
+  uint32_t ui32_temp[8] = {0};  //reserve 32 bytes = 2 bloks of 16 bytes
+  // copy the config in a buffer (32 bytes)
+  memcpy( ui32_temp, p_configuration_variables , (uint32_t) sizeof(m_configuration_variables) ); // dest, source, number)
+  XMC_FLASH_WriteBlocks	(	pAddress32, ui32_temp, 2, false);	 // flash adr, source, number of blocks of 16 bytes, verify   
 }

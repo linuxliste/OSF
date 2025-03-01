@@ -114,6 +114,6 @@ done:
         - #define ADC_10_BIT_BATTERY_EXTRACURRENT				50  //  8 amps
         - #define ADC_10_BIT_BATTERY_CURRENT_MAX				112	// 18 amps // 1 = 0.16 Amp
         -define ADC_10_BIT_MOTOR_PHASE_CURRENT_MAX			187	// 30 amps // 1 = 0.16 Amp
-- in config.h
+- in config_tsdz8.h
     - ENABLE_THROTTLE has been set on 1 (test with throttle)        
 - in uart.c, I added an error on temperature based on the chip temperature.

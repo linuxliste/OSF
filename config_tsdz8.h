@@ -1,12 +1,12 @@
 /*
- * config.h
+ * config_tesdz8.h
  *
  *  Automatically created by TSDS2 Parameter Configurator
  *  Author: stancecoke
  */
 
-#ifndef CONFIG_H_
-#define CONFIG_H_
+#ifndef CONFIG_TSDZ8_H_
+#define CONFIG_TSDZ8_H_
 
 #include "cybsp.h"
 #include "cy_utils.h"

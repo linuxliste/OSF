@@ -12,6 +12,7 @@
 
 //to debug hall sensor positions
 #define INTERVAL_COUNTER (1 * 6);  // average on 128 electric rotations; * 6 because 6 hall patterns
+
 // power variables
 extern volatile uint8_t ui8_controller_duty_cycle_ramp_up_inverse_step;
 extern volatile uint8_t ui8_controller_duty_cycle_ramp_down_inverse_step;
@@ -46,7 +47,6 @@ extern volatile uint8_t ui8_battery_SOC_saved_flag;
 extern volatile uint8_t ui8_battery_SOC_reset_flag;
 
 // end of code copied from TSDZ2
-//extern uint8_t ui8_test_mode_flag; 
 
 void CCU80_0_IRQHandler(); // called when ccu8 Slice 4 reaches 840  counting UP (= 1/4 of 19mhz cycles)
 void CCU80_1_IRQHandler(); // called when ccu8 Slice 4 reaches 840  counting DOWN (= 1/4 of 19mhz cycles)

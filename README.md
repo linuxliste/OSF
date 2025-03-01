@@ -17,10 +17,8 @@ As the TSDZ8 version is similar to TSDZ2 version, it is good to look at the TSDZ
 
 This version differs with :
 * it requires a Jlink device instead of a stlink device to flash the firmware and the configuration in the controller
-* it uses an XLS configurator instead of a java configurator to generate the configuration
 * it does not require to install additionnal software in order to compile the firmware yourself. The firmware is already precompiled on this site. Still if you want to change some code, see below the tools to be installed. 
 * it is possible to fine tune one parameter (global offset) in order to take care of litte differences (tolerances) that could exist between different motors. This is optionnal.
-* there is a small known limitation whith the current version. Like the TSDZ2 version, this version is supposed to let you change some setup parameters using the display keyboard. Still currently the changes done with the display are lost after a power off. This should be fixed in a future version.
 
 
 # IMPORTANT NOTES
@@ -34,7 +32,7 @@ This version differs with :
 
 To use this firmware, you will have to:
 * Donwload this firmware
-* Generate a file with your preferences (configuration file)
+* Generate a file with your preferences (with a GUI configurator)
 * Use a Segger Jlink device and a cable (this device replace the Stlink used for TSDZ2)
 * Flash the compiled firmware on the TSDZ8 controller
 * Flash also the file containing your preferences
@@ -53,31 +51,19 @@ If you downloaded, unzip the archive where you want.
 
 # 2.Generate the configuration file
 
-There is an xls google sheet to let you define your preference.
-This sheet is stored here (on google sheet):
- https://docs.google.com/spreadsheets/d/1JGoD7aYM3r_jNYhAEYnjPz8FSN3tRxFrSeNIAMIy3Ys/edit?usp=sharing.
- 
-You can't modify it directly but you can copy (on google store) or dowload it as xlsx. You can then edit this copy or dowload. 
+There configuration file is generated with the same tool as TSDZ2: javaconfigurator.jar.
+To know how to use this tool and the purpose of all parameters, see the TSDZ2 manual at https://github.com/emmebrusa/TSDZ2-Smart-EBike-1/blob/master/manuals/EN-Parameter_configurator_guide-TSDZ2-v20.1C.2-2.pdf
+Note: it could be that the TSDZ2 manual is not 100% up to date (the configurator contains perhaps a few more fields).
 
-This sheet replaces the OSF configurator for TSDZ2 but it allows to change (nearly) all the same parameters.
 
-To understand the purpose of all those parameters, see the TSDZ2 manual at https://github.com/emmebrusa/TSDZ2-Smart-EBike-1/blob/master/manuals/EN-Parameter_configurator_guide-TSDZ2-v20.1C.2-2.pdf
+At this stage, I made a specific java configurator for TSDZ8 but later on, it will probably be included in the TSDZ2 configuration.
 
-Note: it seems that the TSDZ2 manual is not 100% up to date (the configurator contains a few more fields).
-The TSDZ2 configurator (JavaConfigurator.jar) is available at https://github.com/emmebrusa/TSDZ2-Smart-EBike-1 but can'be use for TSDZ8
+So currently, you have to use the file named OSF_TSDZ8_configurator.jar from this github site.
 
-To use the sheet:
-- first edit the parameters you want in the yellow cells from the 3 first sheets (Basic settings, Assistance settings, Advance settings).
-- in the tab "Advance settings", click on the blue button. This will move to the HEX sheet and select some cells.
-- in the sheet "HEX", make a copy of the already selected cells to the clipboard (CTRL+C)
-- open a basic editor (like notepad); create an empty document and paste the values you just copied.
-- save your document with a file name extension equal to "HEX" 
+When you run it, after editing your preferences, click the button "Compile & flash". The configurator will open a popup (tested with windows) and you have to press twice a key. It creates a file "files_to_flash/TSDZ8_config.hex" that has to be flashed(=uploaded)  in the controller. 
 
-Important note: 
-The cells are not protected in the sheet. So be carreful to edit/modify only the cells containing parameters (yellow cells).
-There are currently nearly no check on the values being introduced. So be carrefull.
-In the future, I could add some more checks/comments.
-If you have a doub look at the TSDZ2 configurator (manual and/or program). 
+Note: This version is just a raw copy of TSDZ2 version and it will also try to compile and flash. Those steps will fail but it is not a problem for TSDZ8 as there is no need for compilation and flashing is done manually with a Jlink device.
+
 
 # 3.Preparing Jlink
 
@@ -103,13 +89,18 @@ Note: it is usefull to be able to connect/disconnect the VCC/VtRef wire.
 When flashing, best is to avoid to power the motor from the main battery. VTref can be connected in order to let the PC provide the power supply (by default only when using a Jlink clone and not an official one).
 When monitoring/fine tuning some parameters, the motor must be powered from the main battery. It is then better not to connect VtRef to avoid voltage conflict on Jlink (TSDZ8 deliver 5V, Jlink 3.3V). I expect there is a protection but I am not 100% sure.
 
+Note: if you make your own cable with an extension cord, it can be usefull to be able to use it as well to flash the controller as well to monitor motor parameters and also as extension cord.
+To do so, cut the extension cord and resolder the 6 wires and solder also the 4 wires to the Jlink device.
+
+Note : when you want to use the cable for flashing/monitoring the controller, you always have to connect the cable directly to the controller. It means that you have to disconnect the speed sensor from the controller. If you build your own cable and keep it as extension cord, you can then reconnect the speed sensor at the other end (e.g. to monitor some parameters while the wheel is turning).   
+
 # 4.Flash the firmware
 
 To flash, you can follow the instructions from here to know how to use Jlink: 
 https://ebikestuff.eu/en/content/18-tsdz8-firmware-update-using-j-link-jlink-v9-programming-kit
 
 The HEX file to upload is the one you downloaded from this github site at step 1.
-It is named OSF_TSDZ8_Vxx_xx.hex where xx.xx is a version number.
+It is in folder "files_to_flash" and named OSF_TSDZ8_Vxx_xx.hex where xx.xx is a version number.
 
 While flashing, the motor should best not be powered by the battery. Disconnect it or at least power it OFF. In principe, the Jkink will provide power to the controller (at least if it is a Jlink clone device). It seems possible to keep the motor connected to the display but do not press any button on the display.
 
@@ -149,7 +140,7 @@ If you want to do this step, you have to:
 - when ON, the motor should immediately start running (do not forget to remove the chain before this step).
 - you can change the 2 sliders just below. Set the duty cycle in order to let the motor run quite fast (depends on the battery voltage) without driving a to high current.
 - the principle consists to change the "Offset" slider position in order to get the lowest "Average current" for a given "Duty cycle" 
-- the offset value providing the lowest average current has to be noted and filled in the XLS configurator.
+- the offset value providing the lowest average current has to be noted and filled in the configurator. Note: the current configurator still does not allow to fill this parameter. It will be added in a future version.
 - generate a new configuration file and flash it like in step 5.
 
 Note: when Testing is ON, the firmware discard the wheel speed sensor (because the Jlink uses the same connector).

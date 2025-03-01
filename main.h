@@ -9,26 +9,28 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
-#include "config.h"
+#include "config_tsdz8.h"
 #include "common.h"
 
-#define FIRMWARE_VERSION "0.1.2"      // is not used; just for reference)
-#define MAIN_CONFIGURATOR_VERSION 2   // for configurator (must be the same as in xls sheet)
-#define SUB_CONFIGURATOR_VERSION 1    // is not used (just for reference)
+#define FIRMWARE_VERSION "0.1.3"      // is not used; just for reference)
+#define MAIN_CONFIGURATOR_VERSION 3   // for configurator (must be the same as in xls sheet)
+#define SUB_CONFIGURATOR_VERSION  0    // is not used (just for reference)
 
 #define DEBUG_ON_JLINK         (0)  // when 1, messages are generated on jlink; best is to connect only 3 wires (grnd + SWO and S???)
 
 #define USE_CONFIG_FROM_COMPILATION (0)  // this should normally be set on 0; Then values defined in configurator and stored in flash are applied
                                         // set to 1 only if you want to give priority to
-                                         // the parameters defined in config.h and used for compilation
+                                         // the parameters defined in config_tsdz8.h and used for compilation
                                          // this can be convenient for testing/debugging
 
+#define WHEEL_SPEED_X10_SIMULATE  (0)   // 0 = do not simulate; >0 =  speed in 0,1km/h (e.g. 60 = 6 km/h)
 // added to manage TESTING_MODE = allow e.g. to find best global offset or to run at a fixed duty cycle
 #define NORMAL_RUNNING_MODE 0     // motor run as usual
 #define TESTING_MODE 1    // motor is controlled by a few set up defined in uc_probe
 
 // default parameters for easy testing;  can be changed with uc_probe
 #define DEFAULT_TEST_MODE_FLAG        NORMAL_RUNNING_MODE              // or TESTING_MODE 
+
 #define DEFAULT_BATTERY_CURRENT_TARGET_TESTING_A    3 // in Amp ; value set for safety when testing
 #define DEFAULT_DUTY_CYCLE_TARTGET_TESTING          150      // max 255 ; can be changed in uc_probe
 
@@ -40,7 +42,7 @@
 // for CCU4 slice 2
 #define HALL_COUNTER_FREQ                       250000U // 250KHz or 4us
 
-#define PWM_DUTY_CYCLE_MAX                      255  //        
+#define PWM_DUTY_CYCLE_MAX                      254     
 #define PWM_DUTY_CYCLE_STARTUP	                30    // Initial PWM Duty Cycle at motor startup
 
 
@@ -83,7 +85,10 @@
 // for TSDZ2
 //#define MOTOR_SPEED_FIELD_WEAKENING_MIN			490 // it is to compare with erps 
 //For TSDZ8, I expect that it must be 2 * smaller for the same mecanical speed (4 poles instead of 8)
-#define MOTOR_SPEED_FIELD_WEAKENING_MIN				245
+#define MOTOR_SPEED_FIELD_WEAKENING_MIN				245 // 90 rpm
+
+// for TSDZ8 is must be 2 * smaller (320 for TSDZ2 becomes 160)
+#define ERPS_SPEED_OF_MOTOR_REENABLING						160 // 60 rpm
 
 // foc angle multiplier
 // TSDZ2 48 volt motor has inductance = 135uH and 8 poles;
@@ -162,9 +167,11 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 #define ADC_TORQUE_SENSOR_ANGLE_COEFF			11
 #define ADC_TORQUE_SENSOR_ANGLE_COEFF_X10		(uint16_t)(ADC_TORQUE_SENSOR_ANGLE_COEFF * 10)
 
+
+
 /*
 // Torque sensor range values
-#define ADC_TORQUE_SENSOR_RANGE				(uint16_t)(PEDAL_TORQUE_ADC_MAX - PEDAL_TORQUE_ADC_OFFSET)
+#define ADC_TORQUE_SENSOR_RANGE					(uint16_t)(PEDAL_TORQUE_ADC_MAX - PEDAL_TORQUE_ADC_OFFSET)
 #define ADC_TORQUE_SENSOR_RANGE_TARGET	  		160
 
 // Torque sensor offset values
@@ -179,8 +186,8 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 #endif
 
 // adc torque range parameters for remapping
-#define ADC_TORQUE_SENSOR_DELTA_ADJ			(uint16_t)((ADC_TORQUE_SENSOR_MIDDLE_OFFSET_ADJ * 2) - ADC_TORQUE_SENSOR_CALIBRATION_OFFSET - ADC_TORQUE_SENSOR_OFFSET_ADJ)
-#define ADC_TORQUE_SENSOR_RANGE_INGREASE_X100   	(uint16_t)((ADC_TORQUE_SENSOR_RANGE_TARGET * 50) / ADC_TORQUE_SENSOR_RANGE)
+#define ADC_TORQUE_SENSOR_DELTA_ADJ				(uint16_t)((ADC_TORQUE_SENSOR_MIDDLE_OFFSET_ADJ * 2) - ADC_TORQUE_SENSOR_CALIBRATION_OFFSET - ADC_TORQUE_SENSOR_OFFSET_ADJ)
+#define ADC_TORQUE_SENSOR_RANGE_INGREASE_X100	(uint16_t)((ADC_TORQUE_SENSOR_RANGE_TARGET * 50) / ADC_TORQUE_SENSOR_RANGE)
 #define ADC_TORQUE_SENSOR_ANGLE_COEFF			11
 #define ADC_TORQUE_SENSOR_ANGLE_COEFF_X10		(uint16_t)(ADC_TORQUE_SENSOR_ANGLE_COEFF * 10)
 
@@ -195,7 +202,7 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 #define PERCENT_TORQUE_SENSOR_RANGE_WITH_WEIGHT		75 // % of torque sensor range with weight
 #define ADC_TORQUE_SENSOR_TARGET_WITH_WEIGHT		(uint16_t)((ADC_TORQUE_SENSOR_RANGE_TARGET * PERCENT_TORQUE_SENSOR_RANGE_WITH_WEIGHT) / 100)
 
-#define ADC_TORQUE_SENSOR_DELTA_WITH_WEIGHT		(uint16_t)(((((ADC_TORQUE_SENSOR_TARGET_WITH_WEIGHT \
+#define ADC_TORQUE_SENSOR_DELTA_WITH_WEIGHT			(uint16_t)(((((ADC_TORQUE_SENSOR_TARGET_WITH_WEIGHT \
 * ADC_TORQUE_SENSOR_RANGE_TARGET_MIN) / ADC_TORQUE_SENSOR_RANGE_TARGET)	* (100 + PEDAL_TORQUE_ADC_RANGE_ADJ) / 100) \
 * (ADC_TORQUE_SENSOR_TARGET_WITH_WEIGHT - ADC_TORQUE_SENSOR_CALIBRATION_OFFSET + ADC_TORQUE_SENSOR_OFFSET_ADJ \
 - ((ADC_TORQUE_SENSOR_DELTA_ADJ * ADC_TORQUE_SENSOR_TARGET_WITH_WEIGHT) / ADC_TORQUE_SENSOR_RANGE_TARGET))) / ADC_TORQUE_SENSOR_TARGET_WITH_WEIGHT)
@@ -208,22 +215,23 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 */
 
 // scale the torque assist target current
-#define TORQUE_ASSIST_FACTOR_DENOMINATOR		120
+#define TORQUE_ASSIST_FACTOR_DENOMINATOR			120
 
 // torque step mode
-#define TORQUE_STEP_DEFAULT				    0 // not calibrated
-#define TORQUE_STEP_ADVANCED				1 // calibrated
+#define TORQUE_STEP_DEFAULT							0 // not calibrated
+#define TORQUE_STEP_ADVANCED						1 // calibrated
 
 // smooth start ramp
-#define SMOOTH_START_RAMP_MIN				30
+#define SMOOTH_START_RAMP_DEFAULT					165 // 35% (255=0% long ramp)
+#define SMOOTH_START_RAMP_MIN						30
 
 // adc current
-//#define ADC_10_BIT_BATTERY_EXTRACURRENT		38  //  6 amps
-#define ADC_10_BIT_BATTERY_EXTRACURRENT			50//50 // value for TSDZ2=50; should be OK for TSDZ8 too  // 50 = 50*0.16= 8 amps
-#define ADC_10_BIT_BATTERY_CURRENT_MAX			112//112 // value for Tsdz2= 112;  should be ok for TSDZ8; 112 = 18 amps // 1 = 0.16 Amp
-//#define ADC_10_BIT_BATTERY_CURRENT_MAX		124	// 20 amps // 1 = 0.16 Amp
-//#define ADC_10_BIT_BATTERY_CURRENT_MAX		136	// 22 amps // 1 = 0.16 Amp
-#define ADC_10_BIT_MOTOR_PHASE_CURRENT_MAX		187//187 // value for tsdz2 = 187 ; :187 = 30 amps // 1 = 0.16 Amp
+//#define ADC_10_BIT_BATTERY_EXTRACURRENT				38  //  6 amps
+#define ADC_10_BIT_BATTERY_EXTRACURRENT				50  //  8 amps
+#define ADC_10_BIT_BATTERY_CURRENT_MAX				112	// 18 amps // 1 = 0.16 Amp
+//#define ADC_10_BIT_BATTERY_CURRENT_MAX				124	// 20 amps // 1 = 0.16 Amp
+//#define ADC_10_BIT_BATTERY_CURRENT_MAX				136	// 22 amps // 1 = 0.16 Amp
+#define ADC_10_BIT_MOTOR_PHASE_CURRENT_MAX			187	// 30 amps // 1 = 0.16 Amp
 /*---------------------------------------------------------
  NOTE: regarding ADC battery current max
 
@@ -234,8 +242,8 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
  ---------------------------------------------------------*/
 
 // throttle ADC values
-//#define ADC_THROTTLE_MIN_VALUE			47
-//#define ADC_THROTTLE_MAX_VALUE			176
+//#define ADC_THROTTLE_MIN_VALUE					47
+//#define ADC_THROTTLE_MAX_VALUE					176
 
 /*---------------------------------------------------------
  NOTE: regarding throttle ADC values
@@ -246,7 +254,7 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
  ---------------------------------------------------------*/
 
 // cadence sensor
-#define CADENCE_SENSOR_NUMBER_MAGNETS			20U  // is not used in the code (hardcoded 60 min / 20 = 3)
+//#define CADENCE_SENSOR_NUMBER_MAGNETS				20U
 
 /*---------------------------------------------------------------------------
  NOTE: regarding the cadence sensor
@@ -270,12 +278,10 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
  --------------------------------------------------------------------------*/
 
 // ADC battery voltage measurement
-//#define BATTERY_VOLTAGE_PER_10_BIT_ADC_STEP_X512		44  
-#define BATTERY_VOLTAGE_PER_10_BIT_ADC_STEP_X1000		87  // conversion value verified with a cheap power meter = MVolt/adc10bit
-
+#define BATTERY_VOLTAGE_PER_10_BIT_ADC_STEP_X1000		87  // conversion value verified with a cheap power meter
 
 // ADC battery voltage to be subtracted from the cut-off
-#define DIFFERENCE_CUT_OFF_SHUTDOWN_10_BIT			100
+#define DIFFERENCE_CUT_OFF_SHUTDOWN_10_BIT				100
 
 /*---------------------------------------------------------
  NOTE: regarding ADC battery voltage measurement
@@ -289,7 +295,6 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
  ---------------------------------------------------------*/
 
 // ADC battery current measurement
-//#define BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X512		80
 #define BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100		16  // 0.16A x 10 bit ADC step
 
 // for oem display
@@ -303,9 +308,9 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 #define RX_STX						0x59
 
 // parameters for display data
-#define MILES						1
+#define MILES										1
 
-#define DATA_INDEX_ARRAY_DIM		6
+#define DATA_INDEX_ARRAY_DIM						6
 
 /*
 // delay lights function (0.1 sec)
@@ -402,6 +407,12 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 #define BATTERY_SOC					0
 // battery SOC % threshold x10 (volts calc)
 #define BATTERY_SOC_PERCENT_THRESHOLD_X10		150
+
+// SOC calculation
+#define SOC_CALC_AUTO							0
+#define SOC_CALC_WH								1
+#define SOC_CALC_VOLTS							2
+
 /*
 // cell bars
 #if ENABLE_VLCD6 || ENABLE_XH18
@@ -488,8 +499,11 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 
 #define AVAIABLE_FOR_FUTURE_USE				0 // EEPROM
 
+
+// added by mstrens to store the configuration from xls configurator
 #define ADDRESS_OF_M_CONFIG_FLASH 0x1000F000U // address in flash where the config is strored (must be the same as the adrress set in the xls for config)
 
-
+#define ADDRESS_OF_M_CONFIGURATION_VARIABLES 0x1000FF00 // address in flash of the variables modified by the display
+#define VERSION_OF_M_CONFIGURATION_VARIABLES 0XAABB // to to check if flash contains a setup that can be used
 
 #endif // _MAIN_H_

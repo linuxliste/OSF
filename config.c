@@ -1,13 +1,16 @@
 #include "xmc_flash.h"
-#include "config.h"
+#include "config_tsdz8.h"
 #include "common.h" // to know the uint type
 #include "main.h"
+
+
+
 
 
 struct_config m_config = {
 _MAIN_VERSION,
 _SUB_VERSION,
-_GLOBAL_OFFSET_ANGLE ,
+_GLOBAL_OFFSET_ANGLE,
 _RESERVE_2   ,
 _RESERVE_3   ,
 _RESERVE_4   ,
@@ -85,7 +88,6 @@ _COASTER_BRAKE_ENABLED ,
 _COASTER_BRAKE_TORQUE_THRESHOLD ,
 _ENABLE_AUTO_DATA_DISPLAY ,
 _STARTUP_ASSIST_ENABLED ,
-_AUTO_DATA_NUMBER_DISPLAY ,
 _DELAY_DISPLAY_DATA_1 ,
 _DELAY_DISPLAY_DATA_2 ,
 _DELAY_DISPLAY_DATA_3 ,
@@ -128,6 +130,7 @@ _CRUISE_TARGET_SPEED_LEVEL_4 ,
 _CRUISE_MODE_WALK_ENABLED ,
 _CRUISE_THRESHOLD_SPEED ,
 _PEDAL_TORQUE_ADC_OFFSET ,
+_AUTO_DATA_NUMBER_DISPLAY ,
 _UNITS_TYPE ,
 _ASSIST_THROTTLE_MIN_VALUE ,
 _ASSIST_THROTTLE_MAX_VALUE ,
@@ -152,6 +155,8 @@ _THROTTLE_MODE ,
 _STREET_MODE_THROTTLE_MODE ,
 _ASSIST_LEVEL_1_OF_5_PERCENT ,
 _ALTERNATIVE_MILES ,
+_PWM_FREQ,
+_OVERCURRENT_DELAY,
 } ; 
 
 uint16_t c_ADC_TORQUE_SENSOR_RANGE_TARGET; 
@@ -476,7 +481,6 @@ void init_extra_fields_config (){
 
 void upload_m_config(){
     uint16_t * pConfig = (uint16_t *) ADDRESS_OF_M_CONFIG_FLASH;  // point to the begin of user preference parameters in flash 
-    //uint8_t content_of_pConfig = * pConfig;
     if ( *pConfig != m_config.main_version) {
         return; // discard flash parameters (and use those from compilation) if the main version is different
                 // in ebike_app.c there is another check that force an ERROR_MOTOR_CHECK to block the motor
@@ -561,7 +565,6 @@ void upload_m_config(){
         m_config.coaster_brake_torque_threshold = *pConfig++;
         m_config.enable_auto_data_display = *pConfig++;
         m_config.startup_assist_enabled = *pConfig++;
-        m_config.auto_data_number_display = *pConfig++;
         m_config.delay_display_data_1 = *pConfig++;
         m_config.delay_display_data_2 = *pConfig++;
         m_config.delay_display_data_3 = *pConfig++;
@@ -604,6 +607,7 @@ void upload_m_config(){
         m_config.cruise_mode_walk_enabled = *pConfig++;
         m_config.cruise_threshold_speed = *pConfig++;
         m_config.pedal_torque_adc_offset = *pConfig++;
+        m_config.auto_data_number_display = *pConfig++;
         m_config.units_type = *pConfig++;
         m_config.assist_throttle_min_value = *pConfig++;
         m_config.assist_throttle_max_value = *pConfig++;
@@ -628,5 +632,7 @@ void upload_m_config(){
         m_config.street_mode_throttle_mode = *pConfig++;
         m_config.assist_level_1_of_5_percent = *pConfig++;
         m_config.alternative_miles = *pConfig++;
+        m_config.pwm_freq = *pConfig++;
+        m_config.overcurrent_delay = *pConfig++;
     } // end of good config version
 }

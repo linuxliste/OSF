@@ -1,11 +1,12 @@
 ------------- tasks to perform when publishing a new version ----------------
 When changed are done to this firmware, I have to take care of:
-- change some #define in main.f file:
-    - #define VERSION "0.0.0"                                     This is the firmware version
+- change some #define in main.h file:
+    - #define VERSION "x.x.x"                                     This is the firmware version
     - #define _MAIN_CONFIGURATOR_VERSION 1        to another number; first digit must be changed if xls configurator format changed (e.g. using a reserve field)
     - #define _SUB_CONFIGURATOR_VERSION  1         to another value if minor change is done in xls configurator 
     - #define DEBUG_ON_JLINK         (0)                          to avoid debug messages via jlink
     - #define USE_CONFIG_FROM_COMPILATION (0)                     to force it to use the config flashed in the upper part of memory (generated with xls)
+    - #define WHEEL_SPEED_X10_SIMULATE  (0)                       to avoid simulation of wheel speed sensor
     - #define DEFAULT_TEST_MODE_FLAG        NORMAL_RUNNING_MODE   to avoid that it run in test mode
 - compile the firmware with menu Terminal + Run build task ; it creates a HEX and a ELF file in the build/last config folder.
 - do a copy paste of the HEX file to the root folder (/OSF) 
