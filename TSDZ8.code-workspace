@@ -27,7 +27,11 @@
         "files.associations": {
             "motor.h": "c",
             "segger_rtt.h": "c"
-        }
+        },
+        "java.project.sourcePaths": [
+            "tools\\Java_Configurator_Source\\src"
+        ],
+        "java.project.referencedLibraries": []
     },
     "extensions": {
         "recommendations": [ "marus25.cortex-debug", "ms-vscode.cpptools", "dan-c-underwood.arm" ]

@@ -18,7 +18,7 @@ As the TSDZ8 version is similar to TSDZ2 version, it is good to look at the TSDZ
 This version differs with :
 * it requires a Jlink device instead of a stlink device to flash the firmware and the configuration in the controller
 * it does not require to install additionnal software in order to compile the firmware yourself. The firmware is already precompiled on this site. Still if you want to change some code, see below the tools to be installed. 
-* it is possible to fine tune one parameter (global offset) in order to take care of litte differences (tolerances) that could exist between different motors. This is optionnal.
+* it is possible to fine tune one parameter (global offset angle in range -5/+5) in order to take care of litle differences (tolerances) that could exist between different motors. This is optionnal.
 
 
 # IMPORTANT NOTES
@@ -52,7 +52,7 @@ If you downloaded, unzip the archive where you want.
 # 2.Generate the configuration file
 
 There configuration file is generated with the same tool as TSDZ2: javaconfigurator.jar.
-To know how to use this tool and the purpose of all parameters, see the TSDZ2 manual at https://github.com/emmebrusa/TSDZ2-Smart-EBike-1/blob/master/manuals/EN-Parameter_configurator_guide-TSDZ2-v20.1C.2-2.pdf
+To know how to use this tool and the purpose of all parameters, see the TSDZ2 manuals at https://github.com/emmebrusa/TSDZ2-Smart-EBike-1/tree/master/manuals
 Note: it could be that the TSDZ2 manual is not 100% up to date (the configurator contains perhaps a few more fields).
 
 

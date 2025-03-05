@@ -57,7 +57,7 @@ typedef struct  _configuration_variables
 
 extern uint8_t ui8_test_mode_flag ;
 extern volatile uint32_t ui32_adc_battery_current_filtered_15b; // value in 12 +2 +1 = 15 bits (ADC + IIR + average)
-extern uint8_t global_offset_angle ; 
+extern uint8_t hall_reference_angle ; 
 
 void ebike_app_controller(void);
 struct_configuration_variables* get_configuration_variables(void);

@@ -9,8 +9,11 @@ When changed are done to this firmware, I have to take care of:
     - #define WHEEL_SPEED_X10_SIMULATE  (0)                       to avoid simulation of wheel speed sensor
     - #define DEFAULT_TEST_MODE_FLAG        NORMAL_RUNNING_MODE   to avoid that it run in test mode
 - compile the firmware with menu Terminal + Run build task ; it creates a HEX and a ELF file in the build/last config folder.
-- do a copy paste of the HEX file to the root folder (/OSF) 
+- do a copy paste of the HEX file to the folder /OSF/files_to_flash 
 - rename this paste as "OSF_TSDZ8_Vxx_xx_xx.hex" where XX_XX_XX is the same as the firmware version in main.h
+
+- if there are change in java configurator, compile the java firmware and rename it in OSF_TSDZ8_configurator
+
 
 ------------  General infos --------------------
 Normally there is no need to recompile this firmware with different parameters depending on the desired options.

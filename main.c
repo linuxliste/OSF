@@ -110,8 +110,8 @@ extern uint8_t ui8_hall_ref_angles_log;
 
     
 
-extern volatile uint8_t best_ref_angle[8] ;
-extern uint32_t best_ref_angle_X16bits[8] ;
+extern volatile uint8_t ui8_best_ref_angles[8] ;
+extern uint32_t best_ref_angles_X16bits[8] ;
 
 extern uint16_t ui16_adc_motor_phase_current;
 extern volatile uint8_t ui8_adc_motor_phase_current_max;
@@ -119,7 +119,7 @@ extern volatile uint16_t ui16_hall_counter_total;
 extern volatile uint16_t ui16_adc_voltage;
 extern volatile uint16_t ui16_adc_voltage_cut_off;
 
-extern uint8_t global_offset_angle;
+extern uint8_t hall_reference_angle;
 /*******************************************************************************
 * Function Name: SysTick_Handler
 ********************************************************************************
@@ -172,8 +172,8 @@ int main(void)
 
     // fill table used for knowing the best hall pattern positions
     for (uint8_t i = 0; i<8 ; i++) { 
-        best_ref_angle[i] = ui8_hall_ref_angles[i];
-        best_ref_angle_X16bits[i] = ui8_hall_ref_angles[i] << 8;
+        ui8_best_ref_angles[i] = ui8_hall_ref_angles[i];
+        best_ref_angles_X16bits[i] = ui8_hall_ref_angles[i] << 8;
     } // init best value with reference values.
 
     #if(uCPROBE_GUI_OSCILLOSCOPE == MY_ENABLED)
@@ -337,7 +337,7 @@ int main(void)
                 (unsigned int) ui8_g_duty_cycle,
                 (unsigned int) ui16_motor_speed_erps,
                 (unsigned int) ui16_hall_counter_total,
-                best_ref_angle[1], best_ref_angle[2], best_ref_angle[3], best_ref_angle[4], best_ref_angle[5], best_ref_angle[6]
+                ui8_best_ref_angles[1], ui8_best_ref_angles[2], ui8_best_ref_angles[3], ui8_best_ref_angles[4], ui8_best_ref_angles[5], ui8_best_ref_angles[6]
             );
             //for (uint8_t i = 1; i<7; i++){
             //    real_ticks_interval[i] = 0 ;  // reset real interval between 2 hall patterns

@@ -48,6 +48,8 @@ extern volatile uint8_t ui8_battery_SOC_reset_flag;
 
 // end of code copied from TSDZ2
 
+
+
 void CCU80_0_IRQHandler(); // called when ccu8 Slice 4 reaches 840  counting UP (= 1/4 of 19mhz cycles)
 void CCU80_1_IRQHandler(); // called when ccu8 Slice 4 reaches 840  counting DOWN (= 1/4 of 19mhz cycles)
 void POSIF0_1_IRQHandler(); // called when posif generate a SR 1 ( used currently to debug)

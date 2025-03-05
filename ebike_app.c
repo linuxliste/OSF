@@ -245,6 +245,14 @@ uint16_t debug2 =0;
 uint16_t debug3 =0;
 uint16_t debug4 =0;
 uint16_t debug5 =0;
+uint16_t debug6 =0;
+uint16_t debug7 =0;
+uint16_t debug8 =0;
+uint16_t debug9 =0;
+extern volatile uint8_t ui8_best_ref_angles[8];
+
+
+
 
 // system functions
 static void get_battery_voltage(void);
@@ -405,7 +413,7 @@ void ebike_app_init(void)
 		ui8_adc_motor_phase_current_max = ADC_10_BIT_MOTOR_PHASE_CURRENT_MAX;
 	}
 	// added by Mstrens
-	global_offset_angle = m_config.global_offset_angle ; 
+	hall_reference_angle = m_config.global_offset_angle + (uint8_t) DEFAULT_HALL_REFERENCE_ANGLE; 
 }
 
 
@@ -473,6 +481,14 @@ void ebike_app_controller(void) // is called every 25ms by main()
      not cause any undesirable consequences.
 
      ------------------------------------------------------------------------*/
+	// for debugging
+	debug1 = ui8_best_ref_angles[2];
+	debug2 = ui8_best_ref_angles[3];
+	debug3 = ui8_best_ref_angles[4];
+	debug4 = ui8_best_ref_angles[5];
+	debug5 = ui8_best_ref_angles[6];
+	
+
 }
 
 
@@ -647,8 +663,7 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
 
         // set target battery current in controller
         ui8_controller_adc_battery_current_target = ui8_adc_battery_current_target;
-		debug5 = ui8_controller_adc_battery_current_target;
-        // set target duty cycle in controller
+		// set target duty cycle in controller
         ui8_controller_duty_cycle_target = ui8_duty_cycle_target;
 	}
 	
@@ -925,12 +940,10 @@ static void apply_power_assist(void)
 		if (ui8_smooth_start_counter_set < SMOOTH_START_RAMP_DEFAULT) {
 			 ui8_smooth_start_counter_set = SMOOTH_START_RAMP_DEFAULT;
 		}
-		debug1 = ui16_adc_pedal_torque_delta;
 		apply_smooth_start();
 		ui8_smooth_start_counter_set = ui8_smooth_start_counter_set_temp;   		
         // set cadence assist current target
 		uint16_t ui16_adc_battery_current_target_cadence_assist = ui16_adc_pedal_torque_delta;
-		debug2 = ui16_adc_pedal_torque_delta;
 		// restore pedal torque delta
 		ui16_adc_pedal_torque_delta = ui16_adc_pedal_torque_delta_temp;
 		
@@ -944,7 +957,6 @@ static void apply_power_assist(void)
 		else {
             ui8_adc_battery_current_target = (uint8_t)ui16_adc_battery_current_target_cadence_assist;
         }
-		debug3 = ui8_adc_battery_current_target;
 		// set duty cycle target
         if (ui8_adc_battery_current_target) {
             ui8_duty_cycle_target = ui8_pwm_duty_cycle_max;
@@ -1529,7 +1541,6 @@ static void apply_throttle(void)
 		else {
 			ui8_adc_battery_current_target = ui8_adc_battery_current_target_throttle;
 		}
-		debug4= ui8_adc_battery_current_target;
 		// set duty cycle target
 		ui8_duty_cycle_target = ui8_pwm_duty_cycle_max;
     }// end of current_target_trottle > current_target

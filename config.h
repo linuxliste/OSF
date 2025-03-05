@@ -10,12 +10,13 @@
 
 #include "cybsp.h"
 #include "cy_utils.h"
+#include "main.h"
 
 // added by mstrens
 #define _MAIN_VERSION         MAIN_CONFIGURATOR_VERSION
 #define _SUB_VERSION          SUB_CONFIGURATOR_VERSION
-#define _GLOBAL_OFFSET_ANGLE  CALIBRATED_OFFSET_ANGLE
-#define _RESERVE_2   0
+#define _GLOBAL_OFFSET_ANGLE  0
+#define _FOC_ANGLE_MULTIPLIER FOC_ANGLE_MULTIPLIER // defined in main.h ; tested first with 26
 #define _RESERVE_3   0
 #define _RESERVE_4   0
 #define _RESERVE_5   0

@@ -1,5 +1,5 @@
 /*
- * config_tesdz8.h
+ * config_tsdz8.h
  *
  *  Automatically created by TSDS2 Parameter Configurator
  *  Author: stancecoke
@@ -14,8 +14,8 @@
 // added by mstrens
 #define _MAIN_VERSION         MAIN_CONFIGURATOR_VERSION
 #define _SUB_VERSION          SUB_CONFIGURATOR_VERSION
-#define _GLOBAL_OFFSET_ANGLE  CALIBRATED_OFFSET_ANGLE
-#define _RESERVE_2   0
+#define _GLOBAL_OFFSET_ANGLE  0   // could change for -5 up to + 5 for fine tuning around 66
+#define _FOC_ANGLE_MULTIPLIER   FOC_ANGLE_MULTIPLIER // defined in main.h ; tested first with 26
 #define _RESERVE_3   0
 #define _RESERVE_4   0
 #define _RESERVE_5   0
@@ -172,8 +172,8 @@ typedef struct _config
 {
     uint16_t main_version;
     uint16_t sub_version;
-    uint16_t global_offset_angle;
-    uint16_t reserve_2;
+    uint8_t global_offset_angle;
+    uint8_t foc_angle_multiplier;
     uint16_t reserve_3;
     uint16_t reserve_4;
     uint16_t reserve_5;

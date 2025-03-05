@@ -32,6 +32,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "TSDZ2_Configurator",
+            "request": "launch",
+            "mainClass": "TSDZ2_Configurator",
+            "projectName": "OSF_41329faa"
+        },
+        {
             "name": "Launch (JLink)",
             "type": "cortex-debug",
             "request": "launch",
@@ -42,23 +49,17 @@
             "interface": "swd",
             "serialNumber": "",
             "preLaunchCommands": [
-                // Program via the hex file to get complete coverage
                 "exec-file build/last_config/mtb-example-xmc-gpio-toggle.hex"
             ],
             "overrideRestartCommands": [
                 "starti"
             ],
-            // svdFile is optional, it can be very large.
             "svdFile": "../mtb_shared/mtb-xmclib-cat3/release-v4.4.0/CMSIS/Infineon/SVD/XMC1300.svd",
             "breakAfterReset": true,
-            "runToEntryPoint": "main",    // Specifies application entry point name where program will halt
-            "preLaunchTask": "Build", // Set this to run a task from tasks.json before
-                                                     // starting a debug session
-            "showDevDebugOutput": "none" 
+            "runToEntryPoint": "main",
+            "preLaunchTask": "Build",
+            "showDevDebugOutput": "none"
         },
-        // When using 'attach', make sure your program is running on the board and that your
-        // executable matches the image in the chip exactly, or else strange things can happen
-        // with breakpoints, variables, etc.
         {
             "name": "Attach (JLink)",
             "type": "cortex-debug",
@@ -72,60 +73,55 @@
             "overrideRestartCommands": [
                 "starti"
             ],
-            // svdFile is optional, it can be very large.
             "svdFile": "../mtb_shared/mtb-xmclib-cat3/release-v4.4.0/CMSIS/Infineon/SVD/XMC1300.svd",
             "breakAfterReset": true,
-            "runToEntryPoint": "main",    // Specifies application entry point name for restart/reset
-            "showDevDebugOutput": "none" 
+            "runToEntryPoint": "main",
+            "showDevDebugOutput": "none"
         },
         {
             "name": "Erase Device (JLink)",
             "type": "cortex-debug",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            // executable not needed but need some valid file to get the session to start
             "executable": "build/last_config/mtb-example-xmc-gpio-toggle.elf",
             "servertype": "jlink",
             "device": "XMC1302-T038x0064",
             "interface": "swd",
             "serialNumber": "",
             "overrideLaunchCommands": [
-                "monitor reset",      // Reset both core and the peripherals
+                "monitor reset",
                 "monitor flash erase",
-                "monitor reset"       // Reset both core and the peripherals
+                "monitor reset"
             ],
             "postStartSessionCommands": [
                 "quit"
             ],
-            "showDevDebugOutput": "none" 
+            "showDevDebugOutput": "none"
         },
         {
             "name": "Program (JLink)",
             "type": "cortex-debug",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            // Program via the hex file to get complete coverage, no need for symbols
             "executable": "build/last_config/mtb-example-xmc-gpio-toggle.elf",
             "servertype": "jlink",
             "device": "XMC1302-T038x0064",
             "interface": "swd",
             "serialNumber": "",
             "preLaunchCommands": [
-                // Program via the hex file to get complete coverage
                 "exec-file build/last_config/mtb-example-xmc-gpio-toggle.hex"
             ],
             "overrideLaunchCommands": [
-                "monitor reset",      // Reset both core and the peripherals
+                "monitor reset",
                 "-target-download",
-                "monitor reset",      // Reset both core and the peripherals
+                "monitor reset",
                 "monitor go"
             ],
             "postStartSessionCommands": [
                 "quit"
             ],
-            "preLaunchTask": "Build",    // Set this to run a task from tasks.json
-                                                        // before device programming
-            "showDevDebugOutput": "none" 
+            "preLaunchTask": "Build",
+            "showDevDebugOutput": "none"
         }
     ]
 }

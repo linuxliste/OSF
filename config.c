@@ -1,6 +1,7 @@
 #include "xmc_flash.h"
 #include "config_tsdz8.h"
 #include "common.h" // to know the uint type
+
 #include "main.h"
 
 
@@ -11,7 +12,7 @@ struct_config m_config = {
 _MAIN_VERSION,
 _SUB_VERSION,
 _GLOBAL_OFFSET_ANGLE,
-_RESERVE_2   ,
+_FOC_ANGLE_MULTIPLIER   ,
 _RESERVE_3   ,
 _RESERVE_4   ,
 _RESERVE_5   ,
@@ -487,8 +488,8 @@ void upload_m_config(){
     } else {           
         m_config.main_version = *pConfig++; // read the value given by the pointer, and afterward increment it
         m_config.sub_version = *pConfig++;
-        m_config.global_offset_angle = *pConfig++;
-        m_config.reserve_2 = *pConfig++;
+        m_config.global_offset_angle = ((uint8_t) *pConfig++) - (uint8_t) 100;
+        m_config.foc_angle_multiplier = *pConfig++;
         m_config.reserve_3 = *pConfig++;
         m_config.reserve_4 = *pConfig++;
         m_config.reserve_5 = *pConfig++;

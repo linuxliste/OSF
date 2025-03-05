@@ -85,7 +85,7 @@ static uint8_t ui8_counter_duty_cycle_ramp_down = 0;
 static uint8_t ui8_foc_angle_accumulated;
 static uint8_t ui8_foc_flag;
 volatile uint8_t ui8_g_foc_angle = 0;
-static uint8_t ui8_foc_angle_multiplier = FOC_ANGLE_MULTIPLIER; //39 for 48V motor
+//static uint8_t ui8_foc_angle_multiplier = FOC_ANGLE_MULTIPLIER; //39 for 48V motor
 static uint8_t ui8_adc_foc_angle_current = 0;
 
 // battery current variables
@@ -133,7 +133,7 @@ volatile uint16_t ui16_a = PWM_COUNTER_MAX / 2 ;//   840 in tsdz8   // 4*210 fro
 volatile uint16_t ui16_b = PWM_COUNTER_MAX / 2 ;//   840 in tsdz8   // 4*210 from tsdz2
 volatile uint16_t ui16_c = PWM_COUNTER_MAX / 2 ;//   840 in tsdz8   // 4*210 from tsdz2
 
-uint8_t global_offset_angle = CALIBRATED_OFFSET_ANGLE ; // This value is pre-defined in main.h but is automatically fine tune 
+uint8_t hall_reference_angle  ; // This value is initialised in ebike_app.c with DEFAULT_HALL_REFERENCE_ANGLE and m_config.global_offset_angle 
 
 
 // for testing use of posif for hall pattern valid changes
@@ -149,6 +149,7 @@ uint8_t global_offset_angle = CALIBRATED_OFFSET_ANGLE ; // This value is pre-def
 //volatile uint16_t debug_time_ccu8_irq1c = 0;
 //volatile uint16_t debug_time_ccu8_irq1d = 0;
 //volatile uint16_t debug_time_ccu8_irq1e = 0;
+uint16_t hall_ref_angles_counter = 0;
 
 extern uint8_t ui8_pwm_duty_cycle_max;
 
@@ -234,7 +235,7 @@ const uint8_t ui8_hall_ref_angles[8] = { // Sequence is 1, 3, 2 , 6, 4, 6; so an
 // those values result from running the test to find hall sensor positions with a 36V battery 
 // and with a duty cycle of 50 for 5 msec and 30 for 10 msec
 // it consumes about 2.5A
-// first test with find best global offset : 14, 117, 73, 203, 246, 141 with 36V and dutycycle = 150
+// first test with find best offset : 14, 117, 73, 203, 246, 141 with 36V and dutycycle = 150
 // test with one hall gives +8, +3 , -4 , -5 , -5 , 7
 // So new values for a second run is 22, 120, 69 , 198, 241, 148 
 // second test for one hall patterns gives 2,-3,-2,2,0,2
@@ -266,8 +267,12 @@ uint8_t ui8_hall_ref_angles[8] = { // Sequence is 1, 3, 2 , 6, 4, 5; so angle ar
 };
 
 
-volatile uint8_t best_ref_angle[8] ;
-uint32_t best_ref_angle_X16bits[8] ;  // same as best_ref_angle but with 8 more bits for better filtering
+
+
+volatile uint8_t ui8_best_ref_angles[8] ; // this table is prefilled in main.c at start up
+
+
+uint32_t best_ref_angles_X16bits[8] ;  // same as ui8_best_ref_angles but with 8 more bits for better filtering
 uint32_t ui32_angle_per_tick_X16shift; // 
 
 int8_t i8_hall_add_angles[8] = { // Sequence is 1, 3, 2 , 6, 4, 5; so angle are 39, 86, 127, 167, 216, 0 (256=360°)
@@ -304,11 +309,6 @@ uint8_t best_ref_angle_log;
 uint8_t ui8_hall_ref_angles_log;
 
 
-
-// for best global hall offset
-//uint16_t last_hall_pattern_change_ticks_prev = 0;
-//uint16_t hall_pattern_intervals[8] = {0};
-
 // ************************************** begin of IRQ *************************
 // *************** irq 0 of ccu8
 __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  counting UP (= 1/4 of 19mhz cycles with 1680 ticks at 64mHz and centered aligned)
@@ -336,7 +336,7 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
             if (current_hall_pattern ==  0x01) {  // rotor at 210°
                 if (ui8_hall_360_ref_valid) { // check that we have a full rotation without pattern sequence error
                     ui16_hall_counter_total = last_hall_pattern_change_ticks - previous_360_ref_ticks; // save the total number of tick for one electric rotation
-                    ui32_angle_per_tick_X16shift = ( 1 << 24) / ui16_hall_counter_total;
+                    ui32_angle_per_tick_X16shift = ( 1 << 24) / ui16_hall_counter_total; // new value for interpolation and updating table with reference angle
                     ui8_motor_commutation_type = SINEWAVE_INTERPOLATION_60_DEGREES; // 0x80 ; it says that we can interpolate because speed is known
                 }
                 ui8_hall_360_ref_valid = 0x01;
@@ -355,36 +355,31 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
                 
                 uint16_t ui16_measured_angle_X16bits = ( (uint32_t) ((uint16_t) (last_hall_pattern_change_ticks - previous_360_ref_ticks))
                          * ui32_angle_per_tick_X16shift) >> 8;  // here we get an angle * 256 (to get better rounding for filtering)
-                ui16_measured_angle_X16bits += ui8_hall_ref_angles[1] << 8 ;   // add the angle for hall pattern 1 *256 (with overrunning)
-                //best_ref_angle[current_hall_pattern] = filtering >> 8; // set angle back in 8bits
+                ui16_measured_angle_X16bits += ((uint16_t) ui8_hall_ref_angles[1]) << 8 ;   // add the angle for hall pattern 1 *256 (with overrunning)
+                //ui8_best_ref_angles[current_hall_pattern] = filtering >> 8; // set angle back in 8bits
                 uint8_t ui8_measured_angle = ui16_measured_angle_X16bits >> 8;
                 uint8_t delta =  ui8_measured_angle - ui8_hall_ref_angles[current_hall_pattern];
                 if ((delta < 5 ) || (delta > 251 )) { // when there is no big difference 
                     // apply filter on values X16bits
-                    uint32_t filtering = best_ref_angle_X16bits[current_hall_pattern];
+                    uint32_t filtering = best_ref_angles_X16bits[current_hall_pattern];
                     #define FILTER_HALL_POSITIONS 3
                     filtering = ((filtering << FILTER_HALL_POSITIONS) - filtering + (uint32_t) ui16_measured_angle_X16bits) >> FILTER_HALL_POSITIONS ;
-                    best_ref_angle_X16bits[current_hall_pattern] = filtering ; // apply new filtered value
-                    best_ref_angle[current_hall_pattern] = (filtering + 128 )>> 8; // +128 for rounding
-                    ui8_hall_ref_angles[current_hall_pattern] = best_ref_angle[current_hall_pattern] ;
+                    best_ref_angles_X16bits[current_hall_pattern] = filtering ; // apply new filtered value
+                    ui8_best_ref_angles[current_hall_pattern] = (filtering + 128 )>> 8; // +128 for rounding
+                    // update the table with reference angles
+                    //ui8_hall_ref_angles[current_hall_pattern] = ui8_best_ref_angles[current_hall_pattern] ;
+                    hall_ref_angles_counter++;
                 }
-                
-                //ui8_hall_ref_angles[current_hall_pattern] = filtering >> 8; // update the table
-                
-                //best_ref_angle[current_hall_pattern] = ui8_measured_angle;
-                //uint8_t delta_angle= (ui8_hall_ref_angles[current_hall_pattern] - ui8_hall_ref_angles[previous_hall_pattern]);
-                //expected_ticks_interval[current_hall_pattern] += 
-                //        (((uint32_t) delta_angle) * ui16_hall_counter_total) >>8; // >>8 for 256 steps per 360°
-            //    interval_counter--;
             } 
             if (current_hall_pattern == 1 ){
                 ui16_hall_counter_total_previous = ui16_hall_counter_total; // save previous counter (to check if erps is stable)
             }
             previous_last_hall_pattern_change_ticks = last_hall_pattern_change_ticks; 
         }
-        previous_hall_pattern = current_hall_pattern; // saved to detect future change
+        previous_hall_pattern = current_hall_pattern; // saved to detect future change and check for valid transition
         // set rotor angle based on hall patern
-        ui8_motor_phase_absolute_angle = ui8_hall_ref_angles[current_hall_pattern];  
+        //ui8_motor_phase_absolute_angle = ui8_hall_ref_angles[current_hall_pattern];
+        ui8_motor_phase_absolute_angle = ui8_best_ref_angles[current_hall_pattern]; // use best ref instead of hall_ref_angles[]
     } else { // no hall patern change
         // Verify if rotor stopped (< 10 ERPS)
         if (enlapsed_time > (HALL_COUNTER_FREQ/MOTOR_ROTOR_INTERPOLATION_MIN_ERPS/6)) { //  for TSDZ2: 250000/10 /6 = 4166 ; for TSDZ8 = 8332
@@ -396,7 +391,7 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
         }
     }
     /****************************************************************************/
-    // - calculate interpolation angle and sine wave table index when spped is known
+    // - calculate interpolation angle and sine wave table index when speed is known
     uint8_t ui8_interpolation_angle = 0; // interpolation angle
     uint32_t compensated_enlapsed_time = 0; 
     if (ui8_motor_commutation_type != BLOCK_COMMUTATION) {  // as long as hall patern are OK and motor is running 
@@ -405,14 +400,17 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
         // temp is here related to 256 (because 256 represent 360°); So 36° is here 25
         compensated_enlapsed_time = enlapsed_time + ui8_fw_hall_counter_offset + ui8_hall_counter_offset;
         // convert time tick to angle (256 = 360°)
-          ui8_interpolation_angle = (((uint32_t) compensated_enlapsed_time) << 8) /  ui16_hall_counter_total; // <<8 = 256 = 360 electric angle
+          //ui8_interpolation_angle = (((uint32_t) compensated_enlapsed_time) << 8) /  ui16_hall_counter_total; // <<8 = 256 = 360 electric angle
+        // convert time tick to angle (256 = 360°) using the already calculated angle per tick (avoid a division)
+        ui8_interpolation_angle = (((uint32_t) compensated_enlapsed_time) *  ui32_angle_per_tick_X16shift) >> 16 ; 
         //if (ui8_interpolation_angle > 90){  // added by mstrens because interpolation should not exceed 60°
         //    ui8_interpolation_angle = 21; // 21 is about 30° so mid position between 2 hall pattern changes
         //}
     } 
-    // ------------ Calculate the rotor angle and use it as index in the table----------------- 
-    uint8_t ui8_svm_table_index = ui8_interpolation_angle + ui8_motor_phase_absolute_angle + ui8_g_foc_angle + global_offset_angle +
-                                i8_hall_add_angles[current_hall_pattern]; // add the value found during each hall pattern optimisation
+    // ------------ Calculate the rotor angle and use it as index in the table-----------------
+    // hall_reference_angle is the sum of the DEFAULT_HALL_REFERENCE_ANGLE and the fine tune with m_config.global_offset_angle
+    uint8_t ui8_svm_table_index = ui8_interpolation_angle + ui8_motor_phase_absolute_angle + ui8_g_foc_angle + hall_reference_angle ;
+    //                            + i8_hall_add_angles[current_hall_pattern]; // add the value found during each hall pattern optimisation
     
     // Phase A is advanced 240 degrees over phase B
     ui16_temp = ui16_svm_table[(uint8_t) (ui8_svm_table_index + 171)]; // 171 = 240 deg when 360° is coded as 256
@@ -508,7 +506,7 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
             }
             if (ui8_foc_flag) { // is set on 1 when rotor is at 150° so once per electric rotation
 				ui8_adc_foc_angle_current = (ui8_adc_battery_current_filtered >> 1) + (ui16_adc_motor_phase_current >> 1);
-                ui8_foc_flag = (uint16_t)(ui8_adc_foc_angle_current * ui8_foc_angle_multiplier) >> 8 ; // multiplier = 39 for 48V tsdz2, 
+                ui8_foc_flag = (uint16_t)(ui8_adc_foc_angle_current * m_config.foc_angle_multiplier) >> 8 ; // multiplier = 39 for 48V tsdz2, 
                 if (ui8_foc_flag > 13)
                     ui8_foc_flag = 13;
                 ui8_foc_angle_accumulated = ui8_foc_angle_accumulated - (ui8_foc_angle_accumulated >> 4) + ui8_foc_flag;

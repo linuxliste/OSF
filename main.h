@@ -12,8 +12,8 @@
 #include "config_tsdz8.h"
 #include "common.h"
 
-#define FIRMWARE_VERSION "0.1.3"      // is not used; just for reference)
-#define MAIN_CONFIGURATOR_VERSION 3   // for configurator (must be the same as in xls sheet)
+#define FIRMWARE_VERSION "0.1.4"      // is not used; just for reference)
+#define MAIN_CONFIGURATOR_VERSION 4   // for configurator (must be the same as in xls sheet)
 #define SUB_CONFIGURATOR_VERSION  0    // is not used (just for reference)
 
 #define DEBUG_ON_JLINK         (0)  // when 1, messages are generated on jlink; best is to connect only 3 wires (grnd + SWO and S???)
@@ -24,20 +24,25 @@
                                          // this can be convenient for testing/debugging
 
 #define WHEEL_SPEED_X10_SIMULATE  (0)   // 0 = do not simulate; >0 =  speed in 0,1km/h (e.g. 60 = 6 km/h)
-// added to manage TESTING_MODE = allow e.g. to find best global offset or to run at a fixed duty cycle
-#define NORMAL_RUNNING_MODE 0     // motor run as usual
-#define TESTING_MODE 1    // motor is controlled by a few set up defined in uc_probe
 
 // default parameters for easy testing;  can be changed with uc_probe
 #define DEFAULT_TEST_MODE_FLAG        NORMAL_RUNNING_MODE              // or TESTING_MODE 
 
+// parameters that can be adapted when in testing mode
 #define DEFAULT_BATTERY_CURRENT_TARGET_TESTING_A    3 // in Amp ; value set for safety when testing
 #define DEFAULT_DUTY_CYCLE_TARTGET_TESTING          150      // max 255 ; can be changed in uc_probe
 
+
+// here the 2 modes; note TESTING_MODE = allow e.g. to find best global offset angle or to run at a fixed duty cycle
+#define NORMAL_RUNNING_MODE 0     // motor run as usual
+#define TESTING_MODE 1    // motor is controlled by a few set up defined in uc_probe
+
+
+
 // *************** from here we have more general parameters 
 
-// this value can be optimized using uc_probe and changing slightly the "global offset" in order to get the lowest measured current for a given duty cycle 
-#define CALIBRATED_OFFSET_ANGLE 66
+// this value can be optimized using uc_probe and changing slightly the "global offset angle" in order to get the lowest measured current for a given duty cycle 
+#define DEFAULT_HALL_REFERENCE_ANGLE 66
 
 // for CCU4 slice 2
 #define HALL_COUNTER_FREQ                       250000U // 250KHz or 4us
