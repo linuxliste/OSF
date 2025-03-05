@@ -728,7 +728,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
             Integer configSubVersion = 0;
             Integer global_offset_angle = 100 ; // logical value should be -5/+5 but in order to keep a positive value, we add 100
                                                 // So 100 in the generated HEX file means 0 in TSDZ8 firmware. The value 100 is substracted in TSDZ8.
-            Integer foc_angle_multiplier = 0;
+            Integer foc_angle_multiplier = 26;  // to be fine tuned; this is just a first basis
             Integer reserve_3 = 0;
              Integer reserve_4 = 0;
              Integer reserve_5 = 0;
