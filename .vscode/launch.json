@@ -32,13 +32,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "java",
-            "name": "TSDZ2_Configurator",
-            "request": "launch",
-            "mainClass": "TSDZ2_Configurator",
-            "projectName": "OSF_41329faa"
-        },
-        {
             "name": "Launch (JLink)",
             "type": "cortex-debug",
             "request": "launch",

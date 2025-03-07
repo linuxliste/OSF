@@ -31,11 +31,11 @@ This version differs with :
 
 
 To use this firmware, you will have to:
-* Donwload this firmware
-* Generate a file with your preferences (with a GUI configurator)
 * Use a Segger Jlink device and a cable (this device replace the Stlink used for TSDZ2)
+* Donwload this TSDZ8 firmware
 * Flash the compiled firmware on the TSDZ8 controller
-* Flash also the file containing your preferences
+* Generate a file with your preferences (using the GUI configurator that is common for TSDZ2 and TSDZ8)
+* Flash the hex file that has been generated with the configurator.
 * Fine tune one parameter (optional)
 
 If you have questions on this Tsdz8 project, you can ask on this forum:
@@ -44,28 +44,7 @@ https://endless-sphere.com/sphere/threads/new-tsdz8-pswpower.120798/page-12
 If you find bugs, best is to open an issue in github : https://github.com/mstrens/OSF
 
 
-# 1.Download this firmware
-
-Download or clone this repository. 
-If you downloaded, unzip the archive where you want.
-
-# 2.Generate the configuration file
-
-There configuration file is generated with the same tool as TSDZ2: javaconfigurator.jar.
-To know how to use this tool and the purpose of all parameters, see the TSDZ2 manuals at https://github.com/emmebrusa/TSDZ2-Smart-EBike-1/tree/master/manuals
-Note: it could be that the TSDZ2 manual is not 100% up to date (the configurator contains perhaps a few more fields).
-
-
-At this stage, I made a specific java configurator for TSDZ8 but later on, it will probably be included in the TSDZ2 configuration.
-
-So currently, you have to use the file named OSF_TSDZ8_configurator.jar from this github site.
-
-When you run it, after editing your preferences, click the button "Compile & flash". The configurator will open a popup (tested with windows) and you have to press twice a key. It creates a file "files_to_flash/TSDZ8_config.hex" that has to be flashed(=uploaded)  in the controller. 
-
-Note: This version is just a raw copy of TSDZ2 version and it will also try to compile and flash. Those steps will fail but it is not a problem for TSDZ8 as there is no need for compilation and flashing is done manually with a Jlink device.
-
-
-# 3.Preparing Jlink
+# 1.Preparing Jlink
 
 You need a Segger Jlink device and a cable.
 You can get it from here : https://ebikestuff.eu/en/content/18-tsdz8-firmware-update-using-j-link-jlink-v9-programming-kit
@@ -94,42 +73,72 @@ To do so, cut the extension cord and resolder the 6 wires and solder also the 4 
 
 Note : when you want to use the cable for flashing/monitoring the controller, you always have to connect the cable directly to the controller. It means that you have to disconnect the speed sensor from the controller. If you build your own cable and keep it as extension cord, you can then reconnect the speed sensor at the other end (e.g. to monitor some parameters while the wheel is turning).   
 
-# 4.Flash the firmware
+
+# 2.Download this firmware
+
+Download or clone this repository. 
+If you downloaded, unzip the archive where you want.
+
+
+# 3.Flash the firmware
 
 To flash, you can follow the instructions from here to know how to use Jlink: 
 https://ebikestuff.eu/en/content/18-tsdz8-firmware-update-using-j-link-jlink-v9-programming-kit
 
-The HEX file to upload is the one you downloaded from this github site at step 1.
+The HEX file to upload is the one you downloaded from this github site at step 2.
 It is in folder "files_to_flash" and named OSF_TSDZ8_Vxx_xx.hex where xx.xx is a version number.
 
 While flashing, the motor should best not be powered by the battery. Disconnect it or at least power it OFF. In principe, the Jkink will provide power to the controller (at least if it is a Jlink clone device). It seems possible to keep the motor connected to the display but do not press any button on the display.
 
 Note: if you are using an original Segger Jlink device, you probably have to configure it to let it generate the power supply on the pin Vref in order to provide power supply to the controller. Otherwise, you can try to power on the controller with the battery (and pressing the power button on the display). Still I did not tested this method.
 
+
+# 4.Generate the configuration file
+
+The configuration file is generated with the same tool as TSDZ2: JavaConfigurator.jar.
+This requires that you clone or download+unzip totally this repository : https://github.com/emmebrusa/TSDZ2-Smart-EBike-1
+
+
+To know how to use the JavaConfigurator and the purpose of all parameters, see the TSDZ2 manuals at https://github.com/emmebrusa/TSDZ2-Smart-EBike-1/tree/master/manuals
+
+
+Note : there is no need to install all additional softwares mentioned in the manual as you will use only JavaConfigurator.jar.
+So having java on you PC is enough.
+
+
+Doubble click (at least on Windows) on JavaConfigurator.jar
+It opens a graphical user interface. Take care to select TSDZ8 as "Motor type". After editing your preferences, click the button "Compile HEX file". The configurator will generate a new file named "files_to_flash/TSDZ8_config.hex".
+
 # 5.Flash the file with your configuraton
 
-Flash the HEX file your created at step2 in the same way, you flashed the firmware.
+Flash the HEX file your created at step4 in the same way, you flashed already the firmware.
 
 Note:
-There is normally no need to re-flash the firmware each time you change the HEX file with other preferences.
+There is normally no need to re-flash the firmware each time you change the configuration file with other preferences.
 
-Still if there are deep changes (in the firmware and/or the sheet), the Version nr in the sheet will be changed.
-When the controller starts running, it checks that the firmware is compatible with the parameter version.
-If not, it provides an error code  E09 on the display (and blocks the motor).  
+Still if there are deep changes (in the firmware and/or the sheet), a "Main Version nr" in the JavaConfigurator will be changed.
+When the controller starts running, it checks that the firmware is compatible with this version nr.
+If not, it provides an error code E09 on the display (at least on VLCD5) and blocks the motor. It could be that the code is different (e.g. E08 on other displays). 
 
 # 6. Fine tune one parameter.
 
+IMPORTANT NOTE :
+
+Do not yet try this process for fine tuning.
+It is not up to date anymore!!!!!!!!!!!
+I have to make some changes. 
+
 The motor use hall sensors to know the position of the rotor and syncronize the magnetic flux.
 There can be minor differences in the positions, the sensitivity and the hysteresis of those sensors.
-Optionnally, you can fine tune one parameter (the "global offset" applied to hall sensors).
+Optionnally, you can fine tune one parameter (the "global_offset_angle" applied to hall sensors).
 
 If you want to do this step, you have to:
 
 * REMOVE THE CHAIN FROM THE MOTOR!! (so the motor can freely run without driving the wheel)
-* install on you PC (windows) a tool uc_probe provided by Infineon at this link https://infineoncommunity.com/uC-Probe-XMC-software-download_ID712 . It requires that you fill in the register form to dowload it.
+* install on you PC (windows) a tool uc_probe provided by Infineon at this link https://infineoncommunity.com/uC-Probe-XMC-software-download_ID712 . It requires that you fill in the register form to download it.
 - once unzip and installed, run this software
 - in to upper left corner, select settings and then select the options Jlink, 4000 kHz , SWD and little endian.
-- in the menu File, select Open and in the file explorer, go to the folder where you put this TSDZ8 and select the file "test_uc_probe.wspx"
+- in the menu File, select Open and in the file explorer, go to the folder where you put this TSDZ8 firmware and select the file "test_uc_probe.wspx"
 - in the lowest panel named "Symbol browser", there should be a file name displayed ("mtb-example-xmc-gpio-toggle.elf"). It could be that it do not work the first time you try because I expect the software uses an absolute path to the file (and you are using your own path). In this case, click on the ELF button and it will open a popup to select the HEX file. In this popup, go to folder build/last_config and select the file named "mtb-example-xmc-gpio-toggle.elf". This step should not be required if you reopen the software later on.
 - the central panel should now displays different fields and boxes.
 - power on the motor (with the battery and the display) and connect the Jlink device between the motor and the PC.
