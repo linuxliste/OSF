@@ -118,8 +118,9 @@ volatile uint16_t ui16_wheel_speed_sensor_ticks_counter_min = 0;
 volatile uint8_t ui8_battery_SOC_saved_flag = 0;
 volatile uint8_t ui8_battery_SOC_reset_flag = 0;
 
-// Last Hall sensor state
-uint8_t  previous_hall_pattern = 7; // Invalid value, force execution of Hall code at the first run
+// Hall sensor state
+uint8_t current_hall_pattern = 0;
+uint8_t previous_hall_pattern = 7; // Invalid value, force execution of Hall code at the first run
 
 // Hall counter value of last Hall transition 
 uint16_t previous_360_ref_ticks ; 
@@ -135,14 +136,7 @@ volatile uint16_t ui16_c = PWM_COUNTER_MAX / 2 ;//   840 in tsdz8   // 4*210 fro
 
 uint8_t hall_reference_angle  ; // This value is initialised in ebike_app.c with DEFAULT_HALL_REFERENCE_ANGLE and m_config.global_offset_angle 
 
-
-// for testing use of posif for hall pattern valid changes
-//volatile uint32_t posif_print_current_pattern = 0; 
-//volatile uint32_t hall_print_interval = 0; 
-//volatile uint32_t posif_SR0 = 0; // count hall valid transition 
-//volatile uint32_t posif_SR1 = 0; // count hall transition (before check if valid or not)
-
-//// to debug time spent in irq0 and irq1
+// to debug time spent in irq0 and irq1
 //volatile uint16_t debug_time_ccu8_irq0 = 0;
 //volatile uint16_t debug_time_ccu8_irq1 = 0;
 //volatile uint16_t debug_time_ccu8_irq1b = 0;
@@ -153,71 +147,6 @@ uint16_t hall_ref_angles_counter = 0;
 
 extern uint8_t ui8_pwm_duty_cycle_max;
 
-// variables captured during the hall sensor irq
-volatile uint32_t hall_pattern_irq;                   // current hall pattern
-volatile uint16_t hall_pattern_change_ticks_irq; // ticks from ccu4 slice 2 for last pattern change
-
-// When a hall pattern transition occurs (good or wrong) ; this occurs after the delay for sampling
-__RAM_FUNC void CCU40_1_IRQHandler(){ // when a transition occurs, CCU4 performs a Serice request 1   // __RAM_FUNC 
-    // get the timer from CCU4 slice 2 running
-    //hall_pattern_change_ticks_irq = XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW) ;
-    hall_pattern_change_ticks_irq = (uint16_t)RUNNING_250KH_TIMER_HW->TIMER;
-    // read the hall pattern
-    //hall_pattern_irq = XMC_GPIO_GetInput(IN_HALL0_PORT, IN_HALL0_PIN);// hall 0
-    //hall_pattern_irq |=  XMC_GPIO_GetInput(IN_HALL1_PORT, IN_HALL1_PIN) << 1;
-    //hall_pattern_irq |=  XMC_GPIO_GetInput(IN_HALL2_PORT, IN_HALL2_PIN) << 2;
-    hall_pattern_irq = (((IN_HALL0_PORT->IN) >> IN_HALL0_PIN) & 0x1U);// hall 0
-    hall_pattern_irq |=  (((IN_HALL1_PORT->IN) >> IN_HALL1_PIN) & 0x1U) << 1;
-    hall_pattern_irq |=  (((IN_HALL2_PORT->IN) >> IN_HALL2_PIN) & 0x1U) << 2;
-}
-/*
-// When a correct transition occurs
-void CCU40_0_IRQHandler(){ // when a correct transition occurs, CCU4 performs a capture + clear and an Serice request 0
-    // we have to save the capture register and to upload the posif shadow register for next transition.
-    uint32_t capture = XMC_CCU4_SLICE_GetCaptureRegisterValue(HALL_SPEED_TIMER_HW, (0U) );
-    hall_print_interval = capture & 0xFFFF ;  // bits 0/15 = the value
-    uint32_t prescaler = (capture>>16) & 0X0F ; // bits 16/19 = prescaler
-    uint32_t FFL = (capture>>20) & 0X01 ; // bit 20 : 1 = new value
-    uint32_t current_pins = getHallPosition();
-    uint8_t current =  XMC_POSIF_HSC_GetCurrentPattern(HALL_POSIF_HW);
-    uint8_t expected = XMC_POSIF_HSC_GetExpectedPattern(HALL_POSIF_HW);
-    printf("Entering CCU4 SR0= %ld pins=%ld Cur=%ld Exp=%ld Interval=%ld pre=%ld ffl=%ld\r\n",
-                        posif_SR0, current_pins, (uint32_t) current, (uint32_t) expected, hall_print_interval, prescaler, FFL);        
-    update_shadow_pattern(expected);
-    posif_print_current_pattern = XMC_POSIF_HSC_GetCurrentPattern(HALL_POSIF_HW);
-    posif_SR0++;
-    current_pins = getHallPosition();
-    current =  XMC_POSIF_HSC_GetCurrentPattern(HALL_POSIF_HW);
-    expected = XMC_POSIF_HSC_GetExpectedPattern(HALL_POSIF_HW);
-    printf("End CCU4 SR0= %ld pins=%ld Cur=%ld Exp=%ld\r\n", posif_SR0, current_pins, (uint32_t) current, (uint32_t) expected);
-}
-*/
-/* // not used currently - Service request 1 is used to capture hall pattern and timestamp when a transition occurs
-// could be used to detect that motor is not running because timer reached the period 
-void CCU40_1_IRQHandler(){
-    posif_SR1++;
-    uint8_t current =  XMC_POSIF_HSC_GetCurrentPattern(HALL_POSIF_HW);
-    uint8_t expected = XMC_POSIF_HSC_GetExpectedPattern(HALL_POSIF_HW);
-    uint32_t current_pins = getHallPosition();
-    printf("CCU4 SR1= %ld pins=%ld Cur=%ld Exp=%ld\r\n", posif_SR1, current_pins, (uint32_t) current, (uint32_t) expected);
-}
-*/
-/*
-void POSIF0_1_IRQHandler(){ // to debug; 
-    posif_SR1++;
-    uint8_t current =  XMC_POSIF_HSC_GetCurrentPattern(HALL_POSIF_HW);
-    uint8_t expected = XMC_POSIF_HSC_GetExpectedPattern(HALL_POSIF_HW);
-    uint32_t current_pins = getHallPosition();
-    printf("SR1= %ld pins=%ld Cur=%ld Exp=%ld\r\n", posif_SR1, current_pins, (uint32_t) current, (uint32_t) expected);
-    //uint32_t current_pos = getHallPosition();
-    //update_shadow_pattern(current_pos);
-    //XMC_POSIF_HSC_UpdateHallPattern(HALL_POSIF_HW); // 
-    //posif_print_current_pattern = XMC_POSIF_HSC_GetCurrentPattern(HALL_POSIF_HW);
-}
-*/
-uint8_t current_hall_pattern = 1;
-uint8_t current_hall_pattern_prev = 1;
-uint32_t capture_accumulated = 0 ;
 
 /*
 // those values result from running the test to find hall sensor positions
@@ -267,14 +196,13 @@ uint8_t ui8_hall_ref_angles[8] = { // Sequence is 1, 3, 2 , 6, 4, 5; so angle ar
 };
 
 
-
-
 volatile uint8_t ui8_best_ref_angles[8] ; // this table is prefilled in main.c at start up
 
 
 uint32_t best_ref_angles_X16bits[8] ;  // same as ui8_best_ref_angles but with 8 more bits for better filtering
 uint32_t ui32_angle_per_tick_X16shift; // 
 
+/*
 int8_t i8_hall_add_angles[8] = { // Sequence is 1, 3, 2 , 6, 4, 5; so angle are 39, 86, 127, 167, 216, 0 (256=360°)
         0,                     // error ; index must be between 1 and 6
         0 , //    for hall pattern 1
@@ -285,45 +213,29 @@ int8_t i8_hall_add_angles[8] = { // Sequence is 1, 3, 2 , 6, 4, 5; so angle are 
         0, //     for hall pattern 6  
         0                     // error ; index must be between 1 and 6
 };
-
+*/
 
 // Hall offset for current Hall state; This offset is added in the interpolation process (so based also on the erps)
 // the value is in ticks (1 ticks = 4 usec); we need  55usec/4 : 55 = 39 + 16 (39 = 3/4 of 55usec = delay between measuring and PWM change); 16=delay hall sensor
 static uint8_t ui8_hall_counter_offset = 14; 
 
-// to control accuracy of hall sensor positions
-
-uint16_t previous_last_hall_pattern_change_ticks = 0;
-volatile uint32_t real_ticks_interval[8]= {0};  // real interval between each hall patterns and the reference
-volatile uint32_t expected_ticks_interval[8] = {0}; // expected interval based on the defined sensor positions and number ot tick for one electric rotation 
-volatile uint32_t interval_counter = INTERVAL_COUNTER;  // average on 128 electric rotations; * 6 because 6 hall patterns
-
-// to debug
-uint8_t current_hall_pattern_log;
-uint16_t last_hall_pattern_change_ticks_log;
-uint16_t previous_360_ref_ticks_log;
-uint16_t ui16_hall_counter_total_log;
-uint32_t ui32_angle_per_tick_X16shift_log;
-uint16_t ui16_measured_angle_X16bits_log;
-uint8_t best_ref_angle_log;
-uint8_t ui8_hall_ref_angles_log;
-
 
 // ************************************** begin of IRQ *************************
 // *************** irq 0 of ccu8
 __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  counting UP (= 1/4 of 19mhz cycles with 1680 ticks at 64mHz and centered aligned)
-// here we just calculate the new compare values used for the 3 slices (0,1,2) that generates the 3 PWM
-    //XMC_GPIO_SetOutputHigh(OUT_LIGHT_PORT,OUT_LIGHT_PIN); // to check the time required by this interrupt
-    // get and save values from the interrupt (when hall pattern changed)
-    
-    uint32_t critical_section_value = XMC_EnterCriticalSection();
-    current_hall_pattern =  (uint8_t) hall_pattern_irq & 0x07 ;  // hall pattern when last hall change occured
-    uint16_t last_hall_pattern_change_ticks = hall_pattern_change_ticks_irq ;  // ticks at this pattern change( steps of 4usec)
-    uint16_t current_ticks = XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW) ; // ticks now
-    XMC_ExitCriticalSection(critical_section_value);
-    uint16_t enlapsed_time =  current_ticks - last_hall_pattern_change_ticks ; // ticks between now and last change
+    // here we just calculate the new compare values used for the 3 slices (0,1,2) that generates the 3 PWM
+
+    // get the current ticks
+    uint16_t current_speed_timer_ticks = (uint16_t) (XMC_CCU4_SLICE_GetTimerValue(HALL_SPEED_TIMER_HW) );
+    // get the capture register = last changed pattern = current pattern
+    uint16_t last_hall_pattern_change_ticks = (uint16_t) XMC_CCU4_SLICE_GetCaptureRegisterValue(HALL_SPEED_TIMER_HW , 1);
+    // get the current hall pattern
+    current_hall_pattern = XMC_POSIF_HSC_GetLastSampledPattern(HALL_POSIF_HW) ;
+    // elapsed time between now and last pattern
+    uint16_t enlapsed_time =  current_speed_timer_ticks - last_hall_pattern_change_ticks ; // ticks between now and last change
+   
     // to debug
-    //uint16_t start_ticks = current_ticks; // save to calculate enlased time inside the irq // just for debug could be removed
+    //uint16_t start_ticks = current_speed_timer_ticks; // save to calculate enlased time inside the irq // just for debug could be removed
     
     // when pattern change
     if ( current_hall_pattern != previous_hall_pattern) {
@@ -368,17 +280,15 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
                     ui8_best_ref_angles[current_hall_pattern] = (filtering + 128 )>> 8; // +128 for rounding
                     // update the table with reference angles
                     //ui8_hall_ref_angles[current_hall_pattern] = ui8_best_ref_angles[current_hall_pattern] ;
-                    hall_ref_angles_counter++;
+                    hall_ref_angles_counter++;  // just to debug to see if table is updated at regular intervals
                 }
             } 
             if (current_hall_pattern == 1 ){
                 ui16_hall_counter_total_previous = ui16_hall_counter_total; // save previous counter (to check if erps is stable)
-            }
-            previous_last_hall_pattern_change_ticks = last_hall_pattern_change_ticks; 
+            } 
         }
         previous_hall_pattern = current_hall_pattern; // saved to detect future change and check for valid transition
         // set rotor angle based on hall patern
-        //ui8_motor_phase_absolute_angle = ui8_hall_ref_angles[current_hall_pattern];
         ui8_motor_phase_absolute_angle = ui8_best_ref_angles[current_hall_pattern]; // use best ref instead of hall_ref_angles[]
     } else { // no hall patern change
         // Verify if rotor stopped (< 10 ERPS)
@@ -729,7 +639,7 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
 
 
 void motor_enable_pwm(void) { //set posif with current position & restart the timers
-    get_hall_pattern(); // refresh hall pattern in hall_pattern_irq
+    get_hall_pattern(); // refresh hall pattern in current_hall_pattern
     
     // one solution to activate is to generate an event that starts all timers in a synchronized way
     // Enable Global Start Control CCU80  in a synchronized way*/
@@ -750,130 +660,11 @@ void motor_disable_pwm(void) {
     // slice CCU8_3 is not stopped becauses it is required to manage some tasks (speed, torque,...) 
 }
 
-void get_hall_pattern(){
+void get_hall_pattern(){  // use to initialise at power on and in motor_enable()
     uint32_t critical_section_value = XMC_EnterCriticalSection();
-    hall_pattern_irq = XMC_GPIO_GetInput(IN_HALL0_PORT, IN_HALL0_PIN);// hall 0
-    hall_pattern_irq |=  XMC_GPIO_GetInput(IN_HALL1_PORT, IN_HALL1_PIN) << 1;
-    hall_pattern_irq |=  XMC_GPIO_GetInput(IN_HALL2_PORT, IN_HALL2_PIN) << 2;
+    current_hall_pattern = XMC_GPIO_GetInput(IN_HALL0_PORT, IN_HALL0_PIN);// hall 0
+    current_hall_pattern |=  XMC_GPIO_GetInput(IN_HALL1_PORT, IN_HALL1_PIN) << 1;
+    current_hall_pattern |=  XMC_GPIO_GetInput(IN_HALL2_PORT, IN_HALL2_PIN) << 2;
     XMC_ExitCriticalSection(critical_section_value);
 }
-
-
-/*
-uint16_t get_current_adc_10bits(){
-    uint16_t ui16_temp_current_X8 = ((XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 8 ) & 0x0FFF) +
-                                    (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 12 ) & 0x0FFF)) ; 
-    return  ui16_temp_current_X8 >> 5; // >>5 because 2 for IIR, 1 for averaging, 2 for 12 bits to 10 bits 
-}
-*/
-
-
-
-/*
- * This function will return the current state of the POSIF input pins to
- * which hall sensors are connected. This information is required before
- * starting the motor to know the start position of the motor.
- */
-/*
-uint32_t getHallPosition(void)
-{
-  uint32_t hallposition;
-  uint32_t hall[3] = { 0U };
-  //Read the input pins.
-  hall[0] = XMC_GPIO_GetInput(IN_HALL0_PORT, IN_HALL0_PIN);// hall 0
-  hall[1] = XMC_GPIO_GetInput(IN_HALL1_PORT, IN_HALL1_PIN);
-  hallposition = (uint32_t)(hall[0] | ((uint32_t) hall[1] << 1U));
-  hall[2] = XMC_GPIO_GetInput(IN_HALL2_PORT, IN_HALL2_PIN);
-  hallposition |= ((uint32_t)(hall[2] << 2));
-  return ((uint32_t)(hallposition & 0X07));
-}
-*/
-/*
-// is probably not required anymore because we use irq to capture the hall pattern changes just like tsdz2 (and not posif logic)
-void posif_init_position(){
-    uint8_t current_pos = getHallPosition(); // get current position
-    while ((current_pos == 0 )|| (current_pos >6)){
-        current_pos = getHallPosition(); // wait for a valid initial value; test shows that it starts with 7
-    }
-    uint8_t next_pos = expected_pattern_table[current_pos];
-
-    uint32_t current_pins;
-    uint8_t current ;
-    uint8_t expected ;
-    current_pins = getHallPosition();
-    current =  XMC_POSIF_HSC_GetCurrentPattern(HALL_POSIF_HW);
-    expected = XMC_POSIF_HSC_GetExpectedPattern(HALL_POSIF_HW);
-    printf("before update shadow: sR0= %ld pins=%ld Cur=%ld Exp=%ld\r\n", posif_SR0, current_pins , (uint32_t) current, (uint32_t) expected);
-
-    update_shadow_pattern(current_pos); // update shadow register // shadow should be exp = 3 ,  current = 1
-
-    current =  XMC_POSIF_HSC_GetCurrentPattern(HALL_POSIF_HW);
-    expected = XMC_POSIF_HSC_GetExpectedPattern(HALL_POSIF_HW);
-    printf("after update shadow: sR0= %ld pins=%ld Cur=%ld Exp=%ld\r\n", posif_SR0, current_pins , (uint32_t) current, (uint32_t) expected);
-
-    XMC_POSIF_HSC_UpdateHallPattern(HALL_POSIF_HW); // upload shadow register in real register; Then shadow reg becomes 0 0
-    current =  XMC_POSIF_HSC_GetCurrentPattern(HALL_POSIF_HW);
-    expected = XMC_POSIF_HSC_GetExpectedPattern(HALL_POSIF_HW);
-    printf("after update hallPattern: sR0= %ld pins=%ld Cur=%ld Exp=%ld\r\n", posif_SR0, current_pins , (uint32_t) current, (uint32_t) expected);
-
-    update_shadow_pattern(next_pos); // prepare already shadow register for next change // shadow should be exp 2 , current 2
-    current =  XMC_POSIF_HSC_GetCurrentPattern(HALL_POSIF_HW);
-    expected = XMC_POSIF_HSC_GetExpectedPattern(HALL_POSIF_HW);
-    printf("after second update shadow: sR0= %ld pins=%ld Cur=%ld Exp=%ld\r\n", posif_SR0, current_pins , (uint32_t) current, (uint32_t) expected);
-}
-*/
-
-// after a transition, shadow register is automatically copy in HALP (with current and expected)
-// CCU4 slice1 generates a SR0 (at end of period) that is internally routed to MSET of posif
-// When a correct transition happens, new values (next and current) must be uploaded in posif shadow register by the firmware
-// When a correct transition happens, posif generates a signal on OUT1 that is mapped to event 0 on CCU4 slice 1
-// CCU4 (event 0) then performs:
-// - a capture of current timer
-// - a start of timer (with clear and start)
-// - a SR0 that firmware must use to know that a transition occured, a capture has been done, a new value must be filled in shadow register
-// - it is not mandatory to use an interrupt nor to read the SR0 because it is possible to check in the 19 khz interrupt
-
-/*
-void update_shadow_pattern(uint8_t current_pattern){
-    if (current_pattern == 0 || current_pattern > 6) current_pattern = 1;
-    XMC_POSIF_HSC_SetCurrentPattern(HALL_POSIF_HW, current_pattern);
-    XMC_POSIF_HSC_SetExpectedPattern(HALL_POSIF_HW, expected_pattern_table[current_pattern]);
-}
-*/
-
-
-/*
-void set_rotor_angle( uint8_t angle, uint8_t duty_cycle){
-// Phase A is advanced 240 degrees over phase B
-    ui16_temp = ui16_svm_table[(uint8_t) (angle + 171)]; // 171 = 240 deg when 360° is coded as 256
-    if (ui16_temp > MIDDLE_SVM_TABLE) { // 214 at 19 khz
-        ui16_a = MIDDLE_SVM_TABLE + (((ui16_temp - MIDDLE_SVM_TABLE) * (uint16_t) duty_cycle)>>8); // >>8 because duty_cycle 100% is 256
-    } else {
-        ui16_a = MIDDLE_SVM_TABLE - (((MIDDLE_SVM_TABLE - ui16_temp) * (uint16_t) duty_cycle)>>8);
-    }    
-    // phase B as reference phase
-    ui16_temp = ui16_svm_table[angle] ;
-    if (ui16_temp > MIDDLE_SVM_TABLE) {
-        ui16_b = MIDDLE_SVM_TABLE + (((ui16_temp - MIDDLE_SVM_TABLE) * (uint16_t) duty_cycle)>>8);
-    } else {
-        ui16_b = MIDDLE_SVM_TABLE - (((MIDDLE_SVM_TABLE - ui16_temp) * (uint16_t) duty_cycle)>>8);
-    }
-    // phase C is advanced 120 degrees over phase B
-    ui16_temp = ui16_svm_table[(uint8_t) (angle + 85 )] ; // 85 = 120 deg
-    if (ui16_temp > MIDDLE_SVM_TABLE) {
-        ui16_c = MIDDLE_SVM_TABLE + (((ui16_temp - MIDDLE_SVM_TABLE) * (uint16_t) duty_cycle)>>8);
-    } else {
-        ui16_c = MIDDLE_SVM_TABLE - (((MIDDLE_SVM_TABLE - ui16_temp) * (uint16_t) duty_cycle)>>8);
-    }
-    // fill the compare values
-    XMC_CCU8_SLICE_SetTimerCompareMatch(PHASE_U_TIMER_HW, XMC_CCU8_SLICE_COMPARE_CHANNEL_1 , ui16_a);
-    XMC_CCU8_SLICE_SetTimerCompareMatch(PHASE_V_TIMER_HW, XMC_CCU8_SLICE_COMPARE_CHANNEL_1 , ui16_b);
-    XMC_CCU8_SLICE_SetTimerCompareMatch(PHASE_W_TIMER_HW, XMC_CCU8_SLICE_COMPARE_CHANNEL_1 , ui16_c);
-    // Enable shadow transfer for slice 0,1,2 for CCU80 Kernel 
-	XMC_CCU8_EnableShadowTransfer(ccu8_0_HW, ((uint32_t)XMC_CCU8_SHADOW_TRANSFER_SLICE_0 |
-	                                            (uint32_t)XMC_CCU8_SHADOW_TRANSFER_SLICE_1 |
-	                                            (uint32_t)XMC_CCU8_SHADOW_TRANSFER_SLICE_2 ));   
-}   
-*/
-
 

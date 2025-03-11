@@ -68,20 +68,13 @@ extern volatile uint32_t posif_SR0;
 extern volatile uint32_t posif_SR1;
 extern volatile uint32_t posif_print_current_pattern ;
 
-extern volatile uint32_t hall_pattern_irq;                   // current hall pattern
-extern volatile uint16_t hall_pattern_change_ticks_irq; // ticks from ccu4 slice 2 for last pattern change
+extern volatile uint8_t current_hall_pattern;                   // current hall pattern
 extern uint8_t  previous_hall_pattern; 
 
 extern volatile uint16_t ui16_a ;
 extern volatile uint16_t ui16_b ;
 extern volatile uint16_t ui16_c ;
-extern uint8_t ui8_svm_table_index_print  ; 
-extern uint16_t ui16_temp_print  ;
-extern uint16_t ui16_a_print ;
-extern uint16_t ui16_new_angle_print; 
-uint16_t ccu4_S2_timer ; 
-extern uint16_t current_average ;
-extern uint16_t hall_pattern_intervals[8];
+
 // to measure time in irq
 extern volatile uint16_t debug_time_ccu8_irq0; // to debug time in irq0 CCU8 (should be less than 25usec; 1 = 4 usec )
 extern volatile uint16_t debug_time_ccu8_irq1; // to debug time in irq0 CCU8 (should be less than 25usec; 1 = 4 usec )
@@ -94,21 +87,7 @@ extern volatile uint8_t ui8_adc_battery_current_filtered;
 extern uint8_t ui8_battery_current_filtered_x10;
 extern uint16_t ui16_display_data_factor; 
 extern volatile uint8_t ui8_g_foc_angle;
-extern uint8_t ui8_throttle_adc_in;
-
-
-// to debug
-extern uint8_t current_hall_pattern_log;
-extern uint16_t last_hall_pattern_change_ticks_log;
-extern uint16_t previous_360_ref_ticks_log;
-extern uint16_t ui16_hall_counter_total_log;
-extern uint32_t ui32_angle_per_tick_X16shift_log;
-extern uint16_t ui16_measured_angle_X16bits_log;
-extern uint8_t best_ref_angle_log;
-extern uint8_t ui8_hall_ref_angles_log;
-
-
-    
+extern uint8_t ui8_throttle_adc_in; 
 
 extern volatile uint8_t ui8_best_ref_angles[8] ;
 extern uint32_t best_ref_angles_X16bits[8] ;
@@ -246,8 +225,8 @@ int main(void)
     XMC_POSIF_Start(HALL_POSIF_HW);
     
     // set interrupt 
-    NVIC_SetPriority(CCU40_1_IRQn, 0U); //capture hall pattern and slice 2 time when a hall change occurs
-	NVIC_EnableIRQ(CCU40_1_IRQn);
+//    NVIC_SetPriority(CCU40_1_IRQn, 0U); //capture hall pattern and slice 2 time when a hall change occurs
+//	NVIC_EnableIRQ(CCU40_1_IRQn);
     /* CCU80_0_IRQn and CCU80_1_IRQn. slice 3 interrupt on counting up and down. at 19 khz to manage rotating flux*/
 	NVIC_SetPriority(CCU80_0_IRQn, 1U);
 	NVIC_EnableIRQ(CCU80_0_IRQn);
@@ -325,12 +304,6 @@ int main(void)
         #define DEBUG_HALL_POSITIONS (1)
         #if (DEBUG_HALL_POSITIONS == (1) )
         if( take_action(6, 5000)) {
-            //for (uint8_t i = 1; i<7; i++){
-            //    real_ticks_interval_avg[i]= real_ticks_interval[i] *6 / INTERVAL_COUNTER;  // real interval between 2 hall patterns
-            //    expected_ticks_interval_avg[i] = expected_ticks_interval[i] *6 / INTERVAL_COUNTER; // expected interval based on the defined sensor positions and number ot tick for one electric rotation 
-            //    tick_error_avg[i] = (int32_t) expected_ticks_interval_avg[i] - (int32_t) real_ticks_interval_avg[i];
-            //    angle_error_avg[i] = tick_error_avg[i] * 256 / ui16_hall_counter_total ;
-            //}
             SEGGER_RTT_printf(0,
             "c10b=%u  dc=%u erps=%u t360=%u  best1=%u best2=%u best3=%u best4=%u best5=%u best6=%u\r\n",
                 (unsigned int) ui8_adc_battery_current_filtered,
@@ -338,12 +311,7 @@ int main(void)
                 (unsigned int) ui16_motor_speed_erps,
                 (unsigned int) ui16_hall_counter_total,
                 ui8_best_ref_angles[1], ui8_best_ref_angles[2], ui8_best_ref_angles[3], ui8_best_ref_angles[4], ui8_best_ref_angles[5], ui8_best_ref_angles[6]
-            );
-            //for (uint8_t i = 1; i<7; i++){
-            //    real_ticks_interval[i] = 0 ;  // reset real interval between 2 hall patterns
-            //    expected_ticks_interval[i] = 0; // reset expected interval based on the defined sensor positions and number ot tick for one electric rotation 
-            //}
-            //interval_counter = INTERVAL_COUNTER; // allow next measurement    
+            );    
         }
         #endif
         #endif    // end DEBUG_ON_JLINK

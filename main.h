@@ -12,7 +12,7 @@
 #include "config_tsdz8.h"
 #include "common.h"
 
-#define FIRMWARE_VERSION "0.1.4"      // is not used; just for reference)
+#define FIRMWARE_VERSION "0.1.5"      // is not used; just for reference)
 #define MAIN_CONFIGURATOR_VERSION 4   // for configurator (must be the same as in xls sheet)
 #define SUB_CONFIGURATOR_VERSION  0    // is not used (just for reference)
 
@@ -220,7 +220,7 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 */
 
 // scale the torque assist target current
-#define TORQUE_ASSIST_FACTOR_DENOMINATOR			120
+#define TORQUE_ASSIST_FACTOR_DENOMINATOR		120
 
 // torque step mode
 #define TORQUE_STEP_DEFAULT							0 // not calibrated

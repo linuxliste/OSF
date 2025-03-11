@@ -12,7 +12,7 @@ When changed are done to this firmware, I have to take care of:
 - do a copy paste of the HEX file to the folder /OSF/files_to_flash 
 - rename this paste as "OSF_TSDZ8_Vxx_xx_xx.hex" where XX_XX_XX is the same as the firmware version in main.h
 
-- if there are changes in java configurator, contact mbrusa (via issues)
+- if there are changes in java configurator, contact mbrusa (via issues on his github TSDZ2 repository)
 
 
 ------------  General infos --------------------

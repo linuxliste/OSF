@@ -58,6 +58,7 @@ void crc16(uint8_t ui8_data, uint16_t *ui16_crc);
 
 void lights_set_state(uint8_t ui8_state) ; // moved by mstrens from another tsdz2 file
 
+// added by mstrens
 extern volatile uint32_t system_ticks ;
 extern struct_config m_config ;
 

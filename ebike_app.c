@@ -249,6 +249,8 @@ uint16_t debug6 =0;
 uint16_t debug7 =0;
 uint16_t debug8 =0;
 uint16_t debug9 =0;
+
+// added by mstrens to optimise hall positions
 extern volatile uint8_t ui8_best_ref_angles[8];
 
 
@@ -440,8 +442,8 @@ void ebike_app_controller(void) // is called every 25ms by main()
 	// calculate the cadence and set limits from wheel speed
 	calc_cadence();
 
-	// Calculate filtered Battery Voltage (mV)  // get a ui16_adc_voltage filtered value and convert it in mv with ui16_battery_voltage_filtered_x1000
-    get_battery_voltage();
+	// Calculate filtered Battery Voltage (mV)
+    get_battery_voltage();  // get a ui16_adc_voltage filtered value and convert it in mv with ui16_battery_voltage_filtered_x1000
 	
     // Calculate filtered Battery Current (Ampx10)
     ui8_battery_current_filtered_x10 = (uint8_t)(((uint16_t)(ui8_adc_battery_current_filtered * (uint8_t)BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100)) / 10U);
@@ -500,7 +502,7 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
     ui8_adc_battery_current_target = 0;
     ui8_duty_cycle_target = 0;
 	
-	// field weakening enabled
+	// field weakening enable
 	if ((m_config.field_weakening_enabled)
 		&& (ui16_motor_speed_erps > MOTOR_SPEED_FIELD_WEAKENING_MIN)
 		&& (ui8_adc_battery_current_filtered < ui8_controller_adc_battery_current_target)
@@ -572,7 +574,7 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
 	// For 10 A, TSDZ8 shoud give 10*24,576 steps
 	// to convert TSDZ8 steps in the same units as TSDZ2, we shoud take ADC *62/245,76 = 0,25 and divide by 4 (or >>2)
 	// current is available in gr0 ch1 result 8 in queue 0 p2.8 and/or in gr0 ch0 result in 12 (p2.8)
-	// here we take the average of the 2 conversions and so use >>3 instead of >>2
+	// here we take the average of the 2 conversions and so we should use >>3 instead of >>2
 	// Still due to IIR filtering, we have to add >>2 because it is returned in 14 bits instead of 12
 	uint8_t ui8_temp_adc_current = ((XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 15 ) & 0xFFFF) +
     							    (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 15 ) & 0xFFFF)) >>5  ;  // >>2 for IIR, >>2 for ADC12 to ADC10 , >>1 for averaging
@@ -663,6 +665,7 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
 
         // set target battery current in controller
         ui8_controller_adc_battery_current_target = ui8_adc_battery_current_target;
+		
 		// set target duty cycle in controller
         ui8_controller_duty_cycle_target = ui8_duty_cycle_target;
 	}
@@ -1696,7 +1699,6 @@ static uint8_t toffset_cycle_counter = 0;
 	uint16_t ui16_temp = 0;
 	// this has been moved from motor.c to here in order to save time in the irq; >>2 is to go from ADC 12 bits to 10 bits like TSDZ2
 	ui16_adc_torque   = (XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 2 ) & 0xFFF) >> 2; // torque gr0 ch7 result 2 in bg p2.2
-
     if (toffset_cycle_counter < TOFFSET_CYCLES) {
         uint16_t ui16_tmp = ui16_adc_torque; 
         ui16_adc_pedal_torque_offset_init = filter(ui16_tmp, ui16_adc_pedal_torque_offset_init, 2);
