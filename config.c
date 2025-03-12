@@ -263,6 +263,7 @@ void init_extra_fields_config (){
                         // still a define in main.h allows to let the motor run with the compilation config.
                         // this can be usefull for testing/debugging (avoid changes in XLS) 
     #endif
+    
     // battery
     ui16_actual_battery_capacity = (uint16_t)(((uint32_t) m_config.target_max_battery_capacity * m_config.actual_battery_capacity_percent ) / 100);
  

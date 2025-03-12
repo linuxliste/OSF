@@ -36,7 +36,7 @@ To use this firmware, you will have to:
 * Flash the compiled firmware on the TSDZ8 controller
 * Generate a file with your preferences (using the GUI configurator that is common for TSDZ2 and TSDZ8)
 * Flash the hex file that has been generated with the configurator.
-* Fine tune one parameter (optional)
+* Fine tune some parameters (optional) + monitor (optional) 
 
 If you have questions on this Tsdz8 project, you can ask on this forum:
 https://endless-sphere.com/sphere/threads/new-tsdz8-pswpower.120798/page-12
@@ -120,40 +120,52 @@ Still if there are deep changes (in the firmware and/or the sheet), a "Main Vers
 When the controller starts running, it checks that the firmware is compatible with this version nr.
 If not, it provides an error code E09 on the display (at least on VLCD5) and blocks the motor. It could be that the code is different (e.g. E08 on other displays). 
 
-# 6. Fine tune one parameter.
+# 6. Fine tune some parameters (optional) + monitor (optional).
 
-IMPORTANT NOTE :
-
-Do not yet try this process for fine tuning.
-It is not up to date anymore!!!!!!!!!!!
-I have to make some changes. 
-
-The motor use hall sensors to know the position of the rotor and syncronize the magnetic flux.
+The motor use hall sensors to know the position of the rotor and synchronize the magnetic flux.
 There can be minor differences in the positions, the sensitivity and the hysteresis of those sensors.
-Optionnally, you can fine tune one parameter (the "global_offset_angle" applied to hall sensors).
+Combined with J-link, there is a tool allowing, while the motor is running :
 
-If you want to do this step, you have to:
+- to monitor many values from the motor (current, speed, torque, ...)
+- to change some parameters to fine tune the "global_offset_angle" that is used to position one hall sensor.
 
-* REMOVE THE CHAIN FROM THE MOTOR!! (so the motor can freely run without driving the wheel)
+If you want to use this tool, you have to:
+
 * install on you PC (windows) a tool uc_probe provided by Infineon at this link https://infineoncommunity.com/uC-Probe-XMC-software-download_ID712 . It requires that you fill in the register form to download it.
-- once unzip and installed, run this software
-- in to upper left corner, select settings and then select the options Jlink, 4000 kHz , SWD and little endian.
-- in the menu File, select Open and in the file explorer, go to the folder where you put this TSDZ8 firmware and select the file "test_uc_probe.wspx"
-- in the lowest panel named "Symbol browser", there should be a file name displayed ("mtb-example-xmc-gpio-toggle.elf"). It could be that it do not work the first time you try because I expect the software uses an absolute path to the file (and you are using your own path). In this case, click on the ELF button and it will open a popup to select the HEX file. In this popup, go to folder build/last_config and select the file named "mtb-example-xmc-gpio-toggle.elf". This step should not be required if you reopen the software later on.
-- the central panel should now displays different fields and boxes.
-- power on the motor (with the battery and the display) and connect the Jlink device between the motor and the PC.
-- in uc_probe, in the upper left corner, click on the Run button (green arrow).
-- you should see some values that this program collects from the controller. 
-- the first row of fields are just for information.
-- the ON/OFF button near "Testing" allows to switch between normal running mode and Testing
-- when ON, the motor should immediately start running (do not forget to remove the chain before this step).
-- you can change the 2 sliders just below. Set the duty cycle in order to let the motor run quite fast (depends on the battery voltage) without driving a to high current.
-- the principle consists to change the "Offset" slider position in order to get the lowest "Average current" for a given "Duty cycle" 
-- the offset value providing the lowest average current has to be noted and filled in the configurator. Note: the current configurator still does not allow to fill this parameter. It will be added in a future version.
-- generate a new configuration file and flash it like in step 5.
 
-Note: when Testing is ON, the firmware discard the wheel speed sensor (because the Jlink uses the same connector).
-If Jlink is connected while Testing is OFF, the firmware will give an error on the display (after a short delay) because it does not get the expected signal from the speed sensor. To avoid this error, you can enable the option "Assist with error". 
+* once unzip and installed, run this software
+* in to upper left corner, select settings and then select the options Jlink, 4000 kHz , SWD and little endian.
+* in the menu File, select Open and in the file explorer, go to the folder where you put this TSDZ8 firmware and select the file "uc_probmonitoring.wspx"
+* in the lowest panel named "Symbol browser", there should be a file name displayed ("mtb-example-xmc-gpio-toggle.elf"). It could be that it do not work the first time you try because I expect the software uses an absolute path to the file (and you are using your own path while I create the file with my path). In this case, click on the ELF button and it will open a popup to select the HEX file. In this popup, go to folder build/last_config and select the file named "mtb-example-xmc-gpio-toggle.elf". This step should not be required if you reopen the software later on.
+
+* the central panel should now displays different fields and boxes.
+
+* power on the motor (with the battery and the display) and connect the Jlink device between the motor and the PC.
+* in uc_probe, in the upper left corner, click on the Run button (green arrow).
+* you should see some values that this program collects from the controller. 
+
+* the first block gives some general motor values. Do not modify them.
+
+* the second gives some fields checked by the firmware to see is the motor is allowed to run. They can in many cases explain why the motor should not start running. Do not modify those fields
+
+* the third block allows to activate/deactivate a special test mode.
+    * when the button is OFF, the motor works as usual.
+    * when the button is ON, the motor starts IMMEDIATELY running and discard (nearly) all parameters from other assist modes (power, torque, cadence, walk, ...) and their level of assist. You get full control of the power with just 2 parameters that you can modify with the sliders.
+    * IMPORTANT NOTE : when button is ON, the motor can start running immediately. Disconnect the chain or be sure that the wheel can turn!!!!! 
+    * the first parameter is the maximum current that the motor can drive during the test. Start with a low value and increase only if every thing seems fine.
+    * the second parameter is the max duty cycle applied to the motor. This can be compared to the maximum percentage of the battery voltage that can be applied to the motor. The max value is 254 and correspond to 100%.
+    * note that those 2 parameters are in fact used as input for some internal regulation. The real values applied on the motor depends also of other parameters like acceleration/deceleration that you can't control here. This can explain why the real current and duty cycle could differs from the value defined in the slider.
+    * there are also 2 gauges (one up to 300mA and one up to 25000mA) to display the average current over the last second. As explain below, it allows to find the parameters providing the lowest current.
+
+* the block fine tuning reference angle allows to modify the reference position of one hall sensor in order to optimise the motor. The purpose is to seach the value providing the lowest current when testing mode is activated AND the motor has no load (so best when chain is disconnected). The default value is 66. If you get better result with another value, you can caculate an offset to be fill in the field "global_offset_angle" from the file "other sttings/TSDZ8_header.ini" that exists where you put the javaConfigurator.rar. Take care that the value to fill must be (100 - 66 + the value providing the lowest current). So e.g. if lowest current is with reference angle = 65, the the value to fill is 100-66+65 = 99. It seems strange but it is done this way  in order to handle only positive values in the configurator. Afterwards, you have to rerun the javaConfigurator and to reflash the generated Hex file.
+
+* the block "Fine tuning foc multiplier" allows to change a parameter that has a quite big impact on the motor efficiency when the motor is running fast and under load. This parameter is used to advance more or less the magnetic flux. To fine tune, best would be to install the motor on a bike home trainer, to select first a quite light load on the home trainer and to activate the testing mode with a  quite high current and duty cycle. Then Increase the load on the home trainer and start adjusting the slider in order to get the lowest current. The value providing best result has to be filled in the field "foc_angle_multiplier" from the file "other sttings/TSDZ8_header.ini" that exists where you put the javaConfigurator.rar. Afterwards, you have to rerun the javaConfigurator and to reflash the generated Hex file. 
+
+* the block "Check best position for hall sensors" is for information. The positions/characteristics of hall sensors can slightly vary from motor to motor. The firmware tries to detect and adjust automatically the position of the sensors when the motor is running fast and at constant rpm. In those conditions, it takes one sensor (giving pattern1) as reference and calculates the position of the other patterns based on enlapsed time between changes. For technical reason, the angles are not in degree but in step (256 steps = 360°). The field "number of updates" indicates when the firmware is updating the angles because motor is running fast enough and at constant speed. Note: when reaching a limit, the counter restarts automatically from 0. So the value is not meaningful but only the fact that the value is changing. It is expected that the values does not differ to much from the default values at power on. 
+
+* the block "Discard wheel speed sensor and force a fixed speed (km/h)" allows to use the tools without having a wheel speed sensor connected. In normal operations, the firmware gives an error (E08 on VLCD5 display - but could be different on other displays) when the motor runs for more than 12 sec and there is no incomming signal from the speed sensor. When you use the uc_probe tool, you have to connect the J-link device and so, usually, to disconnect the speed sensor. Setting a value greater than zero with the slider simulates a fixed speed and so avoid those errors.
+
+
 
 # Developper
 

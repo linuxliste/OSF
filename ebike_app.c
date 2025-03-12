@@ -140,6 +140,7 @@ volatile uint8_t ui8_adc_motor_phase_current_max = ADC_10_BIT_MOTOR_PHASE_CURREN
 // wheel speed sensor
  uint16_t ui16_wheel_speed_x10 = 0;
  uint8_t ui8_wheel_speed_max_array[2] ; //= {WHEEL_MAX_SPEED,STREET_MODE_SPEED_LIMIT};
+uint8_t ui8_wheel_speed_simulate = 0;  //added by mstrens to simulate a fixe speed whithout having a speed sensor 
 
 // wheel speed display
 uint8_t ui8_display_ready_flag = 0;
@@ -193,6 +194,9 @@ uint8_t ui8_smooth_start_counter_set_temp = SMOOTH_START_RAMP_DEFAULT;
  uint16_t ui16_motor_temperature_filtered_x10 = 0;
 // uint8_t ui8_motor_temperature_max_value_to_limit_array[2] = {MOTOR_TEMPERATURE_MAX_VALUE_LIMIT, (uint8_t)(MOTOR_TEMPERATURE_MAX_VALUE_LIMIT + 50)};
 // uint8_t ui8_motor_temperature_min_value_to_limit_array[2] = {MOTOR_TEMPERATURE_MIN_VALUE_LIMIT, (uint8_t)(MOTOR_TEMPERATURE_MIN_VALUE_LIMIT + 50)};
+
+// controller temperature control  added by mstrens
+uint8_t ui8_temp_celcius = 0;
 
 
 // UART
@@ -416,6 +420,7 @@ void ebike_app_init(void)
 	}
 	// added by Mstrens
 	hall_reference_angle = m_config.global_offset_angle + (uint8_t) DEFAULT_HALL_REFERENCE_ANGLE; 
+	ui8_wheel_speed_simulate =  WHEEL_SPEED_SIMULATE; // load wheel speed simulate (so allow to change it with uc-probe)
 }
 
 
@@ -1621,10 +1626,9 @@ static void calc_wheel_speed(void)
 	else {
 		ui16_wheel_speed_x10 = 0;
     }
-	#if (WHEEL_SPEED_X10_SIMULATE > 0)
-		ui16_wheel_speed_x10 = WHEEL_SPEED_X10_SIMULATE;
-	#endif
-	
+	if (ui8_wheel_speed_simulate > 0){ 
+		ui16_wheel_speed_x10 = ui8_wheel_speed_simulate * 10;
+	}	
 }
 
 
@@ -1895,7 +1899,7 @@ static uint8_t ui8_motor_check_goes_alone_timer = 0U;
 // changed by mstrens for TSDZ8
 #define MOTOR_ERPS_SPEED_THRESHOLD	                  90 // 180 for TSDZ2; should be 2 X less for TSDZ8 because 4 poles instead of 8
 // "if" added by mstrens to avoid error while testing
-if (ui8_test_mode_flag == NORMAL_RUNNING_MODE) {  // check only in normal running mode ; not when
+if (ui8_test_mode_flag == NORMAL_RUNNING_MODE) {  // check only in normal running mode ; not when testing
 	static uint16_t ui16_check_speed_sensor_counter;
 	
 	// check speed sensor
@@ -1924,7 +1928,7 @@ if (ui8_test_mode_flag == NORMAL_RUNNING_MODE) {  // check only in normal runnin
 // are not used, left for ini file compatibility
 #define MOTOR_BLOCKED_COUNTER_THRESHOLD_NEW				10  // 10 * 100ms = 1.0 seconds
 #define MOTOR_BLOCKED_BATTERY_CURRENT_THRESHOLD_X10_NEW	30 // 30 = 3.0 amps
-#define MOTOR_BLOCKED_ERPS_THRESHOLD_NEW				20 // 20 ERPS
+#define MOTOR_BLOCKED_ERPS_THRESHOLD_NEW				10 // 20 ERPS for TSDZ2; so 10 for TSDZ8 (4 poles instead of 8 poles)
 
     static uint8_t ui8_motor_blocked_counter;
 
@@ -3303,9 +3307,13 @@ void uart_send_package(){
     #define MAX_TEMPERATURE 80
 	/* Calculate temperature of the chip in Kelvin */
         uint32_t temp_k = XMC_SCU_CalcTemperature();
-
-        /* Convert temperature to Celsius */
-        if ((temp_k - 273) > MAX_TEMPERATURE){
+		/* Convert temperature to Celsius */
+		if (temp_k > 273){
+			ui8_temp_celcius = (uint8_t) (XMC_SCU_CalcTemperature() - 273u) ; 
+		} else {
+			ui8_temp_celcius = 0;
+		}
+        if (ui8_temp_celcius > MAX_TEMPERATURE){
 			ui8_display_fault_code = ERROR_OVERTEMPERATURE;
 		}
 

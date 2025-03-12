@@ -12,7 +12,7 @@
 #include "config_tsdz8.h"
 #include "common.h"
 
-#define FIRMWARE_VERSION "0.1.5"      // is not used; just for reference)
+#define FIRMWARE_VERSION "0.1.6"      // 22/03/25 12h30 is not used; just for reference)
 #define MAIN_CONFIGURATOR_VERSION 4   // for configurator (must be the same as in xls sheet)
 #define SUB_CONFIGURATOR_VERSION  0    // is not used (just for reference)
 
@@ -23,7 +23,7 @@
                                          // the parameters defined in config_tsdz8.h and used for compilation
                                          // this can be convenient for testing/debugging
 
-#define WHEEL_SPEED_X10_SIMULATE  (0)   // 0 = do not simulate; >0 =  speed in 0,1km/h (e.g. 60 = 6 km/h)
+#define WHEEL_SPEED_SIMULATE  (0)   // 0 = do not simulate; when >0 =  fixed simulated speed in km/h 
 
 // default parameters for easy testing;  can be changed with uc_probe
 #define DEFAULT_TEST_MODE_FLAG        NORMAL_RUNNING_MODE              // or TESTING_MODE 
@@ -163,7 +163,7 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 #define HALL_COUNTER_OFFSET_UP                  (HALL_COUNTER_OFFSET_DOWN + 21)
 #define FW_HALL_COUNTER_OFFSET_MAX              5 // 5*4=20us max time offset
 
-#define MOTOR_ROTOR_INTERPOLATION_MIN_ERPS      20 // it was 10 for tsdz2 that used 8 poles; tsdz8 uses 4 poles so it takes 2* more ticks
+#define MOTOR_ROTOR_INTERPOLATION_MIN_ERPS      5 // it was 10 for tsdz2 that used 8 poles; tsdz8 uses 4 poles so erps is 2 smaller
  
 // adc torque offset gap value for error
 #define ADC_TORQUE_SENSOR_OFFSET_THRESHOLD		30
@@ -233,9 +233,11 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 // adc current
 //#define ADC_10_BIT_BATTERY_EXTRACURRENT				38  //  6 amps
 #define ADC_10_BIT_BATTERY_EXTRACURRENT				50  //  8 amps
-#define ADC_10_BIT_BATTERY_CURRENT_MAX				112	// 18 amps // 1 = 0.16 Amp
+//#define ADC_10_BIT_BATTERY_CURRENT_MAX				112	// 18 amps // 1 = 0.16 Amp
 //#define ADC_10_BIT_BATTERY_CURRENT_MAX				124	// 20 amps // 1 = 0.16 Amp
 //#define ADC_10_BIT_BATTERY_CURRENT_MAX				136	// 22 amps // 1 = 0.16 Amp
+#define ADC_10_BIT_BATTERY_CURRENT_MAX				143	// 23 amps // 1 = 0.16 Amp
+
 #define ADC_10_BIT_MOTOR_PHASE_CURRENT_MAX			187	// 30 amps // 1 = 0.16 Amp
 /*---------------------------------------------------------
  NOTE: regarding ADC battery current max
