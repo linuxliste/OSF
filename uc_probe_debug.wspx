@@ -1,0 +1,1049 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<workspace>
+  <symbolbrowser>
+    <symbolfiles>
+      <symbolfile Filepath="..\build\tsdz8_for_GPIO_TEST\Debug\mtb-example-xmc-gpio-toggle.elf" ExternallyAdded="false" Core_Identifier="Core0" Device_Identifier="Device0" FileType="ELF_File" />
+    </symbolfiles>
+  </symbolbrowser>
+  <screens SelectedScreenId="DataScreen12">
+    <screen RegisteredName="DataScreen12" ScreenHeader="DataScreen7" ScreenType="DataScreen" />
+  </screens>
+  <nodes>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode241" OffsetX="563.90739500286054" OffsetY="73.866036413972779" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="101.78520998831834" Height="64.933963586627314" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Motor Rpm" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode242" OffsetX="578.3999999910593" OffsetY="238.61688621865588" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="71.700000010430813" Height="40.799999808707682" ZIndex="-8" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="0.1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="1" Width="71.700000010430813" Height="40.799999808707682" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui16_wheel_speed_x10" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode243" OffsetX="558.27500663065825" OffsetY="200.00000000000003" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="111.94998673123291" Height="44.794623621809365" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Wheel Speed" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode244" OffsetX="147.79089633127825" OffsetY="238.61688621865582" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="86.017760149232558" Height="43.200001601440896" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="86.017760149232558" Height="43.200001601440896" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui16_adc_torque" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode245" OffsetX="139.99999999999994" OffsetY="199.99999999999997" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="101.59955281178918" Height="38.61688621865585" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="ADC Torque" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode246" OffsetX="139.99999999999994" OffsetY="130" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="90" Height="40.799999930570479" ZIndex="10" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="TextboxControl" Type="TextboxControl">
+          <definitions ColorBackground="#FFF5F5F5" Font="Arial Black" FontSizeValue="20" FontStyleValue="Normal" FontWeightValue="Normal" ColorFont="#FF000000" TextAlignmentValue="Right" SeparateThousandsWithComma="false" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" NumberOfDecimalPlaces="0" ColorBorder="#FFA9A9A9" BorderThickness="0" CornerRadius="3" Width="90" Height="40.799999930570479" IsVerticalText="false" ContainsAssignedSymbols="true" Text="" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui16_adc_throttle" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode247" OffsetX="144.99999999999994" OffsetY="81.578573457809682" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="80" Height="51.200078759195449" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Throttle" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode248" OffsetX="723.90001771174116" OffsetY="235.99999989698378" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="86.199982289749073" Height="44.000000103016248" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="0.1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="86.199982289749073" Height="44.000000103016248" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_battery_current_filtered_x10" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode249" OffsetX="723.900017711741" OffsetY="200" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="108" Height="44.000000103016212" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Current (A)" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode250" OffsetX="1374.4000177191915" OffsetY="195.99999989698375" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="85.599982280808376" Height="44.000000103016248" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="85.599982280808376" Height="44.000000103016248" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_g_duty_cycle" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode251" OffsetX="1359.299991140404" OffsetY="38.3998373055902" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="107" Height="51.2000003072856" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Duty Cycle" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode252" OffsetX="724.30001771770162" OffsetY="131.93301851457204" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="85.799982283788609" Height="44.000000103016248" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="85.799982283788609" Height="44.000000103016248" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_g_foc_angle" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode253" OffsetX="713.200008859596" OffsetY="82.332847213764907" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="108" Height="49.600171300807148" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Foc angle" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode254" OffsetX="160.69802428021427" OffsetY="515.7920023808166" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="339" Height="47.199999712432785" ZIndex="12" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Apply testing mode" Font="Segoe UI" FontSize="26" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode255" OffsetX="170" OffsetY="963" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="200" Height="77" ZIndex="16" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="HSlider" Type="HSlider">
+          <definitions Width="200" Height="77" RangeMax="68" RangeMin="62" RangeIsLogarithmic="false" RangeIsReversed="false" NumberOfRanges="0" MappingMode="Absolute" Transition="Solid" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="2" SliderValue="0" ShowImages="false" NumberOfDecimals="2" FontFamily="Segoe UI" FontColor="#FF808080" FontSize="10" ShowLabel="true" UseDiscreteValues="false" TickFrequency="1" StepValue="1" />
+          <colors />
+          <ColorStopDataObjects />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="hall_reference_angle" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode256" OffsetX="550.69802428021421" OffsetY="525.892002237033" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="100" Height="27" ZIndex="11" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="IPhoneSwitch" Type="iPhoneSwitch">
+          <definitions Width="100" Height="27" ButtonValue="1" ToggleOnValue="1" ToggleOffValue="0" ButtonLabel="" IsButtonChecked="false" LabelOffValue="" LabelOnValue="" FontColor="#FF000000" FontFamily="Segoe UI" FontSize="12" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_test_mode_flag" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode257" OffsetX="481.78660361916445" OffsetY="590.00000000000011" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="200" Height="77" ZIndex="16" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="HSlider" Type="HSlider">
+          <definitions Width="200" Height="77" RangeMax="254" RangeMin="30" RangeIsLogarithmic="false" RangeIsReversed="false" NumberOfRanges="0" MappingMode="Absolute" Transition="Solid" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" SliderValue="0" ShowImages="false" NumberOfDecimals="0" FontFamily="Segoe UI" FontColor="#FF808080" FontSize="10" ShowLabel="true" UseDiscreteValues="false" TickFrequency="20" StepValue="20" />
+          <colors />
+          <ColorStopDataObjects />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_duty_cycle_target_testing" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode258" OffsetX="540.03812428514618" OffsetY="570" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="199.96187571485379" Height="27.218258903338405" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Duty cycle (30 / 254)" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode259" OffsetX="442.70476190305897" OffsetY="989.53895148575134" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="3.3904761904761904" Height="30.000071665071772" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="3.3904761904761904" Height="30.000071665071772" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="global_offset_angle" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode260" OffsetX="546.18660361767434" OffsetY="679.2000974642649" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="71.200000002980232" Height="40.799902535735256" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="71.200000002980232" Height="40.799902535735256" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_duty_cycle_target_testing" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode261" OffsetX="1070" OffsetY="669.20009746426467" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="122.00000001490115" Height="40.799902535735271" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="122.00000001490115" Height="40.799902535735271" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui32_battery_current_filtered_avg_mA" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode262" OffsetX="860" OffsetY="473" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="220.69604863117309" Height="27" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Average current (mA)" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode263" OffsetX="218.23955508916453" OffsetY="312.1233252157445" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="881.51478502939142" Height="39.198558627034927" ZIndex="-6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Checks done in the firmware to let motor run (can help to understand why motor is not running)" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode264" OffsetX="158.10120812236642" OffsetY="376.14493620169304" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="81" Height="45" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="81" Height="45" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_brake_state" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode265" OffsetX="150" OffsetY="349.14493620169304" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="108" Height="27" ZIndex="18" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Brake state" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode266" OffsetX="442.5" OffsetY="384.75036715535316" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="63" Height="40.799999988102556" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="63" Height="40.799999988102556" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_system_state" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode267" OffsetX="420" OffsetY="349.14493620169304" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="108" Height="27" ZIndex="18" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="System state" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode268" OffsetX="715.25" OffsetY="384.75036715535305" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="63" Height="40.799999988102556" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="63" Height="40.799999988102556" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_assist_level" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode269" OffsetX="700" OffsetY="349.14493620169304" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="108" Height="27" ZIndex="18" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Assist level" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode270" OffsetX="988" OffsetY="384.75036715535305" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="63" Height="40.799999988102556" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="63" Height="40.799999988102556" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_riding_mode_parameter" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode271" OffsetX="912.5" OffsetY="349.04493620763571" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="213.99999999999997" Height="27.199999988114836" ZIndex="18" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Riding mode parameter" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode272" OffsetX="549.09999999403954" OffsetY="131.38311378134415" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="131.40000000596046" Height="38.616886218655836" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="15" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="1" Width="131.40000000596046" Height="38.616886218655836" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui16_motor_speed_erps" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode273" OffsetX="810" OffsetY="510" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="300" Height="150" ZIndex="-4" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Semicircle" Type="Semicircle2">
+          <definitions RangeMax="300" RangeMin="0" RangeIsLogarithmic="false" RangeIsReversed="false" NumberOfRanges="3" MappingMode="Absolute" Transition="Solid" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="3" Width="300" Height="150" />
+          <definitions RangeMax="300" RangeMin="0" RangeIsLogarithmic="false" RangeIsReversed="false" NumberOfRanges="3" MappingMode="Absolute" Transition="Solid" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="3" Width="300" Height="150" />
+          <colors>
+            <color Color="#FF00FF00" Offset="0" Index="0" />
+            <color Color="#FFFFFF00" Offset="0.7" Index="1" />
+            <color Color="#FFFF0000" Offset="0.9" Index="2" />
+          </colors>
+          <ColorStopDataObjects>
+            <ColorStopDataObject CurrentColor="#FF00FF00" DisplayName="" Offset="0" Index="0" />
+            <ColorStopDataObject CurrentColor="#FFFFFF00" DisplayName="" Offset="70" Index="1" />
+            <ColorStopDataObject CurrentColor="#FFFF0000" DisplayName="" Offset="90" Index="2" />
+          </ColorStopDataObjects>
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui32_battery_current_filtered_avg_mA" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode274" OffsetX="282.00000885661552" OffsetY="238.21688696786814" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="85.999982286768841" Height="44.000000103016248" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="85.999982286768841" Height="44.000000103016248" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="m_configuration_variables" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0">
+          <symbol path="m_configuration_variables.ui8_riding_mode" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+        </symbol>
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode275" OffsetX="270" OffsetY="198.80000000060016" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="131.2000000029802" Height="51.199999999399829" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Assist Mode" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode276" OffsetX="242.02011544807738" OffsetY="1259.9999999999998" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="85.599982280808376" Height="44.000000103016248" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="85.599982280808376" Height="44.000000103016248" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="debug1" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode277" OffsetX="110" OffsetY="1260" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="85.599982280808376" Height="44.000000103016248" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="85.599982280808376" Height="44.000000103016248" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="debug2" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode278" OffsetX="504.40001771919157" OffsetY="1259.9999999999998" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="85.599982280808376" Height="44.000000103016248" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="85.599982280808376" Height="44.000000103016248" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="debug3" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode279" OffsetX="640.40001771919174" OffsetY="1259.9999999999996" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="85.599982280808376" Height="44.000000103016248" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="85.599982280808376" Height="44.000000103016248" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="debug4" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode280" OffsetX="359.60002565800846" OffsetY="1259.9999999999996" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="85.599982280808376" Height="44.000000103016248" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="85.599982280808376" Height="44.000000103016248" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="debug5" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode281" OffsetX="244.80003359682524" OffsetY="1212.3191752578953" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="85.59998228080849" Height="27.200000013574265" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="pattern 2" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode282" OffsetX="114.40001771919174" OffsetY="1212.319175264656" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="85.599982280808263" Height="27.200000000053034" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="pattern 3" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode283" OffsetX="520" OffsetY="1212.3191752918306" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="83.979882710365061" Height="27.199999945702881" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="pattern 4" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode284" OffsetX="624.40001771919174" OffsetY="1212.3191752918306" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="85.599982280808263" Height="27.199999945702881" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="pattern 5" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode285" OffsetX="380" OffsetY="1212.7693236424784" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="96" Height="26.299703244407805" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="pattern 6" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode286" OffsetX="1190" OffsetY="383.15036709789626" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="85.599982280808376" Height="44.000000103016248" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="85.599982280808376" Height="44.000000103016248" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_motor_enabled" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode287" OffsetX="1168.7999999970198" OffsetY="338.26954245940755" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="131.2000000029802" Height="51.199999999399829" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Motor Enabled" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode288" OffsetX="781.60002657878772" OffsetY="1259.9999999999998" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="85.599982280808376" Height="44.000000103016248" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="85.599982280808376" Height="44.000000103016248" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="hall_ref_angles_counter" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode289" OffsetX="181.32685424912228" OffsetY="1149.882990877717" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="739.15899395475878" Height="44.014621281606367" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Check best position for hall sensors (pattern 1 is taken as reference; 256 = 360°)" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode290" OffsetX="760" OffsetY="1212.7191752576755" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="180" Height="26.400000014012697" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="number of updates" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode291" OffsetX="1030" OffsetY="963.19999999999993" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="200" Height="76.8" ZIndex="-2" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="HSlider" Type="HSlider">
+          <definitions Width="200" Height="76.8" RangeMax="40" RangeMin="10" RangeIsLogarithmic="false" RangeIsReversed="false" NumberOfRanges="0" MappingMode="Absolute" Transition="Solid" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="2" SliderValue="0" ShowImages="false" NumberOfDecimals="2" FontFamily="Segoe UI" FontColor="#FF808080" FontSize="10" ShowLabel="true" UseDiscreteValues="false" TickFrequency="3" StepValue="3" />
+          <colors />
+          <ColorStopDataObjects />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="m_config" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0">
+          <symbol path="m_config.foc_angle_multiplier" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+        </symbol>
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode292" OffsetX="979.993948532662" OffsetY="822.80000028756717" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="339" Height="47.199999712432785" ZIndex="12" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Fine tuning foc multiplier" Font="Segoe UI" FontSize="26" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode293" OffsetX="421" OffsetY="30.255670824319857" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="339" Height="47.199999712432785" ZIndex="12" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="General motor values" Font="Segoe UI" FontSize="26" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode294" OffsetX="100" OffsetY="453.2352178770949" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="1419.1902293797607" Height="276.764782122905" ZIndex="-7" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#FF000000" DashDot="1, 0" Opacity="1" Label="" Font="Segoe UI" FontSize="12" FontWeight="Normal" FontStyle="Normal" Bold="false" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode295" OffsetX="99.064589452213909" OffsetY="30.5162623630452" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="1420.7997619419609" Height="269.61276465300375" ZIndex="-9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#FF000000" DashDot="1, 0" Opacity="1" Label="" Font="Segoe UI" FontSize="12" FontWeight="Normal" FontStyle="Normal" Bold="false" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode296" OffsetX="99.257355235911859" OffsetY="312.09085941380931" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="1420.1180000936467" Height="117.90914058619069" ZIndex="-10" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#FF000000" DashDot="1, 0" Opacity="1" Label="" Font="Segoe UI" FontSize="12" FontWeight="Normal" FontStyle="Normal" Bold="false" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode297" OffsetX="969.97130361714426" OffsetY="800.28639501232828" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="499.19993053748169" Height="249.71360498767169" ZIndex="-11" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#FF000000" DashDot="1, 0" Opacity="1" Label="" Font="Segoe UI" FontSize="12" FontWeight="Normal" FontStyle="Normal" Bold="false" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode298" OffsetX="114.59695426692304" OffsetY="822.44984538451331" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="775.10619908478941" Height="117.90914058619069" ZIndex="12" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Fine tuning reference angle&#xD;&#xA;= DEFAULT_HALL_REFERENCE_ANGLE + global_offset_angle" Font="Segoe UI" FontSize="26" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode299" OffsetX="120" OffsetY="590.00000000000011" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="200" Height="77" ZIndex="16" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="HSlider" Type="HSlider">
+          <definitions Width="200" Height="77" RangeMax="20" RangeMin="0" RangeIsLogarithmic="false" RangeIsReversed="false" NumberOfRanges="0" MappingMode="Absolute" Transition="Solid" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" SliderValue="0" ShowImages="false" NumberOfDecimals="0" FontFamily="Segoe UI" FontColor="#FF808080" FontSize="10" ShowLabel="true" UseDiscreteValues="false" TickFrequency="2" StepValue="2" />
+          <colors />
+          <ColorStopDataObjects />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_battery_current_target_testing" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode300" OffsetX="209.60293023249963" OffsetY="572.78174109666168" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="180.39706976750034" Height="27.218258903338405" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Max current (Amp)" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode301" OffsetX="178.79999999701977" OffsetY="679.2000974642649" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="71.200000002980232" Height="40.799902535735256" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="71.200000002980232" Height="40.799902535735256" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_battery_current_target_testing" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode302" OffsetX="1160" OffsetY="510" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="300" Height="150" ZIndex="-4" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Semicircle" Type="Semicircle2">
+          <definitions RangeMax="25000" RangeMin="0" RangeIsLogarithmic="false" RangeIsReversed="false" NumberOfRanges="3" MappingMode="Absolute" Transition="Solid" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="3" Width="300" Height="150" />
+          <definitions RangeMax="25000" RangeMin="0" RangeIsLogarithmic="false" RangeIsReversed="false" NumberOfRanges="3" MappingMode="Absolute" Transition="Solid" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="3" Width="300" Height="150" />
+          <colors>
+            <color Color="#FF00FF00" Offset="0" Index="0" />
+            <color Color="#FFFFFF00" Offset="0.7" Index="1" />
+            <color Color="#FFFF0000" Offset="0.9" Index="2" />
+          </colors>
+          <ColorStopDataObjects>
+            <ColorStopDataObject CurrentColor="#FF00FF00" DisplayName="" Offset="0" Index="0" />
+            <ColorStopDataObject CurrentColor="#FFFFFF00" DisplayName="" Offset="70" Index="1" />
+            <ColorStopDataObject CurrentColor="#FFFF0000" DisplayName="" Offset="90" Index="2" />
+          </ColorStopDataObjects>
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui32_battery_current_filtered_avg_mA" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode303" OffsetX="1070" OffsetY="198.79999938542881" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="80" Height="51.200000614571209" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Actual" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode304" OffsetX="1080" OffsetY="90" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="80" Height="51.200000614571209" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Target" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode305" OffsetX="277.14789171483443" OffsetY="81.577923408084885" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="132.75147311706243" Height="51.196222125093392" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Cadence (rpm)" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode306" OffsetX="279.99999999999994" OffsetY="130" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="90" Height="40.799999930570479" ZIndex="10" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="TextboxControl" Type="TextboxControl">
+          <definitions ColorBackground="#FFF5F5F5" Font="Arial Black" FontSizeValue="20" FontStyleValue="Normal" FontWeightValue="Normal" ColorFont="#FF000000" TextAlignmentValue="Right" SeparateThousandsWithComma="false" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" NumberOfDecimalPlaces="0" ColorBorder="#FFA9A9A9" BorderThickness="0" CornerRadius="3" Width="90" Height="40.799999930570479" IsVerticalText="false" ContainsAssignedSymbols="true" Text="" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_pedal_cadence_RPM" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode307" OffsetX="419.99999999999994" OffsetY="130" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="90" Height="40.799999930570479" ZIndex="10" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="TextboxControl" Type="TextboxControl">
+          <definitions ColorBackground="#FFF5F5F5" Font="Arial Black" FontSizeValue="20" FontStyleValue="Normal" FontWeightValue="Normal" ColorFont="#FF000000" TextAlignmentValue="Right" SeparateThousandsWithComma="false" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" NumberOfDecimalPlaces="0" ColorBorder="#FFA9A9A9" BorderThickness="0" CornerRadius="3" Width="90" Height="40.799999930570479" IsVerticalText="false" ContainsAssignedSymbols="true" Text="" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_temp_celcius" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode308" OffsetX="426.02954291283555" OffsetY="81.576437695086682" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="111.94998673123291" Height="48.800027864582425" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Temperature" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode309" OffsetX="1370" OffsetY="97.1999861214367" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="85.599982280808376" Height="44.000000103016248" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="85.599982280808376" Height="44.000000103016248" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_controller_duty_cycle_target" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode310" OffsetX="1150" OffsetY="40.000000000000007" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="166" Height="47.999674918465971" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="max ADC current" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode311" OffsetX="1206.9217635114619" OffsetY="100" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="85.599982280808376" Height="44.000000103016248" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="85.599982280808376" Height="44.000000103016248" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_controller_adc_battery_current_target" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode312" OffsetX="1206.9217635114615" OffsetY="199.99999999999997" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="85.599982280808376" Height="44.000000103016248" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="85.599982280808376" Height="44.000000103016248" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_adc_battery_current_filtered" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode313" OffsetX="90.261541783717462" OffsetY="801.04665105386221" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="823.77702405120056" Height="248.95334894613777" ZIndex="-5" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#FF000000" DashDot="1, 0" Opacity="1" Label="" Font="Segoe UI" FontSize="12" FontWeight="Normal" FontStyle="Normal" Bold="false" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode314" OffsetX="90.186287867822386" OffsetY="1129.5684617870772" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="908.37276759884992" Height="221.82283967769" ZIndex="-2" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#FF000000" DashDot="1, 0" Opacity="1" Label="" Font="Segoe UI" FontSize="12" FontWeight="Normal" FontStyle="Normal" Bold="false" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode315" OffsetX="1298.7999999970198" OffsetY="969.2000974642649" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="71.200000002980232" Height="40.799902535735256" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="71.200000002980232" Height="40.799902535735256" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="m_config" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0">
+          <symbol path="m_config.foc_angle_multiplier" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+        </symbol>
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode316" OffsetX="1110" OffsetY="1212.7191752576755" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="200" Height="76.8" ZIndex="-2" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="HSlider" Type="HSlider">
+          <definitions Width="200" Height="76.8" RangeMax="40" RangeMin="0" RangeIsLogarithmic="false" RangeIsReversed="false" NumberOfRanges="0" MappingMode="Absolute" Transition="Solid" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="2" SliderValue="0" ShowImages="false" NumberOfDecimals="2" FontFamily="Segoe UI" FontColor="#FF808080" FontSize="10" ShowLabel="true" UseDiscreteValues="false" TickFrequency="1" StepValue="1" />
+          <colors />
+          <ColorStopDataObjects />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_wheel_speed_simulate" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode317" OffsetX="1370" OffsetY="1219.9999999999998" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="71.200000002980232" Height="40.799902535735256" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="71.200000002980232" Height="40.799902535735256" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="ui8_wheel_speed_simulate" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode318" OffsetX="1119.6839295033253" OffsetY="1149.8830041899009" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="300" Height="45.597186626630219" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Discard wheel speed sensor and &#xD;&#xA;force a fixed speed (km/h)" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode319" OffsetX="1090.6980710955083" OffsetY="1128.3518506056087" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="419" Height="232" ZIndex="-12" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#FF000000" DashDot="1, 0" Opacity="1" Label="" Font="Segoe UI" FontSize="12" FontWeight="Normal" FontStyle="Normal" Bold="false" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode320" OffsetX="408.79999999680695" OffsetY="970" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="71.200000002980232" Height="40.799902535735256" ZIndex="6" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" UpdateWhenVisible="true" IsWritableControl="false" WritableValue="0" IsDrawingShape="false" ShapeTypeStr="" RibbonTool="None">
+      <innercontent>
+        <content ControlType="Numeric" Type="Numeric2">
+          <definitions NumericFontFamilyValue="Arial Black" NumericFontSizeValue="20" NumericForegroundValue="#FF000000" NumericTextAlignmentValue="Right" IsThousandSeparatorEnabled="true" ScalingFactor="1" ScalingOffset="0" ScalingFormat="" LeadingZeroes="0" DecimalPlaces="0" Width="71.200000002980232" Height="40.799902535735256" />
+        </content>
+      </innercontent>
+      <symbols>
+        <symbol path="hall_reference_angle" IsAnArrayElement="false" ElementIndex="0" IsCustomSymbol="false" Mask_Enabled="false" Mask_Start_Bit="0" Mask_End_Bit="0" />
+      </symbols>
+    </node>
+    <node ScreenId="DataScreen12" NodeId="CustomDiagramNode321" OffsetX="1150.1980710955086" OffsetY="1294.4028133733696" AllowMove="true" AllowResize="true" AllowRotate="true" AllowSelect="true" IsInRuntimeMode="false" Width="300" Height="45.597186626630219" ZIndex="9" IsLocked="false" RotateAngle="0" Pivot="0.5,0.5" IsWritableControl="false" WritableValue="0" IsDrawingShape="true" ShapeTypeStr="Rectangle" RibbonTool="None">
+      <shape>
+        <properties Fill="#00FFFFFF" Thickness="2" Stroke="#00FFFFFF" DashDot="1, 0" Opacity="1" Label="Set on 0 to avoid forcing a speed" Font="Segoe UI" FontSize="18" FontWeight="Bold" FontStyle="Normal" Bold="true" UnderLine="false" Strike="false" Italic="false" TextAlignment="Center" LabelHAlign="Center" LabelVAlign="Center" LabelMargin="5,5,5,5" LabelBackground="#00FFFFFF" LabelForeground="#FF000000" />
+      </shape>
+    </node>
+  </nodes>
+  <screens_objects />
+  <explorer>
+    <content>
+      <nodes>
+        <node IsEnable="true" Name="Test with gpio" NodeType="Project" ScreenType="None" UniqueID="Project15">
+          <node IsEnable="true" Name="DataScreen7" NodeType="Screen" ScreenType="DataScreen" UniqueID="DataScreen12" />
+        </node>
+        <node IsEnable="true" Name="Project8" NodeType="Project" ScreenType="None" UniqueID="Project16" />
+      </nodes>
+    </content>
+  </explorer>
+  <infineon XMC_Family="XMC_1000" />
+  <application IsInFullScreenMode="false">
+    <docking>
+      <ArrayOfDockingParams xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <DockingParams>
+          <PreviousFloatingWindowRect />
+          <FloatWindowState>Normal</FloatWindowState>
+          <ZorderInFloatMode>0</ZorderInFloatMode>
+          <TabOrderIndex>-1</TabOrderIndex>
+          <PreviousContainerDesiredSize>
+            <Width>1324</Width>
+            <Height>0</Height>
+          </PreviousContainerDesiredSize>
+          <PreviousDesiredWidthInDockedMode>1324</PreviousDesiredWidthInDockedMode>
+          <PreviousDesiredHeightInDockedMode>194.4</PreviousDesiredHeightInDockedMode>
+          <Name>usrSymbolBrowser</Name>
+          <State>Dock</State>
+          <NoHeader>false</NoHeader>
+          <SideDocked>Bottom</SideDocked>
+          <SideFloating>Left</SideFloating>
+          <TargetDocked />
+          <TargetFloating />
+          <DesiredWidthInDockedMode>1324</DesiredWidthInDockedMode>
+          <DesiredHeightInDockedMode>194.4</DesiredHeightInDockedMode>
+          <DesiredWidthInFloatingMode>90</DesiredWidthInFloatingMode>
+          <DesiredHeightInFloatingMode>360</DesiredHeightInFloatingMode>
+          <NoDock>false</NoDock>
+          <CanDock>true</CanDock>
+          <CanClose>false</CanClose>
+          <IsSelectedTab>false</IsSelectedTab>
+          <IsActiveWindow>false</IsActiveWindow>
+          <WindowRect />
+          <TabGroupName>14766461</TabGroupName>
+          <IsTabGroupOwner>false</IsTabGroupOwner>
+          <SideTabOrder>0</SideTabOrder>
+          <IndexInDockMode>4</IndexInDockMode>
+          <IndexInFloatMode>4</IndexInFloatMode>
+          <TabOrderInDockMode>0</TabOrderInDockMode>
+          <TabOrderInFloatMode>0</TabOrderInFloatMode>
+          <MDIBounds>0,0,124,50</MDIBounds>
+          <TDIIndex>-1</TDIIndex>
+          <IsSelected>false</IsSelected>
+          <MDIMinimizedBounds>0,0,124,24</MDIMinimizedBounds>
+          <MDIWindowState>Normal</MDIWindowState>
+          <AllowMDIResize>true</AllowMDIResize>
+          <TDIGroupOrientation>Horizontal</TDIGroupOrientation>
+          <WayOfTDIGroup />
+          <DockForSide>Bottom</DockForSide>
+          <PreviousIndexInDockMode>0</PreviousIndexInDockMode>
+          <PreviousSideInDockMode>Left</PreviousSideInDockMode>
+          <DoShift>false</DoShift>
+          <SideRelativetoContainer>Left</SideRelativetoContainer>
+          <TabParent />
+          <DockWindowState>Normal</DockWindowState>
+          <CanMaximize>true</CanMaximize>
+          <CanMinimize>true</CanMinimize>
+          <CanResizeInDockedState>true</CanResizeInDockedState>
+          <CanResizeHeightInDockedState>true</CanResizeHeightInDockedState>
+          <CanResizeWidthInDockedState>true</CanResizeWidthInDockedState>
+          <CanResizeInFloatState>true</CanResizeInFloatState>
+          <CanResizeHeightInFloatState>true</CanResizeHeightInFloatState>
+          <CanResizeWidthInFloatState>true</CanResizeWidthInFloatState>
+          <CanFloatMaximize>false</CanFloatMaximize>
+          <IsFixedSize>false</IsFixedSize>
+          <IsFixedHeight>false</IsFixedHeight>
+          <IsFixedWidth>false</IsFixedWidth>
+          <FixedHeight>0</FixedHeight>
+          <FixedWidth>0</FixedWidth>
+          <ContainerSize>
+            <Width>1324</Width>
+            <Height>652.8</Height>
+          </ContainerSize>
+          <PreviousHostWidth>90</PreviousHostWidth>
+          <PreviousHostHeight>90</PreviousHostHeight>
+          <PreviousContainerHeight>90</PreviousContainerHeight>
+          <PreviousContainerWidth>90</PreviousContainerWidth>
+          <TargetAutoHide />
+          <SplitPanelOffset>0</SplitPanelOffset>
+          <IsSwapped>false</IsSwapped>
+        </DockingParams>
+        <DockingParams>
+          <PreviousFloatingWindowRect />
+          <FloatWindowState>Normal</FloatWindowState>
+          <ZorderInFloatMode>0</ZorderInFloatMode>
+          <TabOrderIndex>-1</TabOrderIndex>
+          <PreviousContainerDesiredSize>
+            <Width>204.8</Width>
+            <Height>652.80000000000007</Height>
+          </PreviousContainerDesiredSize>
+          <PreviousDesiredWidthInDockedMode>204.8</PreviousDesiredWidthInDockedMode>
+          <PreviousDesiredHeightInDockedMode>49.6</PreviousDesiredHeightInDockedMode>
+          <Name>workspaceExplorerMainView</Name>
+          <State>Dock</State>
+          <NoHeader>false</NoHeader>
+          <SideDocked>Left</SideDocked>
+          <SideFloating>Left</SideFloating>
+          <TargetDocked />
+          <TargetFloating />
+          <DesiredWidthInDockedMode>204.8</DesiredWidthInDockedMode>
+          <DesiredHeightInDockedMode>49.6</DesiredHeightInDockedMode>
+          <DesiredWidthInFloatingMode>270</DesiredWidthInFloatingMode>
+          <DesiredHeightInFloatingMode>30</DesiredHeightInFloatingMode>
+          <NoDock>false</NoDock>
+          <CanDock>true</CanDock>
+          <CanClose>false</CanClose>
+          <IsSelectedTab>false</IsSelectedTab>
+          <IsActiveWindow>false</IsActiveWindow>
+          <WindowRect />
+          <TabGroupName>65128598</TabGroupName>
+          <IsTabGroupOwner>false</IsTabGroupOwner>
+          <SideTabOrder>0</SideTabOrder>
+          <IndexInDockMode>3</IndexInDockMode>
+          <IndexInFloatMode>3</IndexInFloatMode>
+          <TabOrderInDockMode>0</TabOrderInDockMode>
+          <TabOrderInFloatMode>0</TabOrderInFloatMode>
+          <MDIBounds>0,0,124,50</MDIBounds>
+          <TDIIndex>-1</TDIIndex>
+          <IsSelected>false</IsSelected>
+          <MDIMinimizedBounds>0,0,124,24</MDIMinimizedBounds>
+          <MDIWindowState>Normal</MDIWindowState>
+          <AllowMDIResize>true</AllowMDIResize>
+          <TDIGroupOrientation>Horizontal</TDIGroupOrientation>
+          <WayOfTDIGroup />
+          <DockForSide>Left</DockForSide>
+          <PreviousIndexInDockMode>0</PreviousIndexInDockMode>
+          <PreviousSideInDockMode>Bottom</PreviousSideInDockMode>
+          <DoShift>false</DoShift>
+          <SideRelativetoContainer>Left</SideRelativetoContainer>
+          <TabParent />
+          <DockWindowState>Normal</DockWindowState>
+          <CanMaximize>true</CanMaximize>
+          <CanMinimize>true</CanMinimize>
+          <CanResizeInDockedState>true</CanResizeInDockedState>
+          <CanResizeHeightInDockedState>true</CanResizeHeightInDockedState>
+          <CanResizeWidthInDockedState>true</CanResizeWidthInDockedState>
+          <CanResizeInFloatState>true</CanResizeInFloatState>
+          <CanResizeHeightInFloatState>true</CanResizeHeightInFloatState>
+          <CanResizeWidthInFloatState>true</CanResizeWidthInFloatState>
+          <CanFloatMaximize>false</CanFloatMaximize>
+          <IsFixedSize>false</IsFixedSize>
+          <IsFixedHeight>false</IsFixedHeight>
+          <IsFixedWidth>false</IsFixedWidth>
+          <FixedHeight>0</FixedHeight>
+          <FixedWidth>0</FixedWidth>
+          <ContainerSize>
+            <Width>204.8</Width>
+            <Height>652.8</Height>
+          </ContainerSize>
+          <PreviousHostWidth>90</PreviousHostWidth>
+          <PreviousHostHeight>90</PreviousHostHeight>
+          <PreviousContainerHeight>90</PreviousContainerHeight>
+          <PreviousContainerWidth>90</PreviousContainerWidth>
+          <TargetAutoHide />
+          <SplitPanelOffset>0</SplitPanelOffset>
+          <IsSwapped>true</IsSwapped>
+        </DockingParams>
+        <DockingParams>
+          <PreviousFloatingWindowRect />
+          <FloatWindowState>Normal</FloatWindowState>
+          <ZorderInFloatMode>0</ZorderInFloatMode>
+          <TabOrderIndex>-1</TabOrderIndex>
+          <PreviousContainerDesiredSize>
+            <Width>204.8</Width>
+            <Height>652.80000000000007</Height>
+          </PreviousContainerDesiredSize>
+          <PreviousDesiredWidthInDockedMode>204.8</PreviousDesiredWidthInDockedMode>
+          <PreviousDesiredHeightInDockedMode>575.2</PreviousDesiredHeightInDockedMode>
+          <Name>toolboxMainView</Name>
+          <State>Dock</State>
+          <NoHeader>false</NoHeader>
+          <SideDocked>Top</SideDocked>
+          <SideFloating>Left</SideFloating>
+          <TargetDocked>workspaceExplorerMainView</TargetDocked>
+          <TargetFloating />
+          <DesiredWidthInDockedMode>204.8</DesiredWidthInDockedMode>
+          <DesiredHeightInDockedMode>575.2</DesiredHeightInDockedMode>
+          <DesiredWidthInFloatingMode>90</DesiredWidthInFloatingMode>
+          <DesiredHeightInFloatingMode>90</DesiredHeightInFloatingMode>
+          <NoDock>false</NoDock>
+          <CanDock>true</CanDock>
+          <CanClose>false</CanClose>
+          <IsSelectedTab>false</IsSelectedTab>
+          <IsActiveWindow>false</IsActiveWindow>
+          <WindowRect />
+          <TabGroupName>49286473</TabGroupName>
+          <IsTabGroupOwner>false</IsTabGroupOwner>
+          <SideTabOrder>0</SideTabOrder>
+          <IndexInDockMode>1</IndexInDockMode>
+          <IndexInFloatMode>2</IndexInFloatMode>
+          <TabOrderInDockMode>0</TabOrderInDockMode>
+          <TabOrderInFloatMode>0</TabOrderInFloatMode>
+          <MDIBounds>0,0,124,50</MDIBounds>
+          <TDIIndex>-1</TDIIndex>
+          <IsSelected>false</IsSelected>
+          <MDIMinimizedBounds>0,0,124,24</MDIMinimizedBounds>
+          <MDIWindowState>Normal</MDIWindowState>
+          <AllowMDIResize>true</AllowMDIResize>
+          <TDIGroupOrientation>Horizontal</TDIGroupOrientation>
+          <WayOfTDIGroup />
+          <DockForSide>Left</DockForSide>
+          <PreviousIndexInDockMode>0</PreviousIndexInDockMode>
+          <PreviousSideInDockMode>Left</PreviousSideInDockMode>
+          <DoShift>false</DoShift>
+          <SideRelativetoContainer>Left</SideRelativetoContainer>
+          <TabParent />
+          <DockWindowState>Normal</DockWindowState>
+          <CanMaximize>true</CanMaximize>
+          <CanMinimize>true</CanMinimize>
+          <CanResizeInDockedState>true</CanResizeInDockedState>
+          <CanResizeHeightInDockedState>true</CanResizeHeightInDockedState>
+          <CanResizeWidthInDockedState>true</CanResizeWidthInDockedState>
+          <CanResizeInFloatState>true</CanResizeInFloatState>
+          <CanResizeHeightInFloatState>true</CanResizeHeightInFloatState>
+          <CanResizeWidthInFloatState>true</CanResizeWidthInFloatState>
+          <CanFloatMaximize>false</CanFloatMaximize>
+          <IsFixedSize>false</IsFixedSize>
+          <IsFixedHeight>false</IsFixedHeight>
+          <IsFixedWidth>false</IsFixedWidth>
+          <FixedHeight>0</FixedHeight>
+          <FixedWidth>0</FixedWidth>
+          <ContainerSize>
+            <Width>204.8</Width>
+            <Height>652.8</Height>
+          </ContainerSize>
+          <PreviousHostWidth>90</PreviousHostWidth>
+          <PreviousHostHeight>90</PreviousHostHeight>
+          <PreviousContainerHeight>90</PreviousContainerHeight>
+          <PreviousContainerWidth>90</PreviousContainerWidth>
+          <TargetAutoHide />
+          <SplitPanelOffset>0</SplitPanelOffset>
+          <IsSwapped>true</IsSwapped>
+        </DockingParams>
+        <DockingParams>
+          <PreviousFloatingWindowRect />
+          <FloatWindowState>Normal</FloatWindowState>
+          <ZorderInFloatMode>0</ZorderInFloatMode>
+          <TabOrderIndex>-1</TabOrderIndex>
+          <PreviousContainerDesiredSize>
+            <Width>204.8</Width>
+            <Height>652.80000000000007</Height>
+          </PreviousContainerDesiredSize>
+          <PreviousDesiredWidthInDockedMode>204.8</PreviousDesiredWidthInDockedMode>
+          <PreviousDesiredHeightInDockedMode>20</PreviousDesiredHeightInDockedMode>
+          <Name>infineonSelectorView</Name>
+          <State>Dock</State>
+          <NoHeader>false</NoHeader>
+          <SideDocked>Top</SideDocked>
+          <SideFloating>Left</SideFloating>
+          <TargetDocked>workspaceExplorerMainView</TargetDocked>
+          <TargetFloating />
+          <DesiredWidthInDockedMode>204.8</DesiredWidthInDockedMode>
+          <DesiredHeightInDockedMode>20</DesiredHeightInDockedMode>
+          <DesiredWidthInFloatingMode>90</DesiredWidthInFloatingMode>
+          <DesiredHeightInFloatingMode>60</DesiredHeightInFloatingMode>
+          <NoDock>false</NoDock>
+          <CanDock>true</CanDock>
+          <CanClose>false</CanClose>
+          <IsSelectedTab>true</IsSelectedTab>
+          <IsActiveWindow>false</IsActiveWindow>
+          <WindowRect />
+          <TabGroupName>40925076</TabGroupName>
+          <IsTabGroupOwner>false</IsTabGroupOwner>
+          <SideTabOrder>0</SideTabOrder>
+          <IndexInDockMode>2</IndexInDockMode>
+          <IndexInFloatMode>1</IndexInFloatMode>
+          <TabOrderInDockMode>0</TabOrderInDockMode>
+          <TabOrderInFloatMode>0</TabOrderInFloatMode>
+          <MDIBounds>0,0,124,50</MDIBounds>
+          <TDIIndex>-1</TDIIndex>
+          <IsSelected>false</IsSelected>
+          <MDIMinimizedBounds>0,0,124,24</MDIMinimizedBounds>
+          <MDIWindowState>Normal</MDIWindowState>
+          <AllowMDIResize>true</AllowMDIResize>
+          <TDIGroupOrientation>Horizontal</TDIGroupOrientation>
+          <WayOfTDIGroup />
+          <DockForSide>Left</DockForSide>
+          <PreviousIndexInDockMode>0</PreviousIndexInDockMode>
+          <PreviousSideInDockMode>Left</PreviousSideInDockMode>
+          <DoShift>false</DoShift>
+          <SideRelativetoContainer>Left</SideRelativetoContainer>
+          <TabParent />
+          <DockWindowState>Normal</DockWindowState>
+          <CanMaximize>true</CanMaximize>
+          <CanMinimize>true</CanMinimize>
+          <CanResizeInDockedState>true</CanResizeInDockedState>
+          <CanResizeHeightInDockedState>true</CanResizeHeightInDockedState>
+          <CanResizeWidthInDockedState>true</CanResizeWidthInDockedState>
+          <CanResizeInFloatState>true</CanResizeInFloatState>
+          <CanResizeHeightInFloatState>true</CanResizeHeightInFloatState>
+          <CanResizeWidthInFloatState>true</CanResizeWidthInFloatState>
+          <CanFloatMaximize>false</CanFloatMaximize>
+          <IsFixedSize>false</IsFixedSize>
+          <IsFixedHeight>false</IsFixedHeight>
+          <IsFixedWidth>false</IsFixedWidth>
+          <FixedHeight>0</FixedHeight>
+          <FixedWidth>0</FixedWidth>
+          <ContainerSize>
+            <Width>204.8</Width>
+            <Height>652.8</Height>
+          </ContainerSize>
+          <PreviousHostWidth>90</PreviousHostWidth>
+          <PreviousHostHeight>90</PreviousHostHeight>
+          <PreviousContainerHeight>90</PreviousContainerHeight>
+          <PreviousContainerWidth>90</PreviousContainerWidth>
+          <TargetAutoHide />
+          <SplitPanelOffset>0</SplitPanelOffset>
+          <IsSwapped>true</IsSwapped>
+        </DockingParams>
+        <DockingParams>
+          <PreviousFloatingWindowRect />
+          <FloatWindowState>Normal</FloatWindowState>
+          <ZorderInFloatMode>0</ZorderInFloatMode>
+          <TabOrderIndex>0</TabOrderIndex>
+          <PreviousContainerDesiredSize>
+            <Width>0</Width>
+            <Height>0</Height>
+          </PreviousContainerDesiredSize>
+          <PreviousDesiredWidthInDockedMode>0</PreviousDesiredWidthInDockedMode>
+          <PreviousDesiredHeightInDockedMode>0</PreviousDesiredHeightInDockedMode>
+          <Name>DataScreen12</Name>
+          <State>Document</State>
+          <NoHeader>false</NoHeader>
+          <SideDocked>Left</SideDocked>
+          <SideFloating>Left</SideFloating>
+          <TargetDocked />
+          <TargetFloating />
+          <DesiredWidthInDockedMode>90</DesiredWidthInDockedMode>
+          <DesiredHeightInDockedMode>90</DesiredHeightInDockedMode>
+          <DesiredWidthInFloatingMode>90</DesiredWidthInFloatingMode>
+          <DesiredHeightInFloatingMode>90</DesiredHeightInFloatingMode>
+          <NoDock>false</NoDock>
+          <CanDock>false</CanDock>
+          <CanClose>false</CanClose>
+          <IsSelectedTab>false</IsSelectedTab>
+          <IsActiveWindow>true</IsActiveWindow>
+          <WindowRect />
+          <TabGroupName />
+          <IsTabGroupOwner>false</IsTabGroupOwner>
+          <SideTabOrder>0</SideTabOrder>
+          <IndexInDockMode>0</IndexInDockMode>
+          <IndexInFloatMode>0</IndexInFloatMode>
+          <TabOrderInDockMode>0</TabOrderInDockMode>
+          <TabOrderInFloatMode>0</TabOrderInFloatMode>
+          <MDIBounds>0,0,124,50</MDIBounds>
+          <TDIIndex>0</TDIIndex>
+          <IsSelected>true</IsSelected>
+          <MDIMinimizedBounds>0,0,124,24</MDIMinimizedBounds>
+          <MDIWindowState>Normal</MDIWindowState>
+          <AllowMDIResize>true</AllowMDIResize>
+          <TDIGroupOrientation>Horizontal</TDIGroupOrientation>
+          <WayOfTDIGroup />
+          <DockForSide>Left</DockForSide>
+          <PreviousIndexInDockMode>0</PreviousIndexInDockMode>
+          <PreviousSideInDockMode>Left</PreviousSideInDockMode>
+          <DoShift>false</DoShift>
+          <SideRelativetoContainer>Left</SideRelativetoContainer>
+          <TabParent />
+          <DockWindowState>Normal</DockWindowState>
+          <CanMaximize>true</CanMaximize>
+          <CanMinimize>true</CanMinimize>
+          <CanResizeInDockedState>true</CanResizeInDockedState>
+          <CanResizeHeightInDockedState>true</CanResizeHeightInDockedState>
+          <CanResizeWidthInDockedState>true</CanResizeWidthInDockedState>
+          <CanResizeInFloatState>true</CanResizeInFloatState>
+          <CanResizeHeightInFloatState>true</CanResizeHeightInFloatState>
+          <CanResizeWidthInFloatState>true</CanResizeWidthInFloatState>
+          <CanFloatMaximize>true</CanFloatMaximize>
+          <IsFixedSize>false</IsFixedSize>
+          <IsFixedHeight>false</IsFixedHeight>
+          <IsFixedWidth>false</IsFixedWidth>
+          <FixedHeight>0</FixedHeight>
+          <FixedWidth>0</FixedWidth>
+          <ContainerSize>
+            <Width>0</Width>
+            <Height>0</Height>
+          </ContainerSize>
+          <PreviousHostWidth>90</PreviousHostWidth>
+          <PreviousHostHeight>90</PreviousHostHeight>
+          <PreviousContainerHeight>90</PreviousContainerHeight>
+          <PreviousContainerWidth>90</PreviousContainerWidth>
+          <TargetAutoHide />
+          <SplitPanelOffset>0</SplitPanelOffset>
+          <IsSwapped>false</IsSwapped>
+        </DockingParams>
+      </ArrayOfDockingParams>
+    </docking>
+  </application>
+</workspace>

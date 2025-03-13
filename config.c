@@ -315,7 +315,7 @@ void init_extra_fields_config (){
     * m_config.pedal_torque_per_10_bit_adc_step_adv_x100) / PEDAL_TORQUE_PER_10_BIT_ADC_STEP_BASE_X100));
 
     // delay lights function (0.1 sec)
-    uint8_t c_DELAY_LIGHTS_ON = m_config.delay_menu_on;	//	 	DELAY_MENU_ON    // 5sec
+    c_DELAY_LIGHTS_ON = m_config.delay_menu_on;	//	 	DELAY_MENU_ON    // 5sec
 
     // delay function status (0.1 sec)
     c_DELAY_FUNCTION_STATUS =   (uint8_t) (c_DELAY_LIGHTS_ON / 2) ; //2,5 sec
