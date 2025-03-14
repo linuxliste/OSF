@@ -7,7 +7,7 @@
 
 #ifndef CONFIG_H_
 #define CONFIG_H_
-
+/*
 #define MOTOR_TYPE 0
 #define TORQUE_SENSOR_CALIBRATED 0
 #define MOTOR_ACCELERATION  35
@@ -148,5 +148,5 @@
 #define PWM_FREQ 19
 #define OVERCURRENT_DELAY 2
 #define MOTOR_TYPE_TSDZ8 1
-
+*/
 #endif /* CONFIG_H_ */

@@ -39,7 +39,7 @@ static const uint8_t ui8_default_array[EEPROM_BYTES_STORED] =
 // Fill m_configuration_variables with saved flash or with default
 void m_configuration_init(void){
  // added by mstrens in order to fill m-configuration_variables with the variables from m_config before having eeprom functions
- // This has to be called AFTER that m_config fas been filled
+ // This has to be called AFTER that m_config has been filled
   // pointer to m_configuration_variables
   struct_configuration_variables *p_configuration_variables = &m_configuration_variables;
   // 32 bytes to use as buffer  
