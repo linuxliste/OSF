@@ -61,7 +61,7 @@ void m_configuration_init(void){
     // for oem display
     m_configuration_variables.ui8_assist_without_pedal_rotation_enabled = m_config.motor_assistance_without_pedal_rotation;
     m_configuration_variables.ui8_assist_with_error_enabled = ASSISTANCE_WITH_ERROR_ENABLED; // is always disabled; must be enabled with the display
-    m_configuration_variables.ui8_battery_SOC_percentage_8b = 0; // mstrens : Should be calculated and strored in eeprom (not defined in m_config) 
+    m_configuration_variables.ui8_battery_SOC_percentage_8b = 0; // mstrens : Should be calculated and stored in eeprom (not defined in m_config) 
     m_configuration_variables.ui8_set_parameter_enabled = m_config.enable_set_parameter_on_startup;
     m_configuration_variables.ui8_street_mode_enabled = m_config.enable_street_mode_on_startup;
     m_configuration_variables.ui8_riding_mode = m_config.riding_mode_on_startup;
