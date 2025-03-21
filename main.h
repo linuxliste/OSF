@@ -12,7 +12,7 @@
 #include "config_tsdz8.h"
 #include "common.h"
 
-#define FIRMWARE_VERSION "0.1.8"      // 22/03/25 12h30 is not used; just for reference)
+#define FIRMWARE_VERSION "0.1.9"      // 22/03/25 12h30 is not used; just for reference)
 #define MAIN_CONFIGURATOR_VERSION 4   // for configurator (must be the same as in xls sheet)
 #define SUB_CONFIGURATOR_VERSION  0    // is not used (just for reference)
 

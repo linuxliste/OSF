@@ -222,8 +222,9 @@ static uint8_t ui8_hall_counter_offset = 14;
 
 // ************************************** begin of IRQ *************************
 // *************** irq 0 of ccu8
-__RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  counting UP (= 1/4 of 19mhz cycles with 1680 ticks at 64mHz and centered aligned)
-    // here we just calculate the new compare values used for the 3 slices (0,1,2) that generates the 3 PWM
+//__RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  counting UP (= 1/4 of 19mhz cycles with 1680 ticks at 64mHz and centered aligned)
+    void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  counting UP (= 1/4 of 19mhz cycles with 1680 ticks at 64mHz and centered aligned)
+        // here we just calculate the new compare values used for the 3 slices (0,1,2) that generates the 3 PWM
 
     // get the current ticks
     uint16_t current_speed_timer_ticks = (uint16_t) (XMC_CCU4_SLICE_GetTimerValue(HALL_SPEED_TIMER_HW) );
@@ -234,7 +235,7 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
     // elapsed time between now and last pattern
     uint16_t enlapsed_time =  current_speed_timer_ticks - last_hall_pattern_change_ticks ; // ticks between now and last change
    
-    // to debug
+    // to debug max time in this iSR
     //uint16_t start_ticks = current_speed_timer_ticks; // save to calculate enlased time inside the irq // just for debug could be removed
     
     // when pattern change
@@ -282,10 +283,10 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
                     //ui8_hall_ref_angles[current_hall_pattern] = ui8_best_ref_angles[current_hall_pattern] ;
                     hall_ref_angles_counter++;  // just to debug to see if table is updated at regular intervals
                 }
-            } 
+            }
             if (current_hall_pattern == 1 ){
                 ui16_hall_counter_total_previous = ui16_hall_counter_total; // save previous counter (to check if erps is stable)
-            } 
+            }
         }
         previous_hall_pattern = current_hall_pattern; // saved to detect future change and check for valid transition
         // set rotor angle based on hall patern
@@ -346,15 +347,16 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
     // get the voltage ; done in irq0 because used in irq1 and irq0 takes less time
     ui16_adc_voltage  = (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 4 ) & 0x0FFF) >> 2; // battery gr1 ch6 result 4   
         
-    //uint16_t temp  = XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW) ;
+    //uint16_t temp  = XMC_CCU4_SLICE_GetTimerValue(HALL_SPEED_TIMER_HW) ;
     //temp = temp - start_ticks;
     //if (temp > debug_time_ccu8_irq0) debug_time_ccu8_irq0 = temp; // store the max enlapsed time in the irq
 } // end of CCU80_0_IRQHandler
 
 
 // ************* irq handler 
-__RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  counting DOWN (= 1/4 of 19mhz cycles)   __RAM_FUNC 
-    // fill the PWM parameters with the values calculated in the other CCU8 interrupt
+//__RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  counting DOWN (= 1/4 of 19mhz cycles)   __RAM_FUNC 
+void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  counting DOWN (= 1/4 of 19mhz cycles)   __RAM_FUNC 
+        // fill the PWM parameters with the values calculated in the other CCU8 interrupt
     //XMC_CCU8_SLICE_SetTimerCompareMatch(PHASE_U_TIMER_HW, XMC_CCU8_SLICE_COMPARE_CHANNEL_1 , ui16_a);
     //XMC_CCU8_SLICE_SetTimerCompareMatch(PHASE_V_TIMER_HW, XMC_CCU8_SLICE_COMPARE_CHANNEL_1 , ui16_b);
     //XMC_CCU8_SLICE_SetTimerCompareMatch(PHASE_W_TIMER_HW, XMC_CCU8_SLICE_COMPARE_CHANNEL_1 , ui16_c);
@@ -368,9 +370,8 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
     ccu8_0_HW->GCSS = ((uint32_t)XMC_CCU8_SHADOW_TRANSFER_SLICE_0 |
 	                                            (uint32_t)XMC_CCU8_SHADOW_TRANSFER_SLICE_1 |
 	                                            (uint32_t)XMC_CCU8_SHADOW_TRANSFER_SLICE_2 );
-    // to debug
-    //uint16_t temp1b  =  XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW);
-    //uint16_t temp1b  = (uint16_t) RUNNING_250KH_TIMER_HW->TIMER;
+    // to debug max time in this iSR
+    //uint16_t start_ticks  =  XMC_CCU4_SLICE_GetTimerValue(HALL_SPEED_TIMER_HW);
     //temp1b = temp1b - start_ticks;
     //if (temp1b > debug_time_ccu8_irq1b) debug_time_ccu8_irq1b = temp1b; // store the max enlapsed time in the irq
     
@@ -400,8 +401,7 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
              (ui32_temp_current_15b)) >> 2;
         ui8_adc_battery_current_filtered  = ui32_adc_battery_current_filtered_15b >> 5 ; // from 15 bits to 10 bits like TSDZ2 
     // to debug
-    //uint16_t temp1c  =  XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW);
-    //uint16_t temp1c  = (uint16_t) RUNNING_250KH_TIMER_HW->TIMER;
+    //uint16_t temp1c  =  XMC_CCU4_SLICE_GetTimerValue(HALL_SPEED_TIMER_HW);
     //temp1c = temp1c - start_ticks;
     //if (temp1c > debug_time_ccu8_irq1c) debug_time_ccu8_irq1c = temp1c; // store the max enlapsed time in the irq
         
@@ -435,7 +435,7 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
         ui8_brake_state = XMC_GPIO_GetInput(IN_BRAKE_PORT, IN_BRAKE_PIN) == 0; // Low level means that brake is on
     
     // to debug
-    //uint16_t temp1d  = (uint16_t) RUNNING_250KH_TIMER_HW->TIMER; //uint16_t temp1d  =  XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW);
+    //uint16_t temp1d  =  XMC_CCU4_SLICE_GetTimerValue(HALL_SPEED_TIMER_HW);
     //temp1d = temp1d - start_ticks;
     //if (temp1d > debug_time_ccu8_irq1d) debug_time_ccu8_irq1d = temp1d; // store the max enlapsed time in the irq
     
@@ -511,7 +511,7 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
             ui8_counter_duty_cycle_ramp_down = 0;
         }
     // to debug
-    //uint16_t temp1e  =  XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW);
+    //uint16_t temp1e  =  XMC_CCU4_SLICE_GetTimerValue(HALL_SPEED_TIMER_HW);
     //temp1e = temp1e - start_ticks;
     //if (temp1e > debug_time_ccu8_irq1e) debug_time_ccu8_irq1e = temp1e; // store the max enlapsed time in the irq
 
@@ -632,7 +632,7 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
 
         // original perform also a save of some parameters (battery consumption) // to do 
     // to debug    
-    //uint16_t temp1  =  XMC_CCU4_SLICE_GetTimerValue(RUNNING_250KH_TIMER_HW);
+    //uint16_t temp1  =  XMC_CCU4_SLICE_GetTimerValue(HALL_SPEED_TIMER_HW);
     //temp1 = temp1 - start_ticks;
     //if (temp1 > debug_time_ccu8_irq1) debug_time_ccu8_irq1 = temp1; // store the max enlapsed time in the irq
 }  // end of CCU8_1_IRQ

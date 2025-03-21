@@ -282,7 +282,7 @@ static void apply_hybrid_assist(void);
 static void apply_cruise(void);
 static void apply_walk_assist(void);
 static void apply_throttle(void);
-static void apply_temperature_limiting(void);
+//static void apply_temperature_limiting(void);
 static void apply_speed_limit(void);
 
 // functions for oem display
