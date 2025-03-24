@@ -137,7 +137,7 @@ int main(void)
 {
     cy_rslt_t result;
 
-    uint32_t wait_time = 600000;
+    uint32_t wait_time = 1200000;
     while (wait_time > 0){  // wait a little at power on to let VCC be stable and so get probably better ADC conversions
         wait_time--;
     }
@@ -227,6 +227,9 @@ int main(void)
     // set interrupt 
 //    NVIC_SetPriority(CCU40_1_IRQn, 0U); //capture hall pattern and slice 2 time when a hall change occurs
 //	NVIC_EnableIRQ(CCU40_1_IRQn);
+    // set irq triggered by posif when a pattern changes
+    NVIC_SetPriority(POSIF0_0_IRQn,0);
+    NVIC_EnableIRQ(POSIF0_0_IRQn);     
     /* CCU80_0_IRQn and CCU80_1_IRQn. slice 3 interrupt on counting up and down. at 19 khz to manage rotating flux*/
 	NVIC_SetPriority(CCU80_0_IRQn, 1U);
 	NVIC_EnableIRQ(CCU80_0_IRQn);
@@ -273,7 +276,7 @@ int main(void)
         #endif
         
         // for debug
-        
+        if( take_action(1,1000)) debug_time_ccu8_irq0 = 0;
         #if (DEBUG_ON_JLINK == 1)
          // do debug if communication with display is working
         //if( take_action(1, 250)) SEGGER_RTT_printf(0,"Light is= %u\r\n", (unsigned int) ui8_lights_button_flag);

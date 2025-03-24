@@ -1,0 +1,46 @@
+To achieve rotor positionning I tried many solutions.
+
+1 Finding the positions of the hall sensors
+I first tried to apply a rotation of magnetic flux at very low speed and to measure the angles generating a hall pattern change.
+This doe snot work well. Even using a rotation in each direction was not good.
+I expect that there are to much friction and that the rotor does not exactly allign with the magnetic flux.
+Still, this allows to validate that pattern sequence is 1,3,2, 6, 4,5
+
+Then I try to consider in a first aproximation that hall sensors are positionned at 120° from each other (so gibing a pattern change at each 60°)
+I applied the same algorithm as TSDZ2 : Use each pattern change as reference and extrapolate angle based on
+- enlapsed time (timer ticks) since last pattern change
+- speed (angle/tick) from the last full rotation (from previous pattern 1 up to last pattern 1)
+
+Then I let vary a global offset (that applies to all hall reference positions) in order to find the value that minimised the average current for a given duty cycle.
+
+Then, to validate the relative positions of the hall sensor, I compare:
+- the theoretical angles of the sensors (60° between each pattern change)
+- the extrapolated angles calculated as angle of pattern 1 + tick since last pattern 1  *  speed (during last 360° rotation)
+I used an smooth filtering (automatic update of theoretical angles) when speed is unchanged for 2 successive 360° rotations and difference between theoretical and calculated is not to big.
+
+Once the best relative positions known, it is possible to fine tune the global offset to minimise the current for a given duty cycle.
+
+This process allows an automatic correction of the relative positions of the hall sensors
+
+2 Enhanced algorithm
+
+In method 1 there is still a risk that the angle varies quite a lot at each pattern change because the angle switch
+- from an extapolated angle based on previous 360° speed
+- to an absolute angle (= position of the sensor in a table)
+This can create current peaks and speed variations.
+
+To avoid this, I tried an algorithm found on the web where:
+- it is assumed that one hall sensor divides the time for 360° in 2 parts that are equals when the speed if fixed
+- so it means that there is no difference between rising and falling edge of one hall sensor
+- (it is possible to confirm this comparing the average time for first 180° and for second 180°)
+- Then we can consider that speed on last 180° is more accurate than speed on last 360°
+- when we detect change to pattern 1, we calculate the new reference angle.
+- to avoid brutal angle changes (like in method 1), we take as new reference the previous one + enlapsed time between the 2 pattern 1 chnaged * previous speed.
+- we calculate the difference between this new reference and the actual position (=360° per definition as we got a pattern 1 change)
+- we calculate a new speed to apply for next 360° based on speed of last 180° + correction speed to cover the difference (assuming the speed of last 180°)
+So in theory, if speed remains unchanged, at the end of next rotation, there should be no difference anymore between extrapolated angle (= future ref) and 360°
+
+In other term, errors are compensated during the next 360° rotation but not during the turn.
+
+To see: perhaps use this strategy only when rpm is high enough?
+To do perhaps : add a check that new ref pos is to to far away from 360; if it is the case, then reset new ref to 0

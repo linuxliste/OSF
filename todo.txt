@@ -7,13 +7,11 @@ In the firmware, there is some offset added in the interpolation to take care th
 - the delay bewteen the capture of the ticks in one IRQ and the application of the new PWM setting (it is abour 39 us = 3/4 of 52us = timer period)
 In theory, there should also be a delay because the capture of the hall position is delayed by CCU4 Slice 0 but it is only about 15*5 ns.
 
-in xls configurator sheet, 
-- there should be the possibility to use advance miles (and so to fill one more line)
-- there should also be some other values for display mode 2 and mode 3
 
 add calibration of torque sensor
 we could reuse some code to limit the current if temperature is to high (between min and max) - code exist in original project
 
+add an automatic stop when current exceed some limits (vadc allow to generate a signal when volt is out of range and ccu8 allows a TRAP)
 
 Check in uart.c the ui16_display_data_factor because it is a ui16 but there is a multiplying factor of 1475 (so quite big)
 

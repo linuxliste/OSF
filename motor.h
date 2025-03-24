@@ -45,6 +45,33 @@ extern volatile uint8_t ui8_battery_SOC_reset_flag;
 
 // end of code copied from TSDZ2
 
+// added by mstrens to debug
+extern int16_t i16_debug_delta_min[8];
+extern int16_t i16_debug_delta_max[8];
+extern int16_t i16_debug_delta_min_1;
+extern int16_t i16_debug_delta_min_2;
+extern int16_t i16_debug_delta_min_3;
+extern int16_t i16_debug_delta_min_4;
+extern int16_t i16_debug_delta_min_5;
+extern int16_t i16_debug_delta_min_6;
+extern int16_t i16_debug_delta_max_1;
+extern int16_t i16_debug_delta_max_2;
+extern int16_t i16_debug_delta_max_3;
+extern int16_t i16_debug_delta_max_4;
+extern int16_t i16_debug_delta_max_5;
+extern int16_t i16_debug_delta_max_6;
+extern uint32_t ui32_adc_battery_current_filtered_min;
+extern uint32_t ui32_adc_battery_current_filtered_max;
+extern uint16_t ui16_battery_current_filtered_ma_min_1sec;
+extern uint16_t ui16_battery_current_filtered_ma_max_1sec;
+extern uint32_t ui32_angle_per_tick_X16shift_min;
+extern uint32_t ui32_angle_per_tick_X16shift_max;
+extern uint32_t ui32_angle_per_tick_X16shift_min_1sec;
+extern uint32_t ui32_angle_per_tick_X16shift_max_1sec;
+extern uint16_t ui16_interval_first_180_ticks;
+extern uint16_t ui16_interval_second_180_ticks;
+
+
 
 
 void CCU80_0_IRQHandler(); // called when ccu8 Slice 4 reaches 840  counting UP (= 1/4 of 19mhz cycles)

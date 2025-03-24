@@ -1263,8 +1263,8 @@
                         <Param id="disable_idle_signal" value="true"/>
                         <Param id="external_WHE_active_level" value="XMC_POSIF_INPUT_ACTIVE_LEVEL_HIGH"/>
                         <Param id="external_WHE_enable" value="false"/>
-                        <Param id="hall_input_update_event" value="false"/>
-                        <Param id="hall_input_update_event_SR_line" value="XMC_POSIF_SR_ID_1"/>
+                        <Param id="hall_input_update_event" value="true"/>
+                        <Param id="hall_input_update_event_SR_line" value="XMC_POSIF_SR_ID_0"/>
                         <Param id="hall_pattern_1" value="1"/>
                         <Param id="hall_pattern_2" value="3"/>
                         <Param id="hall_pattern_3" value="2"/>
@@ -1275,7 +1275,7 @@
                         <Param id="index_event_SR_line" value="XMC_POSIF_SR_ID_0"/>
                         <Param id="index_pin_enable" value="false"/>
                         <Param id="is_debug_mode" value="false"/>
-                        <Param id="low_pass_filter" value="XMC_POSIF_FILTER_8_CLOCK_CYCLE"/>
+                        <Param id="low_pass_filter" value="XMC_POSIF_FILTER_64_CLOCK_CYCLE"/>
                         <Param id="num_of_hall_sensors" value="3"/>
                         <Param id="period_clock_event" value="false"/>
                         <Param id="period_clock_event_SR_line" value="XMC_POSIF_SR_ID_0"/>

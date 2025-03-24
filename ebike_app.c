@@ -300,10 +300,20 @@ uint8_t ui8_pwm_duty_cycle_max = PWM_DUTY_CYCLE_MAX;	//max duty cycle for normal
 uint8_t ui8_test_mode_flag = DEFAULT_TEST_MODE_FLAG ; // can be changed in uc_probe
 uint8_t ui8_battery_current_target_testing = DEFAULT_BATTERY_CURRENT_TARGET_TESTING_A ; // value is in A ; this is a default value that can be changed with uc_probe
 uint8_t ui8_duty_cycle_target_testing = DEFAULT_DUTY_CYCLE_TARTGET_TESTING; // max is 245, this is a default value that can be changed with uc_probe
-#define AVERAGING_CNT 40 // 25 msec per cycle; 40 = 1 sec
-uint32_t ui32_adc_battery_current_filtered_15b_accumulated =0;
-uint32_t ui32_adc_battery_current_filtered_15b_cnt = AVERAGING_CNT;
-uint32_t ui32_battery_current_filtered_avg_mA ;
+#define AVERAGING_BITS 6
+#define AVERAGING_CNT (1<<AVERAGING_BITS) // 25 msec per cycle; 64 = 1,5 sec
+uint32_t ui32_battery_current_mA_acc =0;
+uint32_t ui32_battery_current_mA_squared =0;
+uint32_t ui32_battery_current_mA_cnt = AVERAGING_CNT;
+uint32_t ui32_battery_current_mA_avg ;
+uint32_t ui32_battery_current_mA_var ;
+
+// to debug the difference of time between first and second 180° per turn
+uint32_t ui32_interval_second_180_ticks_accumulated = 0;
+uint32_t ui32_interval_first_180_ticks_accumulated = 0;
+uint32_t ui32_interval_first_180_ticks_avg;
+uint32_t ui32_interval_second_180_ticks_avg;
+	
 	
 
 // ********************* init ******************************
@@ -612,14 +622,60 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
 		}
 	}
 	
-	// calculate an average current in mA (to find parameters giving lowest current)
-	ui32_adc_battery_current_filtered_15b_accumulated += ui32_adc_battery_current_filtered_15b;
-	ui32_adc_battery_current_filtered_15b_cnt--;
-	if (ui32_adc_battery_current_filtered_15b_cnt == 0){
-		ui32_battery_current_filtered_avg_mA = (ui32_adc_battery_current_filtered_15b_accumulated  *1000 
-				/ AVERAGING_CNT / BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100) >> 5;
-		ui32_adc_battery_current_filtered_15b_cnt = AVERAGING_CNT ;
-		ui32_adc_battery_current_filtered_15b_accumulated = 0;
+	// calculate an averange on ticks on first and second 180°
+	ui32_interval_second_180_ticks_accumulated += ui16_interval_second_180_ticks;
+	ui32_interval_first_180_ticks_accumulated += ui16_interval_first_180_ticks;
+
+	// calculate an average in mA (to find parameters giving lowest current)
+	uint32_t current_mA = (ui32_adc_battery_current_filtered_15b * 1000
+		/ BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100) >> 5;
+	ui32_battery_current_mA_acc += current_mA;
+	ui32_battery_current_mA_squared += current_mA * current_mA  ;
+	ui32_battery_current_mA_cnt--;
+	if (ui32_battery_current_mA_cnt == 0){
+		// for debug
+		ui32_interval_second_180_ticks_avg  = ui32_interval_second_180_ticks_accumulated >> AVERAGING_BITS;
+		ui32_interval_first_180_ticks_avg =  ui32_interval_first_180_ticks_accumulated  >> AVERAGING_BITS;
+		ui32_interval_second_180_ticks_accumulated = 0;
+		ui32_interval_first_180_ticks_accumulated = 0;
+
+		ui32_battery_current_mA_avg = ui32_battery_current_mA_acc >> AVERAGING_BITS;
+		//  Var = (SumSq − (Sum × Sum) / n) / (n − 1)  Wikipedia
+		ui32_battery_current_mA_var = 
+			(ui32_battery_current_mA_squared - ((ui32_battery_current_mA_acc * ui32_battery_current_mA_acc) >> AVERAGING_BITS))
+			 *100 / (AVERAGING_CNT-1);
+		ui32_battery_current_mA_cnt = AVERAGING_CNT ;
+		ui32_battery_current_mA_acc = 0;
+		ui32_battery_current_mA_squared = 0;
+
+		// for debug; look at the difference between extrapolated angle and the ref.
+		i16_debug_delta_min_1 = i16_debug_delta_min[1];
+		i16_debug_delta_min_2 = i16_debug_delta_min[2];
+		i16_debug_delta_min_3 = i16_debug_delta_min[3];
+		i16_debug_delta_min_4 = i16_debug_delta_min[4];
+		i16_debug_delta_min_5 = i16_debug_delta_min[5];
+		i16_debug_delta_min_6 = i16_debug_delta_min[6];
+		i16_debug_delta_max_1 = i16_debug_delta_max[1];
+		i16_debug_delta_max_2 = i16_debug_delta_max[2];
+		i16_debug_delta_max_3 = i16_debug_delta_max[3];
+		i16_debug_delta_max_4 = i16_debug_delta_max[4];
+		i16_debug_delta_max_5 = i16_debug_delta_max[5];
+		i16_debug_delta_max_6 = i16_debug_delta_max[6];
+		ui16_battery_current_filtered_ma_min_1sec = (ui32_adc_battery_current_filtered_min *1000 / BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100) >> 5;
+		ui16_battery_current_filtered_ma_max_1sec = (ui32_adc_battery_current_filtered_max *1000 / BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100) >> 5;
+		ui32_adc_battery_current_filtered_min = 255 << 5;
+		ui32_adc_battery_current_filtered_max = 0;
+		ui32_angle_per_tick_X16shift_min_1sec = ui32_angle_per_tick_X16shift_min;
+		ui32_angle_per_tick_X16shift_max_1sec = ui32_angle_per_tick_X16shift_max;
+		ui32_angle_per_tick_X16shift_min = 0XFFFFFFFF;
+		ui32_angle_per_tick_X16shift_max = 0;
+		
+		;
+
+		for (uint8_t i=1;i<7;i++){
+			i16_debug_delta_min[i] = 1000;
+			i16_debug_delta_max[i] = -1000;
+		}	
 	}
 
     // reset control parameters if... (safety)

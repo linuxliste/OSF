@@ -12,10 +12,12 @@
 #include "config_tsdz8.h"
 #include "common.h"
 
-#define FIRMWARE_VERSION "0.1.9"      // 22/03/25 12h30 is not used; just for reference)
+#define FIRMWARE_VERSION "0.1.10"      // 22/03/25 12h30 is not used; just for reference)
 #define MAIN_CONFIGURATOR_VERSION 4   // for configurator (must be the same as in xls sheet)
 #define SUB_CONFIGURATOR_VERSION  0    // is not used (just for reference)
 
+
+// here some parameters for testing/debugging
 #define DEBUG_ON_JLINK         (0)  // when 1, messages are generated on jlink; best is to connect only 3 wires (grnd + SWO and S???)
 
 #define USE_CONFIG_FROM_COMPILATION (0)  // this should normally be set on 0; Then values defined in configurator and stored in flash are applied
@@ -26,16 +28,26 @@
 #define WHEEL_SPEED_SIMULATE  (0)   // 0 = do not simulate; when >0 =  fixed simulated speed in km/h 
 
 // default parameters for easy testing;  can be changed with uc_probe
-#define DEFAULT_TEST_MODE_FLAG        NORMAL_RUNNING_MODE              // or TESTING_MODE 
+// in TESTING_MODE, motor is driven only by a fixed duty cycle (target) but can't exceed a given current
+//      when current is not reached, motor runs at max speed (for this duty cycle)
+//      the only way to stop it is using the brake.
+#define DEFAULT_TEST_MODE_FLAG        NORMAL_RUNNING_MODE              //  TESTING_MODE  or NORMAL_RUNNING_MODE
 
 // parameters that can be adapted when in testing mode
 #define DEFAULT_BATTERY_CURRENT_TARGET_TESTING_A    3 // in Amp ; value set for safety when testing
-#define DEFAULT_DUTY_CYCLE_TARTGET_TESTING          150      // max 255 ; can be changed in uc_probe
+#define DEFAULT_DUTY_CYCLE_TARTGET_TESTING          200      // max 255 ; can be changed in uc_probe
 
 
 // here the 2 modes; note TESTING_MODE = allow e.g. to find best global offset angle or to run at a fixed duty cycle
 #define NORMAL_RUNNING_MODE 0     // motor run as usual
 #define TESTING_MODE 1    // motor is controlled by a few set up defined in uc_probe
+
+//#define APPLY_ENHANCED_POSITIONING (0) // 0 = do not apply; 1 = apply enhanced
+// enhanced means that we use only pattern 1 as reference +
+// that speed for angle extrapolation on next electric rotation includes a correction based on actual error
+// that speed for next rotation is based on the speed on last 180° (and not last 360°)
+// those rules apply only when rotor rotation speed is fast enough otherwise we use "normal positioning"
+// Normal positionning means that extrapolation is based on each pattern change and on speed on last 360°
 
 
 
@@ -43,7 +55,8 @@
 
 // this value can be optimized using uc_probe and changing slightly the "global offset angle" in order to get the lowest measured current for a given duty cycle 
 #define DEFAULT_HALL_REFERENCE_ANGLE 66
-
+#define MID__RISING_FALLING_EDGE_HALL_SENSOR 5 // half difference between first and second 180 ticks interval 
+#define FINE_TUNE_ANGLE_OFFSET 0 // to change a little hall reference angle
 // for CCU4 slice 2
 #define HALL_COUNTER_FREQ                       250000U // 250KHz or 4us
 
@@ -100,7 +113,7 @@
 // It seems TSDZ8 motor has an inductance of 180 uH and 4 poles
 // So, TSDZ2 uses a multiplier = 39, TSDZ8 should use 39 * 180 / 135 * 4 / 8 = 26  (foc is based on erps*L*I/V) 
 // I reduce it because erps should be 2X lower due to the reduced number of poles
-#define FOC_ANGLE_MULTIPLIER					26
+#define FOC_ANGLE_MULTIPLIER					14
 
 
 // cadence
