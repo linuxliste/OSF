@@ -86,7 +86,7 @@ static uint8_t ui8_foc_angle_accumulated;
 static uint8_t ui8_foc_flag;
 volatile uint8_t ui8_g_foc_angle = 0;
 //static uint8_t ui8_foc_angle_multiplier = FOC_ANGLE_MULTIPLIER; //39 for 48V motor
-static uint8_t ui8_adc_foc_angle_current = 0;
+//static uint8_t ui8_adc_foc_angle_current = 0; // use a ui16 inside the irq
 
 // battery current variables
 uint16_t ui16_adc_battery_current_acc_X4 = 0;
@@ -187,8 +187,8 @@ const uint8_t ui8_hall_ref_angles[8] = { // Sequence is 1, 3, 2 , 6, 4, 5; so an
 uint8_t ui8_hall_ref_angles[8] = { // Sequence is 1, 3, 2 , 6, 4, 5; so angle are in theory e.g. 39, 86, 127, 167, 216, 0 (256=360°)
         0,                     // error ; index must be between 1 and 6
         23 , //    for hall pattern 1
-        106, //     for hall pattern 2  
-        65, //       for hall pattern 3
+        105, //     for hall pattern 2  106
+        66, //       for hall pattern 3 65
         194, //    for hall pattern 4 
         234 , //    for hall pattern 5
         151, //     for hall pattern 6  
@@ -259,7 +259,27 @@ uint32_t ui32_ref_angle_new ; // temporary calculation
 uint8_t ui8_motor_phase_absolute_angle_new; // reference for extrapolation with new algorithm 
 uint8_t ui8_svm_old = 0;
 uint8_t ui8_svm_new = 0;
-    
+
+uint16_t ui16_duty_cycle_count_down = 0;
+uint16_t ui16_duty_cycle_count_up = 0;
+
+#if (DEBUG_256_CURRENT_VALUES == 1)
+uint16_t adc_current_value[256];
+uint8_t  adc_current_angle[256];
+volatile uint16_t adc_current_counter = 0 ;
+#endif
+inline uint32_t filtering_function(uint32_t ui32_temp_current_15b , uint32_t ui32_adc_battery_current_filtered_15b , uint32_t alpha){
+    uint32_t ui32_temp_new = ui32_temp_current_15b * (8U - alpha);
+    uint32_t ui32_temp_old =  ui32_adc_battery_current_filtered_15b * alpha;
+    uint32_t ui32_filtered_value = ((ui32_temp_new + ui32_temp_old + (4)) >> 3);                    
+    if (ui32_filtered_value == ui32_adc_battery_current_filtered_15b) {
+        if (ui32_filtered_value < ui32_temp_current_15b)
+            ui32_filtered_value++;
+        else if (ui32_filtered_value > ui32_temp_current_15b)
+            ui32_filtered_value--;
+    }
+    return ui32_filtered_value ;                  
+}
 
 // this irq callback occurs when posif detects a new pattern 
 __RAM_FUNC void POSIF0_0_IRQHandler(){
@@ -385,8 +405,8 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
                     // used for first algorithm (coud be replaced by (1 << 23) / ui16_interval_second_180_ticks) but only if
                     //     hall sensor does not have to much difference between rising and falling edge
                     //     so if ticks are the same for first and second 180° sectors
-                    //ui32_angle_per_tick_X16shift = ( 1 << 24) / ui16_hall_counter_total; // new value for interpolation and updating table with reference angle
-                    ui32_angle_per_tick_X16shift = ( 1 << 23) / ui16_interval_second_180_ticks;
+                    ui32_angle_per_tick_X16shift = ( 1 << 24) / ui16_hall_counter_total; // new value for interpolation and updating table with reference angle
+                    //ui32_angle_per_tick_X16shift = ( 1 << 23) / ui16_interval_second_180_ticks;
                     ui8_motor_commutation_type = SINEWAVE_INTERPOLATION_60_DEGREES; // 0x80 ; it says that we can interpolate because speed is known
                 }
                 ui8_hall_360_ref_valid = 0x01;
@@ -421,11 +441,15 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
                 uint8_t delta =  ui8_measured_angle - ui8_hall_ref_angles[current_hall_pattern];
                 if ((delta < 5 ) || (delta > 251 )) { // when there is no big difference 
                     // apply filter on values X16bits
+                    best_ref_angles_X16bits[current_hall_pattern] = filtering_function((uint32_t)ui16_measured_angle_X16bits , best_ref_angles_X16bits[current_hall_pattern] ,7 );
+                    ui8_best_ref_angles[current_hall_pattern] = (best_ref_angles_X16bits[current_hall_pattern] + 128 )>> 8; // +128 for rounding
+                    /*
                     uint32_t filtering = best_ref_angles_X16bits[current_hall_pattern];
                     #define FILTER_HALL_POSITIONS 3
                     filtering = ((filtering << FILTER_HALL_POSITIONS) - filtering + (uint32_t) ui16_measured_angle_X16bits) >> FILTER_HALL_POSITIONS ;
                     best_ref_angles_X16bits[current_hall_pattern] = filtering ; // apply new filtered value
                     ui8_best_ref_angles[current_hall_pattern] = (filtering + 128 )>> 8; // +128 for rounding
+                    */
                     // update the table with reference angles
                     //ui8_hall_ref_angles[current_hall_pattern] = ui8_best_ref_angles[current_hall_pattern] ;
                     hall_ref_angles_counter++;  // just to debug to see if table is updated at regular intervals
@@ -436,8 +460,10 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
             }
         }
         previous_hall_pattern = current_hall_pattern; // saved to detect future change and check for valid transition
-        // set rotor angle based on hall patern
-        ui8_motor_phase_absolute_angle = ui8_best_ref_angles[current_hall_pattern]; // use best ref instead of hall_ref_angles[]
+        // set rotor angle based on best ref angles
+        ui8_motor_phase_absolute_angle = ui8_best_ref_angles[current_hall_pattern]; // use best ref instead of ui8_hall_ref_angles[]
+        // set rotor angle based on fixed hall ref angles
+        //ui8_motor_phase_absolute_angle = ui8_hall_ref_angles[current_hall_pattern]; // use best ref instead of hall_ref_angles[]
         
     } else { // no hall patern change
         // Verify if rotor stopped (< 10 ERPS)
@@ -481,6 +507,11 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
 //    #if (APPLY_ENHANCED_POSITIONING == 0)
     // hall_reference_angle is the sum of the DEFAULT_HALL_REFERENCE_ANGLE and the fine tune with m_config.global_offset_angle
     uint8_t ui8_svm_table_index = ui8_interpolation_angle + ui8_motor_phase_absolute_angle + ui8_g_foc_angle + hall_reference_angle + FINE_TUNE_ANGLE_OFFSET;
+    #if (DEBUG_256_CURRENT_VALUES == 1)
+    if( adc_current_counter<256){
+        adc_current_angle[adc_current_counter] = ui8_svm_table_index;
+    }
+    #endif
     // to debug
 //    #else
 //    uint8_t ui8_svm_table_index = ui8_interpolation_angle_new + (ui32_ref_angle >> 16) +  ui8_best_ref_angles[1] + 
@@ -516,6 +547,12 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
     if (temp > debug_time_ccu8_irq0) debug_time_ccu8_irq0 = temp; // store the max enlapsed time in the irq
 } // end of CCU80_0_IRQHandler
 
+void VADC0_G0_0_IRQHandler() {
+    ui8_system_state == ERROR_BATTERY_OVERCURRENT; // set the error to avoid that motor starts again
+    // disable the motor
+    ui8_motor_enabled = 0;
+    motor_disable_pwm();
+}
 
 // ************* irq handler 
 __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  counting DOWN (= 1/4 of 19mhz cycles)   __RAM_FUNC 
@@ -558,11 +595,23 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
         // to convert TSDZ8 steps 12bits  in the same units as TSDZ2, we shoud take ADC12bits *62/245,76 = 0,25 and divide by 4 (or >>2)
         // current is available in gr0 result 15 in queue 0 p2.8 and/or in gr1 result 152 (p2.8)
         // both results use IIR filters and so results are in 14 bits instead of 12 bits
+        // use measurement from the 2 groups
         uint32_t ui32_temp_current_15b = ((XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 15 ) & 0xFFFF) +
                                     (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 15 ) & 0xFFFF)) ;  // So here result is in 15 bits (averaging
-        ui32_adc_battery_current_filtered_15b =  ((( ui32_adc_battery_current_filtered_15b << 2) - ui32_adc_battery_current_filtered_15b) +
-             (ui32_temp_current_15b)) >> 2;
+        // use only measurement from 1 group
+        //uint32_t ui32_temp_current_15b = (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 15 ) & 0xFFFF) <<1;
+        //                            (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 15 ) & 0xFFFF)) ;  // So here result is in 15 bits (averaging
+        ui32_adc_battery_current_filtered_15b = filtering_function(ui32_temp_current_15b , ui32_adc_battery_current_filtered_15b ,7);
+        //ui32_adc_battery_current_filtered_15b =  ((( ui32_adc_battery_current_filtered_15b << 4) - ui32_adc_battery_current_filtered_15b) +
+        //     (ui32_temp_current_15b)) >> 4;
         ui8_adc_battery_current_filtered  = ui32_adc_battery_current_filtered_15b >> 5 ; // from 15 bits to 10 bits like TSDZ2 
+        #if (DEBUG_256_CURRENT_VALUES == 1)
+        if (adc_current_counter < 256){
+            //adc_current_value[adc_current_counter] = (XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 9 ) & 0xFFFF) - 2000; // collect phase U current
+            adc_current_value[adc_current_counter] = ui32_adc_battery_current_filtered_15b ;
+            adc_current_counter++; 
+        }
+        #endif
         if (ui32_adc_battery_current_filtered_15b < ui32_adc_battery_current_filtered_min) ui32_adc_battery_current_filtered_min = ui32_adc_battery_current_filtered_15b;
         if (ui32_adc_battery_current_filtered_15b > ui32_adc_battery_current_filtered_max) ui32_adc_battery_current_filtered_max = ui32_adc_battery_current_filtered_15b;
     // to debug
@@ -580,8 +629,8 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
                 ui16_adc_motor_phase_current = (uint16_t)ui8_adc_battery_current_filtered;
             }
             if (ui8_foc_flag) { // is set on 1 when rotor is at 150° so once per electric rotation
-				ui8_adc_foc_angle_current = (ui8_adc_battery_current_filtered >> 1) + (ui16_adc_motor_phase_current >> 1);
-                ui8_foc_flag = (uint16_t)(ui8_adc_foc_angle_current * m_config.foc_angle_multiplier) >> 8 ; // multiplier = 39 for 48V tsdz2, 
+				uint16_t ui16_adc_foc_angle_current = ((uint16_t)(ui8_adc_battery_current_filtered ) + (ui16_adc_motor_phase_current )) >> 1;
+                ui8_foc_flag = (ui16_adc_foc_angle_current * m_config.foc_angle_multiplier) >> 8 ; // multiplier = 39 for 48V tsdz2, 
                 if (ui8_foc_flag > 13)
                     ui8_foc_flag = 13;
                 ui8_foc_angle_accumulated = ui8_foc_angle_accumulated - (ui8_foc_angle_accumulated >> 4) + ui8_foc_flag;
@@ -624,13 +673,14 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
         //  - ui8_controller_duty_cycle_target // is usually filled with 255 (= 100%)
         //  - ui8_controller_duty_cycle_ramp_up_inverse_step
         //  - ui8_controller_duty_cycle_ramp_down_inverse_step
-        // Furthermore,  hen ebyke_app_controller start pwm, g_duty_cycle is first set on 30 (= 12%)
+        // Furthermore,  when ebyke_app_controller start pwm, g_duty_cycle is first set on 30 (= 12%)
         if ((ui8_controller_duty_cycle_target < ui8_g_duty_cycle)                     // requested duty cycle is lower than actual
           || (ui8_controller_adc_battery_current_target < ui8_adc_battery_current_filtered)  // requested current is lower than actual
-		  || (ui16_adc_motor_phase_current > (uint16_t) ui8_adc_motor_phase_current_max)               // motor phase is to high
-          || (ui16_hall_counter_total < (HALL_COUNTER_FREQ / MOTOR_OVER_SPEED_ERPS))        // Erps is to high
+//		  || (ui16_adc_motor_phase_current > (uint16_t) ui8_adc_motor_phase_current_max)               // motor phase is to high
+//          || (ui16_hall_counter_total < (HALL_COUNTER_FREQ / MOTOR_OVER_SPEED_ERPS))        // Erps is to high
           || (ui16_adc_voltage < ui16_adc_voltage_cut_off)                                  // voltage is to low
-          || (ui8_brake_state)) {                                                           // brake is ON
+          || (ui8_brake_state)
+        ) {                                                           // brake is ON
             // reset duty cycle ramp up counter (filter)
             ui8_counter_duty_cycle_ramp_up = 0;
             // ramp down duty cycle ;  after N iterations at 19 khz 
@@ -642,6 +692,7 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
                 }
 				else if (ui8_g_duty_cycle > 0) {
                     ui8_g_duty_cycle--;
+                    ui16_duty_cycle_count_down++;
 				}
             }
         }
@@ -655,6 +706,7 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
                 // increment duty cycle
                 if (ui8_g_duty_cycle < ui8_pwm_duty_cycle_max) {
                     ui8_g_duty_cycle++;
+                    ui16_duty_cycle_count_up++;
                 }
             }
         }

@@ -112,11 +112,14 @@ extern "C" {
 #define vadc_0_group_0_NUM 0U
 #define vadc_0_group_0_ICLASS_0 0U
 #define vadc_0_group_0_ICLASS_1 1U
+#define vadc_0_group_0_LOWER_BOUND_VALUE 0U
+#define vadc_0_group_0_UPPER_BOUND_VALUE 2U
 #define vadc_0_group_0_SR0_INTERRUPT_HANDLER VADC0_G0_0_IRQHandler
 #define vadc_0_group_0_SR1_INTERRUPT_HANDLER VADC0_G0_1_IRQHandler
 #define vadc_0_group_0_SR0_IRQN VADC0_G0_0_IRQn
 #define vadc_0_group_0_SR1_IRQN VADC0_G0_1_IRQn
 #define G0_CH1_CURRENT_P2_8_ENABLED 1U
+#define G0_CH2_CURRENT_U_P2_9_ENABLED 1U
 #define G0_CH7_TORQUE_P2_2_ENABLED 1U
 #define vadc_0_group_1_ENABLED 1U
 #define vadc_0_group_1_HW VADC_G1
@@ -174,26 +177,18 @@ extern XMC_VADC_GROUP_CONFIG_t vadc_0_group0_init_config;
 extern XMC_VADC_GROUP_CONFIG_t vadc_0_group1_init_config;
 extern const XMC_VADC_GLOBAL_CONFIG_t vadc_0_config;
 extern const XMC_VADC_BACKGROUND_CONFIG_t vadc_0_background_scan_config;
-extern const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_0_queue_entries_0;
-extern const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_0_queue_entries_1;
-extern const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_0_queue_entries_2;
-extern const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_0_queue_entries_3;
-extern const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_0_queue_entries_4;
 extern const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_0_queue_entries_5;
 extern const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_0_queue_entries_6;
 extern const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_0_queue_entries_7;
 extern const XMC_VADC_RESULT_CONFIG_t vadc_0_group_0_result_15_config;
+extern const XMC_VADC_RESULT_CONFIG_t vadc_0_group_0_result_9_config;
 extern const XMC_VADC_RESULT_CONFIG_t vadc_0_group_0_result_2_config;
 extern const XMC_VADC_QUEUE_CONFIG_t vadc_0_group_0_queue_config;
 extern const XMC_VADC_GROUP_CLASS_t vadc_0_0_iclass_0;
 extern const XMC_VADC_GROUP_CLASS_t vadc_0_0_iclass_1;
 extern const XMC_VADC_CHANNEL_CONFIG_t G0_CH1_CURRENT_P2_8_config;
+extern const XMC_VADC_CHANNEL_CONFIG_t G0_CH2_CURRENT_U_P2_9_config;
 extern const XMC_VADC_CHANNEL_CONFIG_t G0_CH7_TORQUE_P2_2_config;
-extern const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_1_queue_entries_0;
-extern const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_1_queue_entries_1;
-extern const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_1_queue_entries_2;
-extern const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_1_queue_entries_3;
-extern const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_1_queue_entries_4;
 extern const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_1_queue_entries_5;
 extern const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_1_queue_entries_6;
 extern const XMC_VADC_QUEUE_ENTRY_t vadc_0_group_1_queue_entries_7;

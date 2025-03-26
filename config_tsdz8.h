@@ -36,7 +36,7 @@
 #define _MOTOR_BLOCKED_ERPS_THRESHOLD 10       // electric RPS mstrens it was 20 for tsdz2, TSDZ8 has 4 poles instead of 8, so 2 more ticks for the same speed
 
 #define _STARTUP_BOOST_CADENCE_STEP 25       
-#define _BATTERY_CURRENT_MAX        5          // A mstrens: it was 13 for tsdz2, reduce for testing
+#define _BATTERY_CURRENT_MAX        18          // A mstrens: it was 13 for tsdz2, Set on 18 for tsdz8
 #define _TARGET_MAX_BATTERY_POWER 500
 #define _TARGET_MAX_BATTERY_CAPACITY 500
 #define _BATTERY_CELLS_NUMBER 10               // mstrens 10 for 36V battery and 13 for 48V battery

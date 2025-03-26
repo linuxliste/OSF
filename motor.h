@@ -2,6 +2,7 @@
 
 #include "cybsp.h"
 #include "SEGGER_RTT.h"
+#include "main.h"
 
 
 
@@ -71,7 +72,11 @@ extern uint32_t ui32_angle_per_tick_X16shift_max_1sec;
 extern uint16_t ui16_interval_first_180_ticks;
 extern uint16_t ui16_interval_second_180_ticks;
 
-
+#if (DEBUG_256_CURRENT_VALUES == 1)
+extern uint16_t adc_current_value[256];
+extern uint8_t  adc_current_angle[256];
+extern volatile uint16_t adc_current_counter ;
+#endif
 
 
 void CCU80_0_IRQHandler(); // called when ccu8 Slice 4 reaches 840  counting UP (= 1/4 of 19mhz cycles)

@@ -422,8 +422,8 @@ void ebike_app_init(void)
 		/ BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100;
 	
 	// set max motor phase current // used in motor.c to perform some checks // 
-	uint16_t ui16_temp = ui8_adc_battery_current_max_temp_1 * ADC_10_BIT_MOTOR_PHASE_CURRENT_MAX;
-	ui8_adc_motor_phase_current_max = (uint8_t)(ui16_temp / ADC_10_BIT_BATTERY_CURRENT_MAX);
+	uint16_t ui16_temp = ui8_adc_battery_current_max_temp_1 * ADC_10_BIT_MOTOR_PHASE_CURRENT_MAX; // 187
+	ui8_adc_motor_phase_current_max = (uint8_t)(ui16_temp / ADC_10_BIT_BATTERY_CURRENT_MAX); // 143
 	// limit max motor phase current if higher than configured hardware limit (safety)
 	if (ui8_adc_motor_phase_current_max > ADC_10_BIT_MOTOR_PHASE_CURRENT_MAX) {
 		ui8_adc_motor_phase_current_max = ADC_10_BIT_MOTOR_PHASE_CURRENT_MAX;
@@ -677,7 +677,7 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
 			i16_debug_delta_max[i] = -1000;
 		}	
 	}
-
+	
     // reset control parameters if... (safety)
     if ((ui8_brake_state)
 	  || (!ui8_motor_enabled)
