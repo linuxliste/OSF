@@ -1512,7 +1512,7 @@
                         <Param id="group_other_boundaries_flag_operation_id_2" value="XMC_VADC_GROUP_BOUNDARY_FLAG_MODE_ENABLED"/>
                         <Param id="group_other_boundaries_flag_operation_id_3" value="XMC_VADC_GROUP_BOUNDARY_FLAG_MODE_ENABLED"/>
                         <Param id="group_other_boundaries_value_id_0" value="0"/>
-                        <Param id="group_other_boundaries_value_id_1" value="2"/>
+                        <Param id="group_other_boundaries_value_id_1" value="1000"/>
                         <Param id="group_other_mux_channel_id_0" value="false"/>
                         <Param id="group_other_mux_channel_id_1" value="false"/>
                         <Param id="group_other_mux_channel_id_2" value="false"/>

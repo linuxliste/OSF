@@ -12,7 +12,7 @@
 #include "config_tsdz8.h"
 #include "common.h"
 
-#define FIRMWARE_VERSION "0.1.11"      // 22/03/25 12h30 is not used; just for reference)
+#define FIRMWARE_VERSION "0.1.12"      // 22/03/25 12h30 is not used; just for reference)
 #define MAIN_CONFIGURATOR_VERSION 4   // for configurator (must be the same as in xls sheet)
 #define SUB_CONFIGURATOR_VERSION  0    // is not used (just for reference)
 
@@ -34,13 +34,17 @@
 #define DEFAULT_TEST_MODE_FLAG        NORMAL_RUNNING_MODE              //  TESTING_MODE  or NORMAL_RUNNING_MODE
 
 // parameters that can be adapted when in testing mode
-#define DEFAULT_BATTERY_CURRENT_TARGET_TESTING_A    3 // in Amp ; value set for safety when testing
-#define DEFAULT_DUTY_CYCLE_TARTGET_TESTING          200      // max 255 ; can be changed in uc_probe
+#define DEFAULT_BATTERY_CURRENT_TARGET_TESTING_A   2 // in Amp ; value set for safety when testing
+#define DEFAULT_DUTY_CYCLE_TARTGET_TESTING          150      // max 255 ; can be changed in uc_probe
+#define DEFAULT_RAMP_UP_INVERSE_TESTING     194     // min = 24(=100% accel), default= 194 (=0% accel)
+#define DEFAULT_RAMP_DOWN_INVERSE_TESTING   73     // min = 9 (=100%decel), default = 73 (=0% decel)
 
 
 // here the 2 modes; note TESTING_MODE = allow e.g. to find best global offset angle or to run at a fixed duty cycle
 #define NORMAL_RUNNING_MODE 0     // motor run as usual
 #define TESTING_MODE 1    // motor is controlled by a few set up defined in uc_probe
+
+#define GENERATE_DATA_FOR_REGRESSION_ANGLES (0) // 1 to let irq0 generate intervals to apply regtression and calculate best angles
 
 //#define APPLY_ENHANCED_POSITIONING (0) // 0 = do not apply; 1 = apply enhanced
 // enhanced means that we use only pattern 1 as reference +
@@ -49,16 +53,13 @@
 // those rules apply only when rotor rotation speed is fast enough otherwise we use "normal positioning"
 // Normal positionning means that extrapolation is based on each pattern change and on speed on last 360°
 
-// this define can be use to write 256 values (current and angle) in an array
-// this array can be log with segger_rtt for firther analysing
-#define DEBUG_256_CURRENT_VALUES (0) // Set on (1) to activate this option
 
 // *************** from here we have more general parameters 
 
 // this value can be optimized using uc_probe and changing slightly the "global offset angle" in order to get the lowest measured current for a given duty cycle 
 #define DEFAULT_HALL_REFERENCE_ANGLE 66
 #define MID__RISING_FALLING_EDGE_HALL_SENSOR 5 // half difference between first and second 180 ticks interval 
-#define FINE_TUNE_ANGLE_OFFSET 2 // to change a little hall reference angle
+#define FINE_TUNE_ANGLE_OFFSET 0 // to change a little hall reference angle
 // for CCU4 slice 2
 #define HALL_COUNTER_FREQ                       250000U // 250KHz or 4us
 

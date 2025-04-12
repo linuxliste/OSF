@@ -99,10 +99,16 @@ extern volatile uint16_t ui16_adc_voltage;
 extern volatile uint16_t ui16_adc_voltage_cut_off;
 
 extern uint8_t hall_reference_angle;
-#if (DEBUG_256_CURRENT_VALUES == (1))
-// to debug sending 256 current but per group of 8
-uint16_t current_group_counter = 0;
-#endif
+
+
+// debug manipulating each ref angle and see impact
+uint8_t ui8_best_ref_angles1 ;
+uint8_t ui8_best_ref_angles2 ;
+uint8_t ui8_best_ref_angles3 ;
+uint8_t ui8_best_ref_angles4 ;
+uint8_t ui8_best_ref_angles5 ;
+uint8_t ui8_best_ref_angles6 ;
+
 /*******************************************************************************
 * Function Name: SysTick_Handler
 ********************************************************************************
@@ -158,6 +164,13 @@ int main(void)
         ui8_best_ref_angles[i] = ui8_hall_ref_angles[i];
         best_ref_angles_X16bits[i] = ui8_hall_ref_angles[i] << 8;
     } // init best value with reference values.
+    // debug when changing ref angle used in motor via uc probe
+    ui8_best_ref_angles1 = ui8_hall_ref_angles[1];
+    ui8_best_ref_angles2 = ui8_hall_ref_angles[2];
+    ui8_best_ref_angles3 = ui8_hall_ref_angles[3];
+    ui8_best_ref_angles4 = ui8_hall_ref_angles[4];
+    ui8_best_ref_angles5 = ui8_hall_ref_angles[5];
+    ui8_best_ref_angles6 = ui8_hall_ref_angles[6];
 
     #if(uCPROBE_GUI_OSCILLOSCOPE == MY_ENABLED)
     ProbeScope_Init(20000);
@@ -228,11 +241,12 @@ int main(void)
     previous_hall_pattern = 0; // use a different hall pattern to force the angle. 
     XMC_POSIF_Start(HALL_POSIF_HW);
     
-    // set interrupt when current exceed 256 (10 bits) = 1024 (12 bits) = boundaries set in modus
+        // set interrupt when current exceed 256 (10 bits) = 1024 (12 bits) = boundaries set in modus
     // link event on group 0 channel 1 to group specific interrupt
     XMC_VADC_GROUP_ChannelSetEventInterruptNode(vadc_0_group_0_HW, 1, XMC_VADC_SR_GROUP_SR0 );
     NVIC_SetPriority(VADC0_G0_0_IRQn,0); // interrupt for group specific event G0 SR0
-    //NVIC_EnableIRQ(VADC0_G0_0_IRQn);    
+    NVIC_EnableIRQ(VADC0_G0_0_IRQn);    
+    
     // set interrupt 
 //    NVIC_SetPriority(CCU40_1_IRQn, 0U); //capture hall pattern and slice 2 time when a hall change occurs
 //	NVIC_EnableIRQ(CCU40_1_IRQn);
@@ -286,24 +300,7 @@ int main(void)
         
         // for debug
         if( take_action(1,1000)) debug_time_ccu8_irq0 = 0;
-        
-        #if (DEBUG_256_CURRENT_VALUES == (1))
-        if (take_action(2,50)){
-        // to debug current (256 values filled in motor.c)
-            if (adc_current_counter >= 256) {
-                SEGGER_RTT_printf(0, "%u %u\r\n", adc_current_angle[current_group_counter], adc_current_value[current_group_counter]);
-                current_group_counter ++;
-                if (current_group_counter >= 256) {
-                    current_group_counter = 0;
-                    adc_current_counter =  0; // restart counting
-                }    
-            }
-        }
-        #endif
-        //if (take_action(2,50)){
-        //            SEGGER_RTT_printf(0, "%u %u\r\n", system_ticks ,ui32_adc_battery_current_filtered_15b);
-        //}        
-        
+                
 //        if(take_action(3,1000)){
 //            uint32_t vadc_group0_event = XMC_VADC_GROUP_ChannelGetAssertedEvents(vadc_0_group_0_HW );
 //            SEGGER_RTT_printf(0, "event gr0 %x\r\n", vadc_group0_event);              

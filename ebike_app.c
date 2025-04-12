@@ -140,7 +140,7 @@ volatile uint8_t ui8_adc_motor_phase_current_max = ADC_10_BIT_MOTOR_PHASE_CURREN
 // wheel speed sensor
  uint16_t ui16_wheel_speed_x10 = 0;
  uint8_t ui8_wheel_speed_max_array[2] ; //= {WHEEL_MAX_SPEED,STREET_MODE_SPEED_LIMIT};
-uint8_t ui8_wheel_speed_simulate = 0;  //added by mstrens to simulate a fixe speed whithout having a speed sensor 
+uint8_t ui8_wheel_speed_simulate = 0;  //added by mstrens to simulate a fixed speed whithout having a speed sensor 
 
 // wheel speed display
 uint8_t ui8_display_ready_flag = 0;
@@ -303,16 +303,12 @@ uint8_t ui8_duty_cycle_target_testing = DEFAULT_DUTY_CYCLE_TARTGET_TESTING; // m
 #define AVERAGING_BITS 6
 #define AVERAGING_CNT (1<<AVERAGING_BITS) // 25 msec per cycle; 64 = 1,5 sec
 uint32_t ui32_battery_current_mA_acc =0;
-uint32_t ui32_battery_current_mA_squared =0;
 uint32_t ui32_battery_current_mA_cnt = AVERAGING_CNT;
 uint32_t ui32_battery_current_mA_avg ;
-uint32_t ui32_battery_current_mA_var ;
 
-// to debug the difference of time between first and second 180° per turn
-uint32_t ui32_interval_second_180_ticks_accumulated = 0;
-uint32_t ui32_interval_first_180_ticks_accumulated = 0;
-uint32_t ui32_interval_first_180_ticks_avg;
-uint32_t ui32_interval_second_180_ticks_avg;
+
+uint32_t ui32_current_1_rotation_ma; // average current over 1 electric rotation
+
 	
 	
 
@@ -430,6 +426,7 @@ void ebike_app_init(void)
 	}
 	// added by Mstrens
 	hall_reference_angle = m_config.global_offset_angle + (uint8_t) DEFAULT_HALL_REFERENCE_ANGLE; 
+	//hall_reference_angle = 66;
 	ui8_wheel_speed_simulate =  WHEEL_SPEED_SIMULATE; // load wheel speed simulate (so allow to change it with uc-probe)
 }
 
@@ -484,7 +481,12 @@ void ebike_app_controller(void) // is called every 25ms by main()
 		case 3:
 			check_system();
 			check_battery_soc();
-			break;
+			ui8_best_ref_angles[1] = ui8_best_ref_angles1;
+			ui8_best_ref_angles[2] = ui8_best_ref_angles2;
+			ui8_best_ref_angles[3] = ui8_best_ref_angles3;
+			ui8_best_ref_angles[4] = ui8_best_ref_angles4;
+			ui8_best_ref_angles[5] = ui8_best_ref_angles5;
+			ui8_best_ref_angles[6] = ui8_best_ref_angles6; 			break;
 	}
 	
 	// use received data and sensor input to control motor
@@ -505,7 +507,16 @@ void ebike_app_controller(void) // is called every 25ms by main()
 	debug4 = ui8_best_ref_angles[5];
 	debug5 = ui8_best_ref_angles[6];
 	
-
+	#if ( GENERATE_DATA_FOR_REGRESSION_ANGLES == (1) )
+	// allow to calculate the regressions for each interval; 
+	// first is the duty cycle
+	// second value is the previous ticks for 360°
+	// next one is the ticks between 5 and 1; then between 1 and 3, between 3 and 2 ...
+	if (ticks_intervals_status == 2) { // when all 8 values have been written by irq0 in motor.c
+		SEGGER_RTT_printf(0,"%u,%u,%u,%u,%u,%u,%u,%u\r\n", ticks_intervals[7],ticks_intervals[0],ticks_intervals[1],ticks_intervals[3],ticks_intervals[2],ticks_intervals[6],ticks_intervals[4],ticks_intervals[5] );
+		ticks_intervals_status = 0; // reset status to allow a new capture
+	}
+	#endif
 }
 
 
@@ -552,17 +563,22 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
 		// for testing, we force the 4 parameters used to control the motor
 		ui8_duty_cycle_ramp_up_inverse_step = PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_DEFAULT;     // 194
 		ui8_duty_cycle_ramp_down_inverse_step = PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_DEFAULT;  //73
-		// Note : this code suppose that Throttle is connected ?? 
 		// set current target to the testing value and check with max
 		ui8_adc_battery_current_target = (uint16_t) ui8_battery_current_target_testing *100 / BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100;
 		if (ui8_adc_battery_current_target > ADC_10_BIT_BATTERY_CURRENT_MAX)
 				ui8_adc_battery_current_target = ADC_10_BIT_BATTERY_CURRENT_MAX;
+		// in case of error, force current target to 0 to avoid that motor starts again (with code for motor enable)
+		if(	ui8_system_state )  {
+			ui8_adc_battery_current_target = 0;
+		}	
 		// set duty cycle target to the tesing value and check against max
 		ui8_duty_cycle_target = ui8_duty_cycle_target_testing;
 		if (ui8_duty_cycle_target >= ui8_pwm_duty_cycle_max ) {
 			ui8_duty_cycle_target = ui8_pwm_duty_cycle_max;  
 		}
 		ui8_riding_mode_parameter =  50; // if it is set on 0 , it means that there is no assist and motor stays/goes off in safety checks
+		ui8_duty_cycle_ramp_up_inverse_step = DEFAULT_RAMP_UP_INVERSE_TESTING;
+		ui8_duty_cycle_ramp_down_inverse_step = DEFAULT_RAMP_DOWN_INVERSE_TESTING;
 	}
 
     // select optional ADC function
@@ -622,60 +638,17 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
 		}
 	}
 	
-	// calculate an averange on ticks on first and second 180°
-	ui32_interval_second_180_ticks_accumulated += ui16_interval_second_180_ticks;
-	ui32_interval_first_180_ticks_accumulated += ui16_interval_first_180_ticks;
-
+	// for debug
 	// calculate an average in mA (to find parameters giving lowest current)
-	uint32_t current_mA = (ui32_adc_battery_current_filtered_15b * 1000
-		/ BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100) >> 5;
-	ui32_battery_current_mA_acc += current_mA;
-	ui32_battery_current_mA_squared += current_mA * current_mA  ;
+	ui32_current_1_rotation_ma = (ui32_adc_battery_current_1_rotation_15b * 10 * BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100) >> 5;
+	ui32_battery_current_mA_acc += ui32_current_1_rotation_ma;
 	ui32_battery_current_mA_cnt--;
-	if (ui32_battery_current_mA_cnt == 0){
-		// for debug
-		ui32_interval_second_180_ticks_avg  = ui32_interval_second_180_ticks_accumulated >> AVERAGING_BITS;
-		ui32_interval_first_180_ticks_avg =  ui32_interval_first_180_ticks_accumulated  >> AVERAGING_BITS;
-		ui32_interval_second_180_ticks_accumulated = 0;
-		ui32_interval_first_180_ticks_accumulated = 0;
-
+	if (ui32_battery_current_mA_cnt == 0){ // so about 1.5 sec
+		// calculate avg current of avg of each rotation
 		ui32_battery_current_mA_avg = ui32_battery_current_mA_acc >> AVERAGING_BITS;
 		//  Var = (SumSq − (Sum × Sum) / n) / (n − 1)  Wikipedia
-		ui32_battery_current_mA_var = 
-			(ui32_battery_current_mA_squared - ((ui32_battery_current_mA_acc * ui32_battery_current_mA_acc) >> AVERAGING_BITS))
-			 *100 / (AVERAGING_CNT-1);
 		ui32_battery_current_mA_cnt = AVERAGING_CNT ;
-		ui32_battery_current_mA_acc = 0;
-		ui32_battery_current_mA_squared = 0;
-
-		// for debug; look at the difference between extrapolated angle and the ref.
-		i16_debug_delta_min_1 = i16_debug_delta_min[1];
-		i16_debug_delta_min_2 = i16_debug_delta_min[2];
-		i16_debug_delta_min_3 = i16_debug_delta_min[3];
-		i16_debug_delta_min_4 = i16_debug_delta_min[4];
-		i16_debug_delta_min_5 = i16_debug_delta_min[5];
-		i16_debug_delta_min_6 = i16_debug_delta_min[6];
-		i16_debug_delta_max_1 = i16_debug_delta_max[1];
-		i16_debug_delta_max_2 = i16_debug_delta_max[2];
-		i16_debug_delta_max_3 = i16_debug_delta_max[3];
-		i16_debug_delta_max_4 = i16_debug_delta_max[4];
-		i16_debug_delta_max_5 = i16_debug_delta_max[5];
-		i16_debug_delta_max_6 = i16_debug_delta_max[6];
-		ui16_battery_current_filtered_ma_min_1sec = (ui32_adc_battery_current_filtered_min *1000 / BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100) >> 5;
-		ui16_battery_current_filtered_ma_max_1sec = (ui32_adc_battery_current_filtered_max *1000 / BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100) >> 5;
-		ui32_adc_battery_current_filtered_min = 255 << 5;
-		ui32_adc_battery_current_filtered_max = 0;
-		ui32_angle_per_tick_X16shift_min_1sec = ui32_angle_per_tick_X16shift_min;
-		ui32_angle_per_tick_X16shift_max_1sec = ui32_angle_per_tick_X16shift_max;
-		ui32_angle_per_tick_X16shift_min = 0XFFFFFFFF;
-		ui32_angle_per_tick_X16shift_max = 0;
-		
-		;
-
-		for (uint8_t i=1;i<7;i++){
-			i16_debug_delta_min[i] = 1000;
-			i16_debug_delta_max[i] = -1000;
-		}	
+		ui32_battery_current_mA_acc = 0;		
 	}
 	
     // reset control parameters if... (safety)
@@ -1382,7 +1355,6 @@ static void apply_power_assist(void)
 			
 			// for verify riding mode change
 			ui8_riding_mode_cruise = CADENCE_ASSIST_MODE;
-					
 			// applies cadence assist up to cruise speed threshold
 			ui8_riding_mode_parameter = ui8_riding_mode_parameter_array[CADENCE_ASSIST_MODE - 1][ui8_assist_level];
 			apply_cadence_assist();

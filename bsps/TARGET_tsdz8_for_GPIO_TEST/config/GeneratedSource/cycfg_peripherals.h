@@ -113,7 +113,7 @@ extern "C" {
 #define vadc_0_group_0_ICLASS_0 0U
 #define vadc_0_group_0_ICLASS_1 1U
 #define vadc_0_group_0_LOWER_BOUND_VALUE 0U
-#define vadc_0_group_0_UPPER_BOUND_VALUE 2U
+#define vadc_0_group_0_UPPER_BOUND_VALUE 1000U
 #define vadc_0_group_0_SR0_INTERRUPT_HANDLER VADC0_G0_0_IRQHandler
 #define vadc_0_group_0_SR1_INTERRUPT_HANDLER VADC0_G0_1_IRQHandler
 #define vadc_0_group_0_SR0_IRQN VADC0_G0_0_IRQn

@@ -67,8 +67,8 @@ static uint16_t ui16_hall_counter_total_previous = 0;  // used to check if erps 
 volatile uint8_t ui8_controller_duty_cycle_ramp_up_inverse_step = PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_DEFAULT; // 194
 volatile uint8_t ui8_controller_duty_cycle_ramp_down_inverse_step = PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_DEFAULT; // 73
 volatile uint16_t ui16_adc_voltage_cut_off = 300*100/BATTERY_VOLTAGE_PER_10_BIT_ADC_STEP_X1000; // 30Volt default value =  300*100/87 in TSDZ2
-volatile uint8_t ui8_adc_battery_current_filtered = 0;
-volatile uint32_t ui32_adc_battery_current_filtered_15b = 0; // value in 12 +2 +1 = 15 bits (ADC + IIR + average)
+volatile uint8_t ui8_adc_battery_current_filtered = 0; // current in adc10 bits units (average on 1 rotation)
+volatile uint32_t ui32_adc_battery_current_1_rotation_15b = 0; // value in 12 +2 +1 = 15 bits (ADC + IIR + average)
 volatile uint8_t ui8_controller_adc_battery_current_target = 0;
 volatile uint8_t ui8_g_duty_cycle = 0;
 volatile uint8_t ui8_controller_duty_cycle_target = 0;
@@ -147,143 +147,80 @@ uint16_t hall_ref_angles_counter = 0;
 
 extern uint8_t ui8_pwm_duty_cycle_max;
 
-
-/*
-// those values result from running the test to find hall sensor positions
-const uint8_t ui8_hall_ref_angles[8] = { // Sequence is 1, 3, 2 , 6, 4, 6; so angle are 39, 86, 127, 167, 216, 0 (256=360°)
-        0,                     // error ; index must be between 1 and 6
-        20 , //   test gives angle = 39   for hall pattern 1
-        113, //   test gives angle = 127  for hall pattern 2  
-        67, //    test gives angle = 86   for hall pattern 3
-        197, //   test gives angle = 216  for hall pattern 4 
-        242 , //    test gives angle = 0    for hall pattern 5
-        147, //   test gives angle = 167  for hall pattern 6  
-        0                     // error ; index must be between 1 and 6
-};
-*/
-// those values result from running the test to find hall sensor positions with a 36V battery 
-// and with a duty cycle of 50 for 5 msec and 30 for 10 msec
-// it consumes about 2.5A
-// first test with find best offset : 14, 117, 73, 203, 246, 141 with 36V and dutycycle = 150
-// test with one hall gives +8, +3 , -4 , -5 , -5 , 7
-// So new values for a second run is 22, 120, 69 , 198, 241, 148 
-// second test for one hall patterns gives 2,-3,-2,2,0,2
-// So new values becomes 24 , 117, 67, 200, 241, 150
-// Third test strating with Hall pattern 3 give X, -3 , 0 ,
-// so change patter 2 to 114
-// then test pattern 6 give +2
-/*
-const uint8_t ui8_hall_ref_angles[8] = { // Sequence is 1, 3, 2 , 6, 4, 5; so angle are in theory e.g. 39, 86, 127, 167, 216, 0 (256=360°)
-        0,                     // error ; index must be between 1 and 6
-        24 , //   test gives angle = 39   for hall pattern 1
-        114, //   test gives angle = 127  for hall pattern 2  
-        67, //    test gives angle = 86   for hall pattern 3
-        200, //   test gives angle = 216  for hall pattern 4 
-        241 , //    test gives angle = 0    for hall pattern 5
-        154, //   test gives angle = 167  for hall pattern 6  
-        0                     // error ; index must be between 1 and 6
-};
-*/
 uint8_t ui8_hall_ref_angles[8] = { // Sequence is 1, 3, 2 , 6, 4, 5; so angle are in theory e.g. 39, 86, 127, 167, 216, 0 (256=360°)
         0,                     // error ; index must be between 1 and 6
-        23 , //    for hall pattern 1
-        105, //     for hall pattern 2  106
+        24 , //    for hall pattern 1
+        107, //     for hall pattern 2  106
         66, //       for hall pattern 3 65
-        194, //    for hall pattern 4 
-        234 , //    for hall pattern 5
-        151, //     for hall pattern 6  
+        195, //    for hall pattern 4 
+        235 , //    for hall pattern 5
+        152, //     for hall pattern 6  
         0                     // error ; index must be between 1 and 6
 };
 
-
+// this could probably be removed
 volatile uint8_t ui8_best_ref_angles[8] ; // this table is prefilled in main.c at start up
-
-
 uint32_t best_ref_angles_X16bits[8] ;  // same as ui8_best_ref_angles but with 8 more bits for better filtering
 uint32_t ui32_angle_per_tick_X16shift; // 
 
-/*
-int8_t i8_hall_add_angles[8] = { // Sequence is 1, 3, 2 , 6, 4, 5; so angle are 39, 86, 127, 167, 216, 0 (256=360°)
-        0,                     // error ; index must be between 1 and 6
-        0 , //    for hall pattern 1
-        0, //     for hall pattern 2  
-        0, //    for hall pattern 3
-        0, //     for hall pattern 4 
-        0 , //      for hall pattern 5
-        0, //     for hall pattern 6  
-        0                     // error ; index must be between 1 and 6
-};
-*/
-
 // Hall offset for current Hall state; This offset is added in the interpolation process (so based also on the erps)
 // the value is in ticks (1 ticks = 4 usec); we need  55usec/4 : 55 = 39 + 16 (39 = 3/4 of 55usec = delay between measuring and PWM change); 16=delay hall sensor
-static uint8_t ui8_hall_counter_offset = 14; 
+// based on the regression tests, there should probably be a correction of about 2 depending it is a rising or a falling edge of hall pattern
+// still this should have only a small impact
+uint8_t ui8_hall_counter_offset = 14; 
 
 // to debug
-int16_t i16_debug_delta_min[8];
-int16_t i16_debug_delta_max[8];
-int16_t i16_debug_delta_min_1;
-int16_t i16_debug_delta_min_2;
-int16_t i16_debug_delta_min_3;
-int16_t i16_debug_delta_min_4;
-int16_t i16_debug_delta_min_5;
-int16_t i16_debug_delta_min_6;
-int16_t i16_debug_delta_max_1;
-int16_t i16_debug_delta_max_2;
-int16_t i16_debug_delta_max_3;
-int16_t i16_debug_delta_max_4;
-int16_t i16_debug_delta_max_5;
-int16_t i16_debug_delta_max_6;
-uint32_t ui32_adc_battery_current_filtered_min;
-uint32_t ui32_adc_battery_current_filtered_max;
-uint16_t ui16_battery_current_filtered_ma_min_1sec;
-uint16_t ui16_battery_current_filtered_ma_max_1sec;
 uint16_t hall_pattern_error_counter;
-uint32_t ui32_angle_per_tick_X16shift_min;
-uint32_t ui32_angle_per_tick_X16shift_max;
-uint32_t ui32_angle_per_tick_X16shift_min_1sec;
-uint32_t ui32_angle_per_tick_X16shift_max_1sec;
-uint16_t ticks_pattern_1;
-uint16_t ticks_pattern_1_previous;
-uint16_t ticks_interval;
+// used to calculate hall angles based of linear regression of all ticks intervals
+// are filled in irq0 and transmitted in ebike_app.c using segger_rtt_print 
+#if ( GENERATE_DATA_FOR_REGRESSION_ANGLES == (1) )
+uint16_t ticks_intervals[8]; // ticks intervals between 2 pattern changes;
+uint8_t ticks_intervals_status; // 0 =  new data can be written; 1 data being written; 2 all data written, must be transmitted
+uint16_t previous_hall_pattern_change_ticks;  // save the ticks of last pattern change
+#endif
 
 volatile uint16_t ticks_hall_pattern_irq_last;
 volatile uint8_t current_hall_pattern_irq;
 
-uint16_t ui16_interval_first_180_ticks;
-uint16_t ui16_interval_second_180_ticks;
-uint16_t previous_180_ref_ticks;
-uint32_t ui32_angle_per_tick_X16shift_new;
-uint32_t ui32_ref_angle; 
-uint32_t ui32_ref_angle_new ; // temporary calculation
-uint8_t ui8_motor_phase_absolute_angle_new; // reference for extrapolation with new algorithm 
-uint8_t ui8_svm_old = 0;
-uint8_t ui8_svm_new = 0;
+//uint32_t ui32_angle_per_tick_X16shift_new;
+//uint32_t ui32_ref_angle; 
+//uint32_t ui32_ref_angle_new ; // temporary calculation
+//uint8_t ui8_motor_phase_absolute_angle_new; // reference for extrapolation with new algorithm 
+//uint8_t ui8_svm_old = 0;
+//uint8_t ui8_svm_new = 0;
 
 uint16_t ui16_duty_cycle_count_down = 0;
 uint16_t ui16_duty_cycle_count_up = 0;
 
-#if (DEBUG_256_CURRENT_VALUES == 1)
-uint16_t adc_current_value[256];
-uint8_t  adc_current_angle[256];
-volatile uint16_t adc_current_counter = 0 ;
-#endif
-inline uint32_t filtering_function(uint32_t ui32_temp_current_15b , uint32_t ui32_adc_battery_current_filtered_15b , uint32_t alpha){
-    uint32_t ui32_temp_new = ui32_temp_current_15b * (8U - alpha);
-    uint32_t ui32_temp_old =  ui32_adc_battery_current_filtered_15b * alpha;
-    uint32_t ui32_filtered_value = ((ui32_temp_new + ui32_temp_old + (4)) >> 3);                    
-    if (ui32_filtered_value == ui32_adc_battery_current_filtered_15b) {
-        if (ui32_filtered_value < ui32_temp_current_15b)
+// average current on 1 eletric rotation
+uint32_t ui32_adc_battery_current_15b = 0; // value from adc
+uint32_t ui32_adc_battery_current_15b_accum = 0; 
+uint32_t ui32_adc_battery_current_15b_counter = 0;
+
+
+inline uint32_t filtering_function(uint32_t ui32_temp_15b , uint32_t ui32_filtered_15b , uint32_t alpha){
+    uint32_t ui32_temp_new = ui32_temp_15b * (16U - alpha);
+    uint32_t ui32_temp_old =  ui32_filtered_15b * alpha;
+    uint32_t ui32_filtered_value = ((ui32_temp_new + ui32_temp_old + (8)) >> 4);                    
+    if (ui32_filtered_value == ui32_filtered_15b) {
+        if (ui32_filtered_value < ui32_temp_15b)
             ui32_filtered_value++;
-        else if (ui32_filtered_value > ui32_temp_current_15b)
+        else if (ui32_filtered_value > ui32_temp_15b)
             ui32_filtered_value--;
     }
     return ui32_filtered_value ;                  
 }
 
+void VADC0_G0_0_IRQHandler() {  // VADC is configured to compare the total current (12bits) with "1000" and generate an irq
+    ui8_system_state = ERROR_BATTERY_OVERCURRENT; // set the error to avoid that motor starts again
+    // disable the motor
+    ui8_motor_enabled = 0;
+    motor_disable_pwm();
+}
+
+
 // this irq callback occurs when posif detects a new pattern 
 __RAM_FUNC void POSIF0_0_IRQHandler(){
-//void POSIF0_0_IRQHandler(){
         // Capture time stamp 
     ticks_hall_pattern_irq_last = XMC_CCU4_SLICE_GetTimerValue(HALL_SPEED_TIMER_HW);
     // capture hall pattern
@@ -302,34 +239,38 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
     uint32_t critical_section_value = XMC_EnterCriticalSection();
     // get the current ticks
     uint16_t current_speed_timer_ticks = (uint16_t) (XMC_CCU4_SLICE_GetTimerValue(HALL_SPEED_TIMER_HW) );
-    // get the capture register = last changed pattern = current pattern
-    //uint16_t last_hall_pattern_change_ticks = (uint16_t) XMC_CCU4_SLICE_GetCaptureRegisterValue(HALL_SPEED_TIMER_HW , 1);
+    // get the last changed pattern ticks (from posif irq)
     uint16_t last_hall_pattern_change_ticks = ticks_hall_pattern_irq_last;
     // get the current hall pattern as saved duting the posif irq
     current_hall_pattern = current_hall_pattern_irq;
     XMC_ExitCriticalSection(critical_section_value);
-    // get the current hall pattern
-    //current_hall_pattern = XMC_POSIF_HSC_GetLastSampledPattern(HALL_POSIF_HW) ;
-    //uint8_t current_hall_pattern_get = XMC_POSIF_HSC_GetCurrentPattern(HALL_POSIF_HW);
-    //current_hall_pattern = XMC_GPIO_GetInput(IN_HALL0_PORT, IN_HALL0_PIN);// hall 0
-    //current_hall_pattern |=  XMC_GPIO_GetInput(IN_HALL1_PORT, IN_HALL1_PIN) << 1;
-    //current_hall_pattern |=  XMC_GPIO_GetInput(IN_HALL2_PORT, IN_HALL2_PIN) << 2;
 
-    // elapsed time between now and last pattern
+    // elapsed time between now and last pattern change (used for interpolation)
     uint16_t enlapsed_time =  current_speed_timer_ticks - last_hall_pattern_change_ticks ; // ticks between now and last change
     // elapse time since last pattern 1
 //    uint16_t elapsed_ticks_since_pattern_1 = current_speed_timer_ticks - previous_360_ref_ticks;
 
 //    uint8_t new_hall_pattern = 0; // filled only when a new pattern is detected
+
     // to debug time in irq
     uint16_t start_ticks = current_speed_timer_ticks; // save to calculate enlased time inside the irq // just for debug could be removed
-    // to debug unregular intervals between 2 pattern 1
-    //if ( ( current_hall_pattern != previous_hall_pattern) && (current_hall_pattern == 1)){
-    //    ticks_interval = current_speed_timer_ticks - ticks_pattern_1_previous;
-    //    ticks_pattern_1_previous = current_speed_timer_ticks;
-    //}
-
     
+//the resistance/gain in TSDZ8 is 4X smaller than in TSDZ2; still ADC is 12 bits instead of 10; so ADC 12bits TSDZ8 = ADC 10 bits TSDZ2
+        // in TSDZ2, we used only the 8 lowest bits of adc; 1 adc step = 0,16A
+        // In tsdz8, the resistance is (I expect) 0.003 Ohm ; So 1A => 0,003V => 0,03V (gain aop is 10)*4096/5Vcc = 24,576 steps
+        //      SO 1 adc step 12bits = 1/24,576 = 0,040A
+        // For 10 A, TSDZ2 should gives 10/0,16 = 62 steps
+        // For 10 A, TSDZ8 shoud give 10*24,576 steps = 246 steps
+        // to convert TSDZ8 steps 12bits  in the same units as TSDZ2, we shoud take ADC12bits *62/245,76 = 0,25 and divide by 4 (or >>2)
+        // current is available in gr0 result 15 in queue 0 p2.8 and/or in gr1 result 152 (p2.8)
+        // both results use IIR filters and so results are in 14 bits instead of 12 bits
+        // use measurement from the 2 groups
+    ui32_adc_battery_current_15b = ((XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 15 ) & 0xFFFF) +
+                                    (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 15 ) & 0xFFFF)) ;  // So here result is in 15 bits (averaging
+    //accumulate the current to calculate an average on one rotation (there are quite big variations inside each 60° sector)
+    ui32_adc_battery_current_15b_accum += ui32_adc_battery_current_15b;
+    ui32_adc_battery_current_15b_counter++;
+
     // when pattern change
     if ( current_hall_pattern != previous_hall_pattern) {
         if (current_hall_pattern != expected_pattern_table[previous_hall_pattern]){ // new pattern is not the expected one
@@ -341,34 +282,9 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
 //            ui32_ref_angle = 0 ; // reset the position at pattern 1
             
         } else {   // valid transition
-/*
-            // calculate angle error when pattern changed
-            int16_t i16_interpolation_angle = (( (uint32_t) ((uint16_t) (last_hall_pattern_change_ticks - (uint16_t) previous_360_ref_ticks))
-                         * ui32_angle_per_tick_X16shift) >> 16) + ui8_hall_ref_angles[1];  // here we get an angle * 256 (to get better rounding for filtering)   
-            //int16_t i16_ref = ui8_hall_ref_angles[current_hall_pattern];
-            //if (current_hall_pattern == 1) i16_ref += 256;
-            //int16_t i16_delta = i16_interpolation_angle - i16_ref;
-            //if ( i16_delta < i16_debug_delta_min[current_hall_pattern]) i16_debug_delta_min[current_hall_pattern] = i16_delta;
-            //if ( i16_delta > i16_debug_delta_max[current_hall_pattern]) i16_debug_delta_max[current_hall_pattern] = i16_delta;
-            if (i16_interpolation_angle < i16_debug_delta_min[current_hall_pattern]) 
-                i16_debug_delta_min[current_hall_pattern] = i16_interpolation_angle;
-            if (i16_interpolation_angle > i16_debug_delta_max[current_hall_pattern]) 
-                i16_debug_delta_max[current_hall_pattern] = i16_interpolation_angle;
-            //if (ui32_angle_per_tick_X16shift < ui32_angle_per_tick_X16shift_min)
-            //     ui32_angle_per_tick_X16shift_min = ui32_angle_per_tick_X16shift;
-            //if (ui32_angle_per_tick_X16shift > ui32_angle_per_tick_X16shift_max)
-            //     ui32_angle_per_tick_X16shift_max = ui32_angle_per_tick_X16shift;
-            if (ui16_hall_counter_total < ui32_angle_per_tick_X16shift_min)
-                 ui32_angle_per_tick_X16shift_min = ui16_hall_counter_total;
-            if (ui16_hall_counter_total > ui32_angle_per_tick_X16shift_max)
-                 ui32_angle_per_tick_X16shift_max = ui16_hall_counter_total;
-
-            //i16_debug_delta_max[current_hall_pattern] = i16_interpolation_angle;
-*/
             if (current_hall_pattern ==  0x01) {  // rotor at 210°
                 if (ui8_hall_360_ref_valid) { // check that we have a full rotation without pattern sequence error
                     ui16_hall_counter_total = last_hall_pattern_change_ticks - previous_360_ref_ticks; // save the total number of tick for one electric rotation
-                    ui16_interval_second_180_ticks = last_hall_pattern_change_ticks - previous_180_ref_ticks - MID__RISING_FALLING_EDGE_HALL_SENSOR;
                     // when speed is still zero, calculate the first value without correction
 //                    if (ui32_angle_per_tick_X16shift_new == 0) {
 //                        ui32_angle_per_tick_X16shift_new = ( 1 << 24) / (ui16_interval_second_180_ticks << 1);
@@ -401,12 +317,7 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
                     // in all cases, set the angle reference in 8 bits for next calculation 
 //                    ui8_motor_phase_absolute_angle_new = (uint8_t) (ui32_ref_angle >> 16) ; // reference for new algorithm
                     
-                    //SEGGER_RTT_printf(0, "%u %u\r\n", ui16_hall_counter_total, ticks_interval );
-                    // used for first algorithm (coud be replaced by (1 << 23) / ui16_interval_second_180_ticks) but only if
-                    //     hall sensor does not have to much difference between rising and falling edge
-                    //     so if ticks are the same for first and second 180° sectors
                     ui32_angle_per_tick_X16shift = ( 1 << 24) / ui16_hall_counter_total; // new value for interpolation and updating table with reference angle
-                    //ui32_angle_per_tick_X16shift = ( 1 << 23) / ui16_interval_second_180_ticks;
                     ui8_motor_commutation_type = SINEWAVE_INTERPOLATION_60_DEGREES; // 0x80 ; it says that we can interpolate because speed is known
                 }
                 ui8_hall_360_ref_valid = 0x01;
@@ -414,16 +325,14 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
             } else if (current_hall_pattern ==  0x03) {  // rotor at 150°)
                 // update ui8_g_foc_angle once every ERPS (used for g_foc_angle calculation) ;
                 // I do not know why this is done when hall pattern = 0X03 and not with 0X01 to avoid a test
-                            ui8_foc_flag = 1;
-            } else if (current_hall_pattern ==  0x06) {  // 180° compare to pattern 1
-                // save tick at mid tirn to update ui32_angle_per_ticks_X16shift based on last 180°
-                // Even if hall sensors have bad relative position to each others, taking position at 180 avoid this
-                // It still does not take into account a possible difference between rising and falling edge
-                // This is supposed to be small for TSDZ8 and anyway could be checked later on.
-                if (ui8_hall_360_ref_valid) { // check that we have a full rotation without pattern sequence error
-                    ui16_interval_first_180_ticks = last_hall_pattern_change_ticks - previous_360_ref_ticks + MID__RISING_FALLING_EDGE_HALL_SENSOR;
-                }    
-                previous_180_ref_ticks = last_hall_pattern_change_ticks;
+                    ui8_foc_flag = 1;
+                    // when we have had at least one full rotation
+                    if (ui8_motor_commutation_type == SINEWAVE_INTERPOLATION_60_DEGREES){
+                        // Calculate avg current per rotation once per rotation
+                        ui32_adc_battery_current_1_rotation_15b = ui32_adc_battery_current_15b_accum / ui32_adc_battery_current_15b_counter;
+                        ui32_adc_battery_current_15b_accum =0;
+                        ui32_adc_battery_current_15b_counter = 0;
+                    }        
             }    
 //            new_hall_pattern = current_hall_pattern;
             #define MIN_ANGLE_PER_TICK_X16SHIFT ((1 << 24) / 5000u ) // update of hall position is done only when erps > 50 = about rpm > 750)
@@ -440,9 +349,9 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
                 uint8_t ui8_measured_angle = ui16_measured_angle_X16bits >> 8;
                 uint8_t delta =  ui8_measured_angle - ui8_hall_ref_angles[current_hall_pattern];
                 if ((delta < 5 ) || (delta > 251 )) { // when there is no big difference 
-                    // apply filter on values X16bits
-                    best_ref_angles_X16bits[current_hall_pattern] = filtering_function((uint32_t)ui16_measured_angle_X16bits , best_ref_angles_X16bits[current_hall_pattern] ,7 );
-                    ui8_best_ref_angles[current_hall_pattern] = (best_ref_angles_X16bits[current_hall_pattern] + 128 )>> 8; // +128 for rounding
+                    // apply filter on values X16bits and update best_ref_angles
+                //    best_ref_angles_X16bits[current_hall_pattern] = filtering_function((uint32_t)ui16_measured_angle_X16bits , best_ref_angles_X16bits[current_hall_pattern] ,7 );
+                //    ui8_best_ref_angles[current_hall_pattern] = (best_ref_angles_X16bits[current_hall_pattern] + 128 )>> 8; // +128 for rounding
                     /*
                     uint32_t filtering = best_ref_angles_X16bits[current_hall_pattern];
                     #define FILTER_HALL_POSITIONS 3
@@ -452,7 +361,7 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
                     */
                     // update the table with reference angles
                     //ui8_hall_ref_angles[current_hall_pattern] = ui8_best_ref_angles[current_hall_pattern] ;
-                    hall_ref_angles_counter++;  // just to debug to see if table is updated at regular intervals
+                    hall_ref_angles_counter++;  // just to debug to see if table is/should updated at regular intervals
                 }
             }
             if (current_hall_pattern == 1 ){
@@ -464,7 +373,20 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
         ui8_motor_phase_absolute_angle = ui8_best_ref_angles[current_hall_pattern]; // use best ref instead of ui8_hall_ref_angles[]
         // set rotor angle based on fixed hall ref angles
         //ui8_motor_phase_absolute_angle = ui8_hall_ref_angles[current_hall_pattern]; // use best ref instead of hall_ref_angles[]
-        
+        #if ( GENERATE_DATA_FOR_REGRESSION_ANGLES == (1) )
+        if ((ticks_intervals_status == 0) && (current_hall_pattern == 1) ) {
+            ticks_intervals[0] = ui16_hall_counter_total ; // save the total ticks for previous 360°
+            ticks_intervals[1] = last_hall_pattern_change_ticks - previous_hall_pattern_change_ticks ;
+            ticks_intervals[7] = ui8_g_duty_cycle; // save the duty cycle
+            ticks_intervals_status = 1;
+        } else if (ticks_intervals_status == 1)  {
+            ticks_intervals[current_hall_pattern] = last_hall_pattern_change_ticks - previous_hall_pattern_change_ticks ;
+            if (current_hall_pattern == 5) {
+                ticks_intervals_status = 2; // stop filling the intervals (wait the values are sent)
+            }    
+        } 
+        previous_hall_pattern_change_ticks = last_hall_pattern_change_ticks;
+        #endif
     } else { // no hall patern change
         // Verify if rotor stopped (< 10 ERPS)
         if (enlapsed_time > (HALL_COUNTER_FREQ/MOTOR_ROTOR_INTERPOLATION_MIN_ERPS/6)) { //  for TSDZ2: 250000/10 /6 = 4166 ; for TSDZ8 = 8332
@@ -473,8 +395,17 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
             ui8_hall_360_ref_valid = 0;
             ui32_angle_per_tick_X16shift = 0; // 0 means unvalid value
             ui16_hall_counter_total = 0xffff;
+            // when we can not use accumulated value, use the latest on and reset accum
+            ui32_adc_battery_current_1_rotation_15b = ui32_adc_battery_current_15b;
+            ui32_adc_battery_current_15b_accum = 0;
+            ui32_adc_battery_current_15b_counter = 0;
+                    
         }
     }
+    
+    // mstrens : moved from irq1 to irq0 to use average current over 1 rotation for regulation
+    ui8_adc_battery_current_filtered  = ui32_adc_battery_current_1_rotation_15b >> 5 ; // from 15 bits to 10 bits like TSDZ2 
+    
     /****************************************************************************/
     // - calculate interpolation angle and sine wave table index when speed is known
     uint8_t ui8_interpolation_angle = 0; // interpolation angle
@@ -506,12 +437,12 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
 //    }
 //    #if (APPLY_ENHANCED_POSITIONING == 0)
     // hall_reference_angle is the sum of the DEFAULT_HALL_REFERENCE_ANGLE and the fine tune with m_config.global_offset_angle
-    uint8_t ui8_svm_table_index = ui8_interpolation_angle + ui8_motor_phase_absolute_angle + ui8_g_foc_angle + hall_reference_angle + FINE_TUNE_ANGLE_OFFSET;
-    #if (DEBUG_256_CURRENT_VALUES == 1)
-    if( adc_current_counter<256){
-        adc_current_angle[adc_current_counter] = ui8_svm_table_index;
-    }
-    #endif
+    uint8_t ui8_svm_table_index = ui8_interpolation_angle + ui8_motor_phase_absolute_angle +
+             ui8_g_foc_angle + hall_reference_angle + FINE_TUNE_ANGLE_OFFSET;
+    // to test without foc_angle
+    //uint8_t ui8_svm_table_index = ui8_interpolation_angle + ui8_motor_phase_absolute_angle + hall_reference_angle + FINE_TUNE_ANGLE_OFFSET;
+    
+    
     // to debug
 //    #else
 //    uint8_t ui8_svm_table_index = ui8_interpolation_angle_new + (ui32_ref_angle >> 16) +  ui8_best_ref_angles[1] + 
@@ -545,14 +476,8 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
     uint16_t temp  = XMC_CCU4_SLICE_GetTimerValue(HALL_SPEED_TIMER_HW) ;
     temp = temp - start_ticks;
     if (temp > debug_time_ccu8_irq0) debug_time_ccu8_irq0 = temp; // store the max enlapsed time in the irq
+    
 } // end of CCU80_0_IRQHandler
-
-void VADC0_G0_0_IRQHandler() {
-    ui8_system_state == ERROR_BATTERY_OVERCURRENT; // set the error to avoid that motor starts again
-    // disable the motor
-    ui8_motor_enabled = 0;
-    motor_disable_pwm();
-}
 
 // ************* irq handler 
 __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  counting DOWN (= 1/4 of 19mhz cycles)   __RAM_FUNC 
@@ -585,40 +510,7 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
         //ui16_adc_torque   = (XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 2 ) & 0xFFF) >> 2; // torque gr0 ch7 result 2 in bg p2.2
         // next line has been moved to ebike_app.c to save time in this irq
         //ui16_adc_throttle = (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 5 ) & 0xFFF) >> 2; // throttle gr1 ch7 result 5  in bg  p2.5
-        
-        //the resistance/gain in TSDZ8 is 4X smaller than in TSDZ2; still ADC is 12 bits instead of 10; so ADC 12bits TSDZ8 = ADC 10 bits TSDZ2
-        // in TSDZ2, we used only the 8 lowest bits of adc; 1 adc step = 0,16A
-        // In tsdz8, the resistance is (I expect) 0.003 Ohm ; So 1A => 0,003V => 0,03V (gain aop is 10)*4096/5Vcc = 24,576 steps
-        //      SO 1 adc step 12bits = 1/24,576 = 0,040A
-        // For 10 A, TSDZ2 should gives 10/0,16 = 62 steps
-        // For 10 A, TSDZ8 shoud give 10*24,576 steps = 246 steps
-        // to convert TSDZ8 steps 12bits  in the same units as TSDZ2, we shoud take ADC12bits *62/245,76 = 0,25 and divide by 4 (or >>2)
-        // current is available in gr0 result 15 in queue 0 p2.8 and/or in gr1 result 152 (p2.8)
-        // both results use IIR filters and so results are in 14 bits instead of 12 bits
-        // use measurement from the 2 groups
-        uint32_t ui32_temp_current_15b = ((XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 15 ) & 0xFFFF) +
-                                    (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 15 ) & 0xFFFF)) ;  // So here result is in 15 bits (averaging
-        // use only measurement from 1 group
-        //uint32_t ui32_temp_current_15b = (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 15 ) & 0xFFFF) <<1;
-        //                            (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 15 ) & 0xFFFF)) ;  // So here result is in 15 bits (averaging
-        ui32_adc_battery_current_filtered_15b = filtering_function(ui32_temp_current_15b , ui32_adc_battery_current_filtered_15b ,7);
-        //ui32_adc_battery_current_filtered_15b =  ((( ui32_adc_battery_current_filtered_15b << 4) - ui32_adc_battery_current_filtered_15b) +
-        //     (ui32_temp_current_15b)) >> 4;
-        ui8_adc_battery_current_filtered  = ui32_adc_battery_current_filtered_15b >> 5 ; // from 15 bits to 10 bits like TSDZ2 
-        #if (DEBUG_256_CURRENT_VALUES == 1)
-        if (adc_current_counter < 256){
-            //adc_current_value[adc_current_counter] = (XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 9 ) & 0xFFFF) - 2000; // collect phase U current
-            adc_current_value[adc_current_counter] = ui32_adc_battery_current_filtered_15b ;
-            adc_current_counter++; 
-        }
-        #endif
-        if (ui32_adc_battery_current_filtered_15b < ui32_adc_battery_current_filtered_min) ui32_adc_battery_current_filtered_min = ui32_adc_battery_current_filtered_15b;
-        if (ui32_adc_battery_current_filtered_15b > ui32_adc_battery_current_filtered_max) ui32_adc_battery_current_filtered_max = ui32_adc_battery_current_filtered_15b;
-    // to debug
-    //uint16_t temp1c  =  XMC_CCU4_SLICE_GetTimerValue(HALL_SPEED_TIMER_HW);
-    //temp1c = temp1c - start_ticks;
-    //if (temp1c > debug_time_ccu8_irq1c) debug_time_ccu8_irq1c = temp1c; // store the max enlapsed time in the irq
-        
+              
         // update foc_angle once per electric rotation (based on fog_flag
         // foc_angle is added to the position given by hall sensor + interpolation )
         if (ui8_g_duty_cycle > 0) {
@@ -653,7 +545,7 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
     //temp1d = temp1d - start_ticks;
     //if (temp1d > debug_time_ccu8_irq1d) debug_time_ccu8_irq1d = temp1d; // store the max enlapsed time in the irq
     
-                /****************************************************************************/
+        /****************************************************************************/
         // PWM duty_cycle controller:
         // - limit battery undervolt
         // - limit battery max current
