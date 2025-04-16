@@ -1553,22 +1553,22 @@
                         <Param id="group_request_sources_event_id_7" value="false"/>
                         <Param id="group_request_sources_external_trigger_edge_id" value="XMC_VADC_TRIGGER_EDGE_ANY"/>
                         <Param id="group_request_sources_external_trigger_event_id" value="XMC_VADC_TRIGGER_EDGE_NONE"/>
-                        <Param id="group_request_sources_external_trigger_id" value="true"/>
+                        <Param id="group_request_sources_external_trigger_id" value="false"/>
                         <Param id="group_request_sources_gating_functionality_id" value="IGNORE"/>
-                        <Param id="group_request_sources_queue_input_id_0" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_1" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_2" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_3" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_4" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_5" value="7"/>
-                        <Param id="group_request_sources_queue_input_id_6" value="2"/>
+                        <Param id="group_request_sources_queue_input_id_0" value="1"/>
+                        <Param id="group_request_sources_queue_input_id_1" value="1"/>
+                        <Param id="group_request_sources_queue_input_id_2" value="7"/>
+                        <Param id="group_request_sources_queue_input_id_3" value="1"/>
+                        <Param id="group_request_sources_queue_input_id_4" value="1"/>
+                        <Param id="group_request_sources_queue_input_id_5" value="2"/>
+                        <Param id="group_request_sources_queue_input_id_6" value="1"/>
                         <Param id="group_request_sources_queue_input_id_7" value="1"/>
                         <Param id="group_request_sources_queue_specific_result_id" value="16"/>
                         <Param id="group_request_sources_refill_id_0" value="true"/>
                         <Param id="group_request_sources_refill_id_1" value="true"/>
                         <Param id="group_request_sources_refill_id_2" value="true"/>
-                        <Param id="group_request_sources_refill_id_3" value="false"/>
-                        <Param id="group_request_sources_refill_id_4" value="false"/>
+                        <Param id="group_request_sources_refill_id_3" value="true"/>
+                        <Param id="group_request_sources_refill_id_4" value="true"/>
                         <Param id="group_request_sources_refill_id_5" value="true"/>
                         <Param id="group_request_sources_refill_id_6" value="true"/>
                         <Param id="group_request_sources_refill_id_7" value="true"/>
@@ -1946,20 +1946,20 @@
                         <Param id="group_request_sources_external_trigger_event_id" value="XMC_VADC_TRIGGER_EDGE_NONE"/>
                         <Param id="group_request_sources_external_trigger_id" value="false"/>
                         <Param id="group_request_sources_gating_functionality_id" value="IGNORE"/>
-                        <Param id="group_request_sources_queue_input_id_0" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_1" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_2" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_3" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_4" value="None"/>
-                        <Param id="group_request_sources_queue_input_id_5" value="7"/>
-                        <Param id="group_request_sources_queue_input_id_6" value="6"/>
+                        <Param id="group_request_sources_queue_input_id_0" value="0"/>
+                        <Param id="group_request_sources_queue_input_id_1" value="0"/>
+                        <Param id="group_request_sources_queue_input_id_2" value="7"/>
+                        <Param id="group_request_sources_queue_input_id_3" value="0"/>
+                        <Param id="group_request_sources_queue_input_id_4" value="0"/>
+                        <Param id="group_request_sources_queue_input_id_5" value="6"/>
+                        <Param id="group_request_sources_queue_input_id_6" value="0"/>
                         <Param id="group_request_sources_queue_input_id_7" value="0"/>
                         <Param id="group_request_sources_queue_specific_result_id" value="16"/>
-                        <Param id="group_request_sources_refill_id_0" value="false"/>
-                        <Param id="group_request_sources_refill_id_1" value="false"/>
-                        <Param id="group_request_sources_refill_id_2" value="false"/>
-                        <Param id="group_request_sources_refill_id_3" value="false"/>
-                        <Param id="group_request_sources_refill_id_4" value="false"/>
+                        <Param id="group_request_sources_refill_id_0" value="true"/>
+                        <Param id="group_request_sources_refill_id_1" value="true"/>
+                        <Param id="group_request_sources_refill_id_2" value="true"/>
+                        <Param id="group_request_sources_refill_id_3" value="true"/>
+                        <Param id="group_request_sources_refill_id_4" value="true"/>
                         <Param id="group_request_sources_refill_id_5" value="true"/>
                         <Param id="group_request_sources_refill_id_6" value="true"/>
                         <Param id="group_request_sources_refill_id_7" value="true"/>
@@ -2296,14 +2296,6 @@
                 <Net>
                     <Port name="ccu8[0].ch[2].out1[0]"/>
                     <Port name="ioss[0].port[0].pin[9].digital_out[0]"/>
-                </Net>
-                <Net>
-                    <Port name="ccu8[0].ch[3].sr3[0]"/>
-                    <Port name="vadc[0].group[0].bgreqtrsel[0]"/>
-                </Net>
-                <Net>
-                    <Port name="ccu8[0].ch[3].st[0]"/>
-                    <Port name="vadc[0].group[0].bgreqgtsel[0]"/>
                 </Net>
                 <Net>
                     <Port name="ioss[0].port[0].pin[6].digital_out[0]"/>

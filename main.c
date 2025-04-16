@@ -99,6 +99,7 @@ extern volatile uint16_t ui16_adc_voltage;
 extern volatile uint16_t ui16_adc_voltage_cut_off;
 
 extern uint8_t hall_reference_angle;
+extern uint8_t ui8_wheel_speed_simulate ;  //added by mstrens to simulate a fixed speed whithout having a speed sensor 
 
 
 // debug manipulating each ref angle and see impact
@@ -201,7 +202,7 @@ int main(void)
         .conv_start_mode = (uint32_t) XMC_VADC_STARTMODE_WFS,
         .req_src_priority = (uint32_t) XMC_VADC_GROUP_RS_PRIORITY_3,
         .src_specific_result_reg = (uint32_t) 0,
-        .trigger_signal = (uint32_t) XMC_VADC_REQ_TR_P, // use gate set up
+        .trigger_signal = (uint32_t) XMC_VADC_REQ_TR_J, // XMC_VADC_REQ_TR_J = CCU8 SR3 = mid point , // XMC_VADC_REQ_TR_P, // use gate set up
         .trigger_edge = (uint32_t) XMC_VADC_TRIGGER_EDGE_ANY,
         .gate_signal = (uint32_t) XMC_VADC_REQ_GT_E, //use CCU8_ST3A = when timer is at mid period counting up
         .timer_mode = (uint32_t) false,
@@ -214,7 +215,7 @@ int main(void)
             .conv_start_mode = (uint32_t) XMC_VADC_STARTMODE_WFS,
             .req_src_priority = (uint32_t) XMC_VADC_GROUP_RS_PRIORITY_2,
             .src_specific_result_reg = (uint32_t) 0,
-            .trigger_signal = (uint32_t) XMC_VADC_REQ_TR_P,  // use gate set up
+            .trigger_signal = (uint32_t) XMC_VADC_REQ_TR_I, //XMC_VADC_REQ_TR_I = CCU8 SR2 = ONe match   // XMC_VADC_REQ_TR_P,  // use gate set up
             .trigger_edge = (uint32_t) XMC_VADC_TRIGGER_EDGE_ANY,
             .gate_signal = (uint32_t) XMC_VADC_REQ_GT_E, ////use CCU8_ST3A = when timer is at mid period counting up
             .timer_mode = (uint32_t) false,
@@ -234,6 +235,12 @@ int main(void)
     m_configuration_init(); // get parameters used to manage the display
     // add some initialisation in ebike_app.init (e.g. fields calculated based on config parameters)
     ebike_app_init();
+
+    // added by Mstrens
+	hall_reference_angle = m_config.global_offset_angle + (uint8_t) DEFAULT_HALL_REFERENCE_ANGLE; 
+	//hall_reference_angle = 66;
+	ui8_wheel_speed_simulate =  WHEEL_SPEED_SIMULATE; // load wheel speed simulate (so allow to change it with uc-probe)
+
     XMC_WDT_Service();
     // set initial position of hall sensor and first next expected one in shadow and load immediately in real register
     //posif_init_position();
@@ -274,6 +281,8 @@ int main(void)
     //XMC_VADC_GLOBAL_EnablePostCalibration(vadc_0_HW, 1U);
     //XMC_VADC_GLOBAL_StartupCalibration(vadc_0_HW);
     
+    
+
     start = system_ticks;
     
 //***************************** while ************************************

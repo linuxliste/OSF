@@ -113,6 +113,8 @@ const static uint8_t ui8_pas_old_valid_state[4] = { 0x01, 0x03, 0x00, 0x02 };
 // wheel speed sensor
 volatile uint16_t ui16_wheel_speed_sensor_ticks = 0;
 volatile uint16_t ui16_wheel_speed_sensor_ticks_counter_min = 0;
+volatile uint32_t ui32_wheel_speed_sensor_ticks_total = 0; // used only in 860C version
+
 
 // battery soc
 volatile uint8_t ui8_battery_SOC_saved_flag = 0;
@@ -178,6 +180,9 @@ uint16_t ticks_intervals[8]; // ticks intervals between 2 pattern changes;
 uint8_t ticks_intervals_status; // 0 =  new data can be written; 1 data being written; 2 all data written, must be transmitted
 uint16_t previous_hall_pattern_change_ticks;  // save the ticks of last pattern change
 #endif
+uint16_t ui16_current_G0;
+uint16_t ui16_current_G1;
+
 
 volatile uint16_t ticks_hall_pattern_irq_last;
 volatile uint8_t current_hall_pattern_irq;
@@ -265,7 +270,10 @@ __RAM_FUNC void CCU80_0_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
         // current is available in gr0 result 15 in queue 0 p2.8 and/or in gr1 result 152 (p2.8)
         // both results use IIR filters and so results are in 14 bits instead of 12 bits
         // use measurement from the 2 groups
-    ui32_adc_battery_current_15b = ((XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 15 ) & 0xFFFF) +
+        ui16_current_G0 =     (XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 15 ) & 0xFFFF);
+        ui16_current_G1 =     (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 15 ) & 0xFFFF);
+        
+        ui32_adc_battery_current_15b = ((XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 15 ) & 0xFFFF) +
                                     (XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 15 ) & 0xFFFF)) ;  // So here result is in 15 bits (averaging
     //accumulate the current to calculate an average on one rotation (there are quite big variations inside each 60° sector)
     ui32_adc_battery_current_15b_accum += ui32_adc_battery_current_15b;
@@ -663,6 +671,7 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
                             // a valid time occured : save the counter with the enlapse time * 55usec
 							ui16_wheel_speed_sensor_ticks = ui16_wheel_speed_sensor_ticks_counter; 
 							ui16_wheel_speed_sensor_ticks_counter = 0;
+                            ++ui32_wheel_speed_sensor_ticks_total; // used only in 860C version
 						}
 					}
 				}

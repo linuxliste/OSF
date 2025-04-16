@@ -39,6 +39,7 @@ extern volatile uint16_t ui16_cadence_sensor_ticks;
 
 // wheel speed sensor
 extern volatile uint16_t ui16_wheel_speed_sensor_ticks;
+extern volatile uint32_t ui32_wheel_speed_sensor_ticks_total;
 
 // battery soc
 extern volatile uint8_t ui8_battery_SOC_saved_flag;
