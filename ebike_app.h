@@ -26,7 +26,7 @@ extern uint16_t ui16_cadence_ticks_count_min_speed_adj;
 extern uint16_t ui16_adc_coaster_brake_threshold;
 
 // ADC motor phase current max
-extern volatile uint8_t ui8_adc_motor_phase_current_max;
+extern volatile uint16_t ui16_adc_motor_phase_current_max;
 
 // Motor enabled
 extern uint8_t ui8_motor_enabled;
@@ -59,12 +59,16 @@ extern uint8_t ui8_test_mode_flag ;
 extern volatile uint32_t ui32_adc_battery_current_1_rotation_15b; // value in 12 +2 +1 = 15 bits (ADC + IIR + average)
 extern uint8_t hall_reference_angle ; 
 
+/*
 extern uint8_t ui8_best_ref_angles1 ;
 extern uint8_t ui8_best_ref_angles2 ;
 extern uint8_t ui8_best_ref_angles3 ;
 extern uint8_t ui8_best_ref_angles4 ;
 extern uint8_t ui8_best_ref_angles5 ;
 extern uint8_t ui8_best_ref_angles6 ;
+*/
+
+extern uint8_t ui8_adc_battery_current_max;
 
 void ebike_app_controller(void);
 struct_configuration_variables* get_configuration_variables(void);

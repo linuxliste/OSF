@@ -384,9 +384,9 @@
                         <Param id="capture1_function" value="XMC_CCU8_SLICE_EVENT_NONE"/>
                         <Param id="channel_dead_time_enable_0" value="true"/>
                         <Param id="channel_dead_time_enable_1" value="false"/>
-                        <Param id="channel_dead_time_falling_0" value="100"/>
+                        <Param id="channel_dead_time_falling_0" value="120"/>
                         <Param id="channel_dead_time_falling_1" value="0"/>
-                        <Param id="channel_dead_time_rising_0" value="100"/>
+                        <Param id="channel_dead_time_rising_0" value="120"/>
                         <Param id="channel_dead_time_rising_1" value="0"/>
                         <Param id="compare_counting_mode" value="XMC_CCU8_SLICE_TIMER_COUNT_MODE_CA"/>
                         <Param id="compare_down_event_sr_1" value="0"/>
@@ -502,9 +502,9 @@
                         <Param id="capture1_function" value="XMC_CCU8_SLICE_EVENT_NONE"/>
                         <Param id="channel_dead_time_enable_0" value="true"/>
                         <Param id="channel_dead_time_enable_1" value="false"/>
-                        <Param id="channel_dead_time_falling_0" value="100"/>
+                        <Param id="channel_dead_time_falling_0" value="120"/>
                         <Param id="channel_dead_time_falling_1" value="0"/>
-                        <Param id="channel_dead_time_rising_0" value="100"/>
+                        <Param id="channel_dead_time_rising_0" value="120"/>
                         <Param id="channel_dead_time_rising_1" value="0"/>
                         <Param id="compare_counting_mode" value="XMC_CCU8_SLICE_TIMER_COUNT_MODE_CA"/>
                         <Param id="compare_down_event_sr_1" value="0"/>
@@ -620,9 +620,9 @@
                         <Param id="capture1_function" value="XMC_CCU8_SLICE_EVENT_NONE"/>
                         <Param id="channel_dead_time_enable_0" value="true"/>
                         <Param id="channel_dead_time_enable_1" value="false"/>
-                        <Param id="channel_dead_time_falling_0" value="100"/>
+                        <Param id="channel_dead_time_falling_0" value="120"/>
                         <Param id="channel_dead_time_falling_1" value="0"/>
-                        <Param id="channel_dead_time_rising_0" value="100"/>
+                        <Param id="channel_dead_time_rising_0" value="120"/>
                         <Param id="channel_dead_time_rising_1" value="0"/>
                         <Param id="compare_counting_mode" value="XMC_CCU8_SLICE_TIMER_COUNT_MODE_CA"/>
                         <Param id="compare_down_event_sr_1" value="0"/>

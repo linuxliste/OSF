@@ -5,7 +5,7 @@ The purpose here is to have a version that can be used on a TSDZ8 Tongsheng moto
 
 Changes were required because TSDZ8 uses a different microprocessor (XMC1302).
 
-This version is supposed to provide the same functionalities and to support the same 4 displays as the mbrusa project above.
+This version is supposed to provide the same functionalities and to support the same (4 or more) displays as the mbrusa project above.
 
 Compare to the TSDZ8 original firmware there are some expected benefits:
 * The user can adapt many parameters to his preferences.
@@ -21,8 +21,7 @@ This version differs with :
 * it is possible to fine tune one parameter (global offset angle in range -5/+5) in order to take care of litle differences (tolerances) that could exist between different motors. This is optionnal.
 
 
-# IMPORTANT NOTES
-* At this stage, this is just a beta version. It has NOT been tested on a bike and there are probably some bugs. Try it at your own risk!!!!
+# IMPORTANT : at this stage, this is just a beta version. There are probably some bugs. Try it at your own risk!!!!
 * Installing this firmware will void your warranty of the TSDZ8 mid drive.
 * We are not responsible for any personal injuries or accidents caused by use of this firmware.
 * There is no guarantee of safety using this firmware, please use it at your own risk.
@@ -31,8 +30,9 @@ This version differs with :
 
 
 To use this firmware, you will have to:
+
+* Donwload this firmware
 * Use a Segger Jlink device and a cable (this device replace the Stlink used for TSDZ2)
-* Donwload this TSDZ8 firmware
 * Flash the compiled firmware on the TSDZ8 controller
 * Generate a file with your preferences (using the GUI configurator that is common for TSDZ2 and TSDZ8)
 * Flash the hex file that has been generated with the configurator.
@@ -44,16 +44,21 @@ https://endless-sphere.com/sphere/threads/new-tsdz8-pswpower.120798/page-12
 If you find bugs, best is to open an issue in github : https://github.com/mstrens/OSF
 
 
-# 1.Preparing Jlink
+# 1.Download this firmware
+
+Download or clone this repository. 
+If you downloaded, unzip the archive where you want.
+
+# 2.Preparing Jlink
 
 You need a Segger Jlink device and a cable.
 You can get it from here : https://ebikestuff.eu/en/content/18-tsdz8-firmware-update-using-j-link-jlink-v9-programming-kit
 
-This link provides also a link to an archive with all the files for flashing. You must download and unzip it.
+This link provides also a link to an archive with all the files for flashing. You can download and unzip it.
 
-Note about the harware: I tested with a chinese jlink clone V9 from aliexpress and it worked too.
+Note: I tested with a chinese jlink clone V9 from aliexpress and it worked too.
 
-For the cable, like me, you can also make your own cable with a speed sensor extension cord for TSDZ2 like this:https://fr.aliexpress.com/item/1005007479961045.html?spm=a2g0o.order_list.order_list_main.120.21ef5e5bFWfkqS&gatewayAdapt=glo2fra
+For the cable, you can also make your own cable with a speed sensor extension cord for TSDZ2 like this:https://fr.aliexpress.com/item/1005007479961045.html?spm=a2g0o.order_list.order_list_main.120.21ef5e5bFWfkqS&gatewayAdapt=glo2fra
 
 I cut the extension cable and connect it directly to the Jlink flat cable based on:
 - the diagram of Jlink connector : https://www.segger.com/products/debug-probes/j-link/technology/interface-description/
@@ -64,20 +69,25 @@ In my case (be careful the colors may be different)
 - brown = Vcc = VTRef = pin 1 of Jlink
 - orange = Grnd = e.g. pin 4 of Jlink
 
-Note: it is usefull to be able to connect/disconnect the VCC/VtRef wire.
-When flashing, best is to avoid to power the motor from the main battery. VTref can be connected in order to let the PC provide the power supply (by default only when using a Jlink clone and not an official one).
-When monitoring/fine tuning some parameters, the motor must be powered from the main battery. It is then better not to connect VtRef to avoid voltage conflict on Jlink (TSDZ8 deliver 5V, Jlink 3.3V). I expect there is a protection but I am not 100% sure.
+It can also be useful to look at this link:  https://www.facebook.com/photo?fbid=7877850202251083&set=pcb.430249463263185.
+It is safe to check that the extension cable you get uses the same colors for the same pins on the connector because some cables could use different colors/pin out.
 
-Note: if you make your own cable with an extension cord, it can be usefull to be able to use it as well to flash the controller as well to monitor motor parameters and also as extension cord.
-To do so, cut the extension cord and resolder the 6 wires and solder also the 4 wires to the Jlink device.
-
-Note : when you want to use the cable for flashing/monitoring the controller, you always have to connect the cable directly to the controller. It means that you have to disconnect the speed sensor from the controller. If you build your own cable and keep it as extension cord, you can then reconnect the speed sensor at the other end (e.g. to monitor some parameters while the wheel is turning).   
+Tip: After cutting the extension cord in 2 parts, I used the one with the female connector to connect to the motor (and to Jlink).
+I also reconnected the wires from the part with the male connector. The advantage is that I can also connect the male connector to the speed sensor.  This avoid having to connect/disconnect the cable each time you flash the controller during the setup phase.
 
 
-# 2.Download this firmware
+IMPORTANT POINT : 
+If the controller is powered by the battery AND simultaneously by the Jlink device, there is a huge risk that it would be DAMAGED and unusable. Torque sensor driver could be destroyed. You would have to replace a mosfet transistor named Q7 on the controller board. Sill replacing it is not easy and require some skill.
 
-Download or clone this repository. 
-If you downloaded, unzip the archive where you want.
+
+By default Chinese clone Jlink (as the one provided by ebikestuff) usualy provides 3.3V on the Vref pin.
+So take care to never power the motor with the battery when Jlink is connected.
+
+For safety, I would recommend to avoid that Jlink provides the 3.3V. This can be achieved in 2 ways:
+- if you make your own cable, just do not connect Vref from jlink to the cable
+- if you use a cable where Vref is connected, you can (as far I tested) open the case of chinese Jlink device and remove a jumper. Then check with a voltmeter that the device does not provide anymore the 3.3V
+
+Note : original Segger jlink devices does not provide 3.3V on Vref pin by default. Still it can provide the 3.3V if you send some command (see Segger doc if you want to enable it).
 
 
 # 3.Flash the firmware
@@ -85,12 +95,11 @@ If you downloaded, unzip the archive where you want.
 To flash, you can follow the instructions from here to know how to use Jlink: 
 https://ebikestuff.eu/en/content/18-tsdz8-firmware-update-using-j-link-jlink-v9-programming-kit
 
-The HEX file to upload is the one you downloaded from this github site at step 2.
+The HEX file to upload is the one you downloaded from this github site at step 1.
 It is in folder "files_to_flash" and named OSF_TSDZ8_Vxx_xx.hex where xx.xx is a version number.
 
-While flashing, the motor should best not be powered by the battery. Disconnect it or at least power it OFF. In principe, the Jkink will provide power to the controller (at least if it is a Jlink clone device). It seems possible to keep the motor connected to the display but do not press any button on the display.
-
-Note: if you are using an original Segger Jlink device, you probably have to configure it to let it generate the power supply on the pin Vref in order to provide power supply to the controller. Otherwise, you can try to power on the controller with the battery (and pressing the power button on the display). Still I did not tested this method.
+IMPORTANT NOTE: as said before, for flashing, the motor should not be powered by the battery AND simulterneously by the jlink device.
+So you must OR disconnect the battery (or at least power it OFF) OR take care that your Jkink does not provide power on Vref pin to the controller.
 
 
 # 4.Generate the configuration file
@@ -100,6 +109,19 @@ This requires that you clone or download+unzip totally this repository : https:/
 
 
 To know how to use the JavaConfigurator and the purpose of all parameters, see the TSDZ2 manuals at https://github.com/emmebrusa/TSDZ2-Smart-EBike-1/tree/master/manuals
+
+There are still a few differences/points of attention about Torque sensor
+* calibrated MUST be enabled because you have to fill Pedal torque ADC offset (no weight) and  Pedal torque ADC max (max weight)
+* Pedal torque ADC step must be correct in order to get a correct value of the human power (see mbrusa instructions). OSF TSDZ8 uses this field even when calibrated is enabled (on the opposite to TSDZ2)
+* Pedal torque ADC step adv is not used (even if calibrated is denabled)
+* Pedal torque ADC offset adjustement is not used.
+* TPedal torque ADC range adj is used to increase/decrease sensitivity for low pressure on the pedal. Sorry if the name if confusing but it was the only field from 860C that I could reuse for this. This parameter does not change the maximum assistance provided for any selected level when pressure on pedal is maximum but it allows to increase (or decrease) the assistance when pressure on pedal is quite low.
+This parameter can vary between -20 and +20. When this parameter is set on 0, the assistance is calculated based on the value of the torque sensor.
+The more the parameter is higher than 0 (up to 20) the less assistance you will get for small pressure on the pedal (but so the more you get for highier pressure - still never exceeding the max value defined for the selected level). In other words, the ratio assistance per kg pressure is lower for lowest pressure and higher for highest pressure compared to parameter set on 0.
+Reversely, the more the parameter is lower than 0 (up to -20), the more assistance you will get for small pressure on the pedal. In other words, the ratio assistance per kg pressure is higher for lowest pressure and lower for highest pressure compare to parameter set on 0.
+* Pedal torque ADC angle adj is not used
+* Pedal torque ADC offset (no weight) is very important. In TSDZ2 or in previous versions, the firmware read the torque sensor during the first 3 seconds and considers this value as the reference when no load is applied. This was done in order to get an automatic recalibration at each power on. This process is not good for TSDZ8 because, for some TSDZ8, the value varies significantly with the position of the pedal. So in this version of OSF, there is no autocalibration of the torque sensor with no load at power on. Instead, the user has to fill in "Pedal torque ADC offset" the value that will become the reference. To find the value to encode, you must let the display show the value of ADC torque sensor (see display manual).  When no load is applied on the pedal, turn manually the pedal and look at the values of "ADC torque sensor". Note the MAXIMUM. I expect that value should be between 150 and 190 depending on your motor. Then add some margin (e.g 10) to avoid assistance with very low pressure and enter the value in "Pedal torque ADC offset". You can adapt the "margin" value to your preference (a higher value will require more pressure on the pedal before getting assistance but will reduce consumption).
+* Pedal torque ADC max (max weight) has to be filled : to find the value, look at field ADC torque sensor when you apply the max pressure on the pedal (about 80 kg = full human weight) while holding the brakes. It seems that the value should be around 450 for TSDZ8 which is quite different from TSDZ2.
 
 
 Note : there is no need to install all additional softwares mentioned in the manual as you will use only JavaConfigurator.jar.
@@ -121,6 +143,7 @@ When the controller starts running, it checks that the firmware is compatible wi
 If not, it provides an error code E09 on the display (at least on VLCD5) and blocks the motor. It could be that the code is different (e.g. E08 on other displays). 
 
 # 6. Fine tune some parameters (optional) + monitor (optional).
+Note :  I am not sure that this section is still valid for 0.1.18 (and upper) version. It could be that it has to be updated. 
 
 The motor use hall sensors to know the position of the rotor and synchronize the magnetic flux.
 There can be minor differences in the positions, the sensitivity and the hysteresis of those sensors.

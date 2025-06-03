@@ -34,6 +34,12 @@ extern volatile uint16_t ui16_adc_voltage;
 extern volatile uint16_t ui16_adc_torque;
 extern volatile uint16_t ui16_adc_throttle;
 
+extern volatile uint16_t ui16_adc_torque_filtered  ; 
+extern volatile uint16_t ui16_adc_torque_actual_rotation ;
+extern volatile uint16_t ui16_adc_torque_previous_rotation ;
+extern volatile uint8_t ui8_adc_torque_rotation_reset ;
+
+
 // cadence sensor
 extern volatile uint16_t ui16_cadence_sensor_ticks;
 
@@ -47,6 +53,10 @@ extern volatile uint8_t ui8_battery_SOC_reset_flag;
 
 // end of code copied from TSDZ2
 
+// added by ms because used in ebike_app.c
+extern volatile uint8_t ui8_g_foc_angle;
+extern uint8_t ui8_foc_angle_multiplicator;
+
 // added by mstrens to debug
 
 #if ( GENERATE_DATA_FOR_REGRESSION_ANGLES == (1) )
@@ -54,6 +64,14 @@ extern uint16_t ticks_intervals[8]; // ticks intervals between 2 pattern changes
 extern uint8_t ticks_intervals_status; // 0 =  new data can be written; 1 data being written; 2 all data written, must be transmitted
 extern uint16_t previous_hall_pattern_change_ticks;  // save the ticks of last pattern change
 #endif
+
+#define AVERAGING_SIZE 64
+typedef struct {
+    uint32_t buffer[AVERAGING_SIZE];
+    int index;
+    int count;
+    uint32_t sum;
+} Moving_average;
 
 void CCU80_0_IRQHandler(); // called when ccu8 Slice 4 reaches 840  counting UP (= 1/4 of 19mhz cycles)
 void CCU80_1_IRQHandler(); // called when ccu8 Slice 4 reaches 840  counting DOWN (= 1/4 of 19mhz cycles)

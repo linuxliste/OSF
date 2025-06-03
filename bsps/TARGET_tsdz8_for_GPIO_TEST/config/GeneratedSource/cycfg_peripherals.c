@@ -27,6 +27,7 @@
  ******************************************************************************/
 
 #include "cycfg_peripherals.h"
+#include "../../adc.h"
 
 #define HALL_POSIF_HALPS(EP, CP) (((uint32_t)EP <<  3) | (uint32_t)CP)
 
@@ -161,9 +162,9 @@ const XMC_CCU8_SLICE_DEAD_TIME_CONFIG_t PHASE_U_TIMER_dead_time_config =
     .channel1_inv_st_path = true,
     .channel2_inv_st_path = false,
     .div = XMC_CCU8_SLICE_DTC_DIV_1,
-    .channel1_st_rising_edge_counter = 100,
+    .channel1_st_rising_edge_counter = 120,
     .channel2_st_rising_edge_counter = 0,
-    .channel1_st_falling_edge_counter = 100,
+    .channel1_st_falling_edge_counter = 120,
     .channel2_st_falling_edge_counter = 0,
 };
 const XMC_CCU8_SLICE_EVENT_CONFIG_t PHASE_U_TIMER_event0_config =
@@ -219,9 +220,9 @@ const XMC_CCU8_SLICE_DEAD_TIME_CONFIG_t PHASE_V_TIMER_dead_time_config =
     .channel1_inv_st_path = true,
     .channel2_inv_st_path = false,
     .div = XMC_CCU8_SLICE_DTC_DIV_1,
-    .channel1_st_rising_edge_counter = 100,
+    .channel1_st_rising_edge_counter = 120,
     .channel2_st_rising_edge_counter = 0,
-    .channel1_st_falling_edge_counter = 100,
+    .channel1_st_falling_edge_counter = 120,
     .channel2_st_falling_edge_counter = 0,
 };
 const XMC_CCU8_SLICE_EVENT_CONFIG_t PHASE_V_TIMER_event0_config =
@@ -277,9 +278,9 @@ const XMC_CCU8_SLICE_DEAD_TIME_CONFIG_t PHASE_W_TIMER_dead_time_config =
     .channel1_inv_st_path = true,
     .channel2_inv_st_path = false,
     .div = XMC_CCU8_SLICE_DTC_DIV_1,
-    .channel1_st_rising_edge_counter = 100,
+    .channel1_st_rising_edge_counter = 120,
     .channel2_st_rising_edge_counter = 0,
-    .channel1_st_falling_edge_counter = 100,
+    .channel1_st_falling_edge_counter = 120,
     .channel2_st_falling_edge_counter = 0,
 };
 const XMC_CCU8_SLICE_EVENT_CONFIG_t PHASE_W_TIMER_event0_config =
@@ -775,6 +776,7 @@ void init_cycfg_peripherals(void)
     XMC_CCU4_EnableClock(ccu4_0_HW, HALL_DELAY_TIMER_NUM);
     XMC_CCU4_SLICE_SetTimerValue(HALL_DELAY_TIMER_HW, 0U);
     XMC_CCU4_SLICE_StartTimer(HALL_DELAY_TIMER_HW);
+
     XMC_CCU4_SLICE_CaptureInit(HALL_SPEED_TIMER_HW, &HALL_SPEED_TIMER_capture_config);
     XMC_CCU4_SLICE_SetTimerPeriodMatch(HALL_SPEED_TIMER_HW, 0XFFFFU);
     XMC_CCU4_SetMultiChannelShadowTransferMode(ccu4_0_HW, XMC_CCU4_MULTI_CHANNEL_SHADOW_TRANSFER_SW_SLICE1);
@@ -789,6 +791,7 @@ void init_cycfg_peripherals(void)
     XMC_CCU4_EnableClock(ccu4_0_HW, HALL_SPEED_TIMER_NUM);
     XMC_CCU4_SLICE_SetTimerValue(HALL_SPEED_TIMER_HW, 0U);
     XMC_CCU4_SLICE_StartTimer(HALL_SPEED_TIMER_HW);
+
     XMC_CCU4_SLICE_CompareInit(PWM_TORQUE_TIMER_HW, &PWM_TORQUE_TIMER_compare_config);
     XMC_CCU4_SLICE_SetTimerCompareMatch(PWM_TORQUE_TIMER_HW, 160U);
     XMC_CCU4_SLICE_SetTimerPeriodMatch(PWM_TORQUE_TIMER_HW, 1279U);
@@ -803,8 +806,10 @@ void init_cycfg_peripherals(void)
     XMC_CCU4_EnableClock(ccu4_0_HW, PWM_TORQUE_TIMER_NUM);
     XMC_CCU4_SLICE_SetTimerValue(PWM_TORQUE_TIMER_HW, 0U);
     XMC_CCU4_SLICE_StartTimer(PWM_TORQUE_TIMER_HW);
+
     XMC_CCU8_Init(ccu8_0_HW, XMC_CCU8_SLICE_MCMS_ACTION_TRANSFER_PR_CR);
     XMC_CCU8_StartPrescaler(ccu8_0_HW);
+    
     XMC_CCU8_SLICE_CompareInit(PHASE_U_TIMER_HW, &PHASE_U_TIMER_compare_config);
     XMC_CCU8_SLICE_SetTimerCompareMatchChannel1(PHASE_U_TIMER_HW, 840U);
     XMC_CCU8_SLICE_SetTimerCompareMatchChannel2(PHASE_U_TIMER_HW, 0U);
@@ -815,9 +820,10 @@ void init_cycfg_peripherals(void)
     XMC_CCU8_SLICE_ConfigureEvent(PHASE_U_TIMER_HW, XMC_CCU8_SLICE_EVENT_1, &PHASE_U_TIMER_event1_config);
     XMC_CCU8_SLICE_ConfigureEvent(PHASE_U_TIMER_HW, XMC_CCU8_SLICE_EVENT_2, &PHASE_U_TIMER_event2_config);
     XMC_CCU8_SLICE_StartConfig(PHASE_U_TIMER_HW, XMC_CCU8_SLICE_EVENT_0, XMC_CCU8_SLICE_START_MODE_TIMER_START_CLEAR);
-    XMC_CCU8_EnableClock(ccu8_0_HW, PHASE_U_TIMER_NUM);
+    //XMC_CCU8_EnableClock(ccu8_0_HW, PHASE_U_TIMER_NUM);
     XMC_CCU8_SLICE_DeadTimeInit(PHASE_U_TIMER_HW, &PHASE_U_TIMER_dead_time_config);
     XMC_CCU8_SLICE_SetTimerValue(PHASE_U_TIMER_HW, 0U);
+    
     XMC_CCU8_SLICE_CompareInit(PHASE_V_TIMER_HW, &PHASE_V_TIMER_compare_config);
     XMC_CCU8_SLICE_SetTimerCompareMatchChannel1(PHASE_V_TIMER_HW, 840U);
     XMC_CCU8_SLICE_SetTimerCompareMatchChannel2(PHASE_V_TIMER_HW, 0U);
@@ -828,9 +834,10 @@ void init_cycfg_peripherals(void)
     XMC_CCU8_SLICE_ConfigureEvent(PHASE_V_TIMER_HW, XMC_CCU8_SLICE_EVENT_1, &PHASE_V_TIMER_event1_config);
     XMC_CCU8_SLICE_ConfigureEvent(PHASE_V_TIMER_HW, XMC_CCU8_SLICE_EVENT_2, &PHASE_V_TIMER_event2_config);
     XMC_CCU8_SLICE_StartConfig(PHASE_V_TIMER_HW, XMC_CCU8_SLICE_EVENT_0, XMC_CCU8_SLICE_START_MODE_TIMER_START_CLEAR);
-    XMC_CCU8_EnableClock(ccu8_0_HW, PHASE_V_TIMER_NUM);
+    //XMC_CCU8_EnableClock(ccu8_0_HW, PHASE_V_TIMER_NUM);
     XMC_CCU8_SLICE_DeadTimeInit(PHASE_V_TIMER_HW, &PHASE_V_TIMER_dead_time_config);
     XMC_CCU8_SLICE_SetTimerValue(PHASE_V_TIMER_HW, 0U);
+    
     XMC_CCU8_SLICE_CompareInit(PHASE_W_TIMER_HW, &PHASE_W_TIMER_compare_config);
     XMC_CCU8_SLICE_SetTimerCompareMatchChannel1(PHASE_W_TIMER_HW, 840U);
     XMC_CCU8_SLICE_SetTimerCompareMatchChannel2(PHASE_W_TIMER_HW, 0U);
@@ -841,9 +848,10 @@ void init_cycfg_peripherals(void)
     XMC_CCU8_SLICE_ConfigureEvent(PHASE_W_TIMER_HW, XMC_CCU8_SLICE_EVENT_1, &PHASE_W_TIMER_event1_config);
     XMC_CCU8_SLICE_ConfigureEvent(PHASE_W_TIMER_HW, XMC_CCU8_SLICE_EVENT_2, &PHASE_W_TIMER_event2_config);
     XMC_CCU8_SLICE_StartConfig(PHASE_W_TIMER_HW, XMC_CCU8_SLICE_EVENT_0, XMC_CCU8_SLICE_START_MODE_TIMER_START_CLEAR);
-    XMC_CCU8_EnableClock(ccu8_0_HW, PHASE_W_TIMER_NUM);
+    //XMC_CCU8_EnableClock(ccu8_0_HW, PHASE_W_TIMER_NUM);
     XMC_CCU8_SLICE_DeadTimeInit(PHASE_W_TIMER_HW, &PHASE_W_TIMER_dead_time_config);
     XMC_CCU8_SLICE_SetTimerValue(PHASE_W_TIMER_HW, 0U);
+    
     XMC_CCU8_SLICE_CompareInit(PWM_IRQ_TIMER_HW, &PWM_IRQ_TIMER_compare_config);
     XMC_CCU8_SLICE_SetTimerCompareMatchChannel1(PWM_IRQ_TIMER_HW, 840U);
     XMC_CCU8_SLICE_SetTimerCompareMatchChannel2(PWM_IRQ_TIMER_HW, 840U);
@@ -862,14 +870,17 @@ void init_cycfg_peripherals(void)
     XMC_CCU8_SLICE_EnableEvent(PWM_IRQ_TIMER_HW, XMC_CCU8_SLICE_IRQ_ID_ONE_MATCH);
     XMC_CCU8_SLICE_EnableEvent(PWM_IRQ_TIMER_HW, XMC_CCU8_SLICE_IRQ_ID_COMPARE_MATCH_UP_CH_2);
     XMC_CCU8_SLICE_EnableEvent(PWM_IRQ_TIMER_HW, XMC_CCU8_SLICE_IRQ_ID_COMPARE_MATCH_DOWN_CH_1);
-    XMC_CCU8_EnableClock(ccu8_0_HW, PWM_IRQ_TIMER_NUM);
+    //XMC_CCU8_EnableClock(ccu8_0_HW, PWM_IRQ_TIMER_NUM);
     XMC_CCU8_SLICE_SetTimerValue(PWM_IRQ_TIMER_HW, 0U);
+
     XMC_POSIF_Enable(HALL_POSIF_HW);
     XMC_POSIF_SetMode(HALL_POSIF_HW, XMC_POSIF_MODE_HALL_SENSOR);
     XMC_POSIF_Init(HALL_POSIF_HW, &HALL_POSIF_config);
     XMC_POSIF_HSC_Init(HALL_POSIF_HW, &HALL_POSIF_HSC_InitHandle);
+// mstrens - commented when using a capture instead of an irq to read the ccu4 running timer
     XMC_POSIF_SetInterruptNode(HALL_POSIF_HW, XMC_POSIF_IRQ_EVENT_HALL_INPUT, XMC_POSIF_SR_ID_0);
     XMC_POSIF_EnableEvent(HALL_POSIF_HW, XMC_POSIF_IRQ_EVENT_HALL_INPUT);
+
     XMC_UART_CH_InitEx(CYBSP_DEBUG_UART_HW, &CYBSP_DEBUG_UART_config, false);
     XMC_UART_CH_SetInputSource(CYBSP_DEBUG_UART_HW, (XMC_UART_CH_INPUT_t)XMC_USIC_CH_INPUT_DX0, CYBSP_DEBUG_UART_DX0_INPUT);
     XMC_UART_CH_SetSamplePoint(CYBSP_DEBUG_UART_HW, 8U);
@@ -878,6 +889,14 @@ void init_cycfg_peripherals(void)
     XMC_USIC_CH_RXFIFO_Configure(CYBSP_DEBUG_UART_HW, CYBSP_DEBUG_UART_RXFIFO_DPTR, CYBSP_DEBUG_UART_RXFIFO_SIZE, CYBSP_DEBUG_UART_RXFIFO_LIMIT);
     XMC_USIC_CH_TXFIFO_Configure(CYBSP_DEBUG_UART_HW, CYBSP_DEBUG_UART_TXFIFO_DPTR, CYBSP_DEBUG_UART_TXFIFO_SIZE, CYBSP_DEBUG_UART_TXFIFO_LIMIT);
     XMC_UART_CH_Start(CYBSP_DEBUG_UART_HW);
+        // here is normally the code to init VADC; in this version, it is done by code in file adc.c to use the same setup as infineon
+    // VADC_init();
+    XMC_WDT_Init(&wdt_0_config);
+    //XMC_WDT_Start();
+}
+
+// removed by mstrens to test another vadc init
+void VADC_init(){
     /* Update group input classes configuration. */
     vadc_0_group0_init_config.class0 = vadc_0_0_iclass_0;
     vadc_0_group1_init_config.class0 = vadc_0_1_iclass_0;
@@ -990,6 +1009,4 @@ void init_cycfg_peripherals(void)
     XMC_VADC_GROUP_ChannelInit(vadc_0_group_1_HW, (uint32_t)6, &G1_CH6_BATTERY_P2_4_config);
     /* Channel init. */
     XMC_VADC_GROUP_ChannelInit(vadc_0_group_1_HW, (uint32_t)7, &G1_CH7_THROTTLE_P2_5_config);
-    XMC_WDT_Init(&wdt_0_config);
-    XMC_WDT_Start();
 }

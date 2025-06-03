@@ -64,5 +64,7 @@ extern struct_config m_config ;
 
 
 bool take_action(uint32_t index, uint32_t interval);
-void wait_ms(uint32_t time);
+bool take_action_250ms(uint32_t index, uint32_t interval);
+
+//void wait_ms(uint32_t time);
 #endif /* COMMON_COMMON_H_ */

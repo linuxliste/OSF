@@ -160,19 +160,19 @@ _PWM_FREQ,
 _OVERCURRENT_DELAY,
 } ; 
 
-uint16_t c_ADC_TORQUE_SENSOR_RANGE_TARGET; 
-uint16_t c_ADC_TORQUE_SENSOR_RANGE_TARGET_MIN;
-uint16_t c_ADC_TORQUE_SENSOR_RANGE_TARGET_MAX;
+//uint16_t c_ADC_TORQUE_SENSOR_RANGE_TARGET; 
+//uint16_t c_ADC_TORQUE_SENSOR_RANGE_TARGET_MIN;
+//uint16_t c_ADC_TORQUE_SENSOR_RANGE_TARGET_MAX;
 
-uint16_t c_ADC_TORQUE_SENSOR_RANGE;
-uint16_t c_ADC_TORQUE_SENSOR_CALIBRATION_OFFSET;
-uint16_t c_ADC_TORQUE_SENSOR_MIDDLE_OFFSET_ADJ;
-uint16_t c_ADC_TORQUE_SENSOR_OFFSET_ADJ;
-uint16_t c_ADC_TORQUE_SENSOR_DELTA_ADJ;
-uint16_t c_ADC_TORQUE_SENSOR_RANGE_INGREASE_X100;
-uint16_t c_ADC_TORQUE_SENSOR_DELTA_WITH_WEIGHT;
-uint16_t c_PEDAL_TORQUE_PER_10_BIT_ADC_STEP_CALC_X100;
-uint16_t c_ADC_TORQUE_SENSOR_TARGET_WITH_WEIGHT;
+//uint16_t c_ADC_TORQUE_SENSOR_RANGE;
+//uint16_t c_ADC_TORQUE_SENSOR_CALIBRATION_OFFSET;
+//uint16_t c_ADC_TORQUE_SENSOR_MIDDLE_OFFSET_ADJ;
+//uint16_t c_ADC_TORQUE_SENSOR_OFFSET_ADJ;
+//uint16_t c_ADC_TORQUE_SENSOR_DELTA_ADJ;
+//uint16_t c_ADC_TORQUE_SENSOR_RANGE_INGREASE_X100;
+//uint16_t c_ADC_TORQUE_SENSOR_DELTA_WITH_WEIGHT;
+//uint16_t c_PEDAL_TORQUE_PER_10_BIT_ADC_STEP_CALC_X100;
+//uint16_t c_ADC_TORQUE_SENSOR_TARGET_WITH_WEIGHT;
 
 uint8_t c_DELAY_LIGHTS_ON;
 uint8_t c_DELAY_FUNCTION_STATUS;
@@ -224,12 +224,14 @@ extern uint8_t ui8_motor_deceleration; // = MOTOR_DECELERATION;
 extern uint8_t ui8_pedal_torque_per_10_bit_ADC_step_calc_x100 ;//= PEDAL_TORQUE_PER_10_BIT_ADC_STEP_CALC_X100;  //
 extern uint16_t ui16_adc_pedal_torque_offset;// = PEDAL_TORQUE_ADC_OFFSET;      // 150
 extern uint16_t ui16_adc_pedal_torque_offset_init;// = PEDAL_TORQUE_ADC_OFFSET; // 150
-extern uint16_t ui16_adc_pedal_torque_offset_cal;// = PEDAL_TORQUE_ADC_OFFSET;  // 150
+//extern uint16_t ui16_adc_pedal_torque_offset_cal;// = PEDAL_TORQUE_ADC_OFFSET;  // 150
 extern uint16_t ui16_adc_pedal_torque_offset_min;// = PEDAL_TORQUE_ADC_OFFSET - ADC_TORQUE_SENSOR_OFFSET_THRESHOLD; //150-30
 extern uint16_t ui16_adc_pedal_torque_offset_max;// = PEDAL_TORQUE_ADC_OFFSET + ADC_TORQUE_SENSOR_OFFSET_THRESHOLD; // 150 + 30
 
 extern uint8_t ui8_torque_sensor_calibrated;// = TORQUE_SENSOR_CALIBRATED;
- 
+extern uint16_t ui16_adc_pedal_torque_range;// mstrens : added to have code similar to 860c; init in config.c
+extern uint8_t ui8_adc_pedal_torque_range_adj ; // mstrens : added to have code similar to 860c; init in config.c    
+
 extern uint8_t ui8_wheel_speed_max_array[2];// = {WHEEL_MAX_SPEED,STREET_MODE_SPEED_LIMIT};
 extern uint8_t ui8_eMTB_based_on_power;
 
@@ -256,24 +258,16 @@ extern uint8_t  ui8_riding_mode_parameter_array[8][5];
 	
 
 void init_extra_fields_config (){
-    #if (USE_CONFIG_FROM_COMPILATION != 1 ) 
-    upload_m_config(); // try to get the user preference from flash at 0X1000F000; 
-                        //When version is not compatible (not the same main version), setup is done with the values from compilation
-                        // Normally the motor is then blocked with an error code = E09.
-                        // still a define in main.h allows to let the motor run with the compilation config.
-                        // this can be usefull for testing/debugging (avoid changes in XLS) 
-    #endif
-    
     // battery
     ui16_actual_battery_capacity = (uint16_t)(((uint32_t) m_config.target_max_battery_capacity * m_config.actual_battery_capacity_percent ) / 100);
  
     // torque sensor
     ui8_pedal_torque_per_10_bit_ADC_step_x100 = m_config.pedal_torque_per_10_bit_adc_step_x100;  // 67
  
-    // Torque sensor range values
-    c_ADC_TORQUE_SENSOR_RANGE = m_config.pedal_torque_adc_max - m_config.pedal_torque_adc_offset;
-    c_ADC_TORQUE_SENSOR_RANGE_TARGET	  =		160;
-
+    // Torque sensor range values to have similar code with 860C
+    ui16_adc_pedal_torque_range = m_config.pedal_torque_adc_max - m_config.pedal_torque_adc_offset;
+    ui8_adc_pedal_torque_range_adj = m_config.pedal_torque_adc_range_adj; // mstrens : added to have code similar to 860c; init in ebike_init()
+    /*
     // Torque sensor offset values
     if (m_config.torque_sensor_calibrated){
         c_ADC_TORQUE_SENSOR_CALIBRATION_OFFSET = (((6 * c_ADC_TORQUE_SENSOR_RANGE) / c_ADC_TORQUE_SENSOR_RANGE_TARGET) + 1);
@@ -295,7 +289,7 @@ void init_extra_fields_config (){
     * (((c_ADC_TORQUE_SENSOR_RANGE_TARGET / 2) / ADC_TORQUE_SENSOR_ANGLE_COEFF + ADC_TORQUE_SENSOR_ANGLE_COEFF) / ADC_TORQUE_SENSOR_ANGLE_COEFF)));
 
     c_ADC_TORQUE_SENSOR_RANGE_TARGET_MAX 	=	(uint16_t)((c_ADC_TORQUE_SENSOR_RANGE_TARGET_MIN * (100 + m_config.pedal_torque_adc_range_adj)) / 100); //PEDAL_TORQUE_ADC_RANGE_ADJ
-
+    
     // parameters of the adc torque step for human power calculation
     #define PEDAL_TORQUE_PER_10_BIT_ADC_STEP_BASE_X100	34 // base adc step for remapping
     #define WEIGHT_ON_PEDAL_FOR_STEP_CALIBRATION		24 // Kg
@@ -309,11 +303,11 @@ void init_extra_fields_config (){
      c_ADC_TORQUE_SENSOR_TARGET_WITH_WEIGHT);
 
     c_PEDAL_TORQUE_PER_10_BIT_ADC_STEP_CALC_X100 =	(uint8_t)((uint16_t)(((WEIGHT_ON_PEDAL_FOR_STEP_CALIBRATION * 167) \
-    / ((c_ADC_TORQUE_SENSOR_DELTA_WITH_WEIGHT * c_ADC_TORQUE_SENSOR_RANGE_TARGET_MAX) \
-    / (c_ADC_TORQUE_SENSOR_RANGE_TARGET_MAX - (((c_ADC_TORQUE_SENSOR_RANGE_TARGET_MAX - c_ADC_TORQUE_SENSOR_DELTA_WITH_WEIGHT) * 10) \
-    / m_config.pedal_torque_adc_angle_adj ))) \
-    * m_config.pedal_torque_per_10_bit_adc_step_adv_x100) / PEDAL_TORQUE_PER_10_BIT_ADC_STEP_BASE_X100));
-
+     / ((c_ADC_TORQUE_SENSOR_DELTA_WITH_WEIGHT * c_ADC_TORQUE_SENSOR_RANGE_TARGET_MAX) \
+     / (c_ADC_TORQUE_SENSOR_RANGE_TARGET_MAX - (((c_ADC_TORQUE_SENSOR_RANGE_TARGET_MAX - c_ADC_TORQUE_SENSOR_DELTA_WITH_WEIGHT) * 10) \
+     / m_config.pedal_torque_adc_angle_adj ))) \
+     * m_config.pedal_torque_per_10_bit_adc_step_adv_x100) / PEDAL_TORQUE_PER_10_BIT_ADC_STEP_BASE_X100));
+    */
     // delay lights function (0.1 sec)
     c_DELAY_LIGHTS_ON = m_config.delay_menu_on;	//	 	DELAY_MENU_ON    // 5sec
 
@@ -388,12 +382,12 @@ void init_extra_fields_config (){
  
     ui8_motor_deceleration = m_config.motor_deceleration;// MOTOR_DECELERATION;
 
-    ui8_pedal_torque_per_10_bit_ADC_step_calc_x100 = c_PEDAL_TORQUE_PER_10_BIT_ADC_STEP_CALC_X100;  //
+    //ui8_pedal_torque_per_10_bit_ADC_step_calc_x100 = c_PEDAL_TORQUE_PER_10_BIT_ADC_STEP_CALC_X100;  //
     ui16_adc_pedal_torque_offset = m_config.pedal_torque_adc_offset;// PEDAL_TORQUE_ADC_OFFSET;      // 150
     ui16_adc_pedal_torque_offset_init = m_config.pedal_torque_adc_offset;// PEDAL_TORQUE_ADC_OFFSET; // 150
-    ui16_adc_pedal_torque_offset_cal =  m_config.pedal_torque_adc_offset;//PEDAL_TORQUE_ADC_OFFSET;  // 150
-    ui16_adc_pedal_torque_offset_min = m_config.pedal_torque_adc_offset - ADC_TORQUE_SENSOR_OFFSET_THRESHOLD; //150-30
-    ui16_adc_pedal_torque_offset_max = m_config.pedal_torque_adc_offset + ADC_TORQUE_SENSOR_OFFSET_THRESHOLD; // 150 + 30
+    //ui16_adc_pedal_torque_offset_cal =  m_config.pedal_torque_adc_offset;//PEDAL_TORQUE_ADC_OFFSET;  // 150
+    ui16_adc_pedal_torque_offset_min = m_config.pedal_torque_adc_offset - ADC_TORQUE_SENSOR_OFFSET_THRESHOLD; 
+    ui16_adc_pedal_torque_offset_max = m_config.pedal_torque_adc_offset ; // mstrens : offset_init may not exceed offset
 
     ui8_torque_sensor_calibrated = m_config.torque_sensor_calibrated;// TORQUE_SENSOR_CALIBRATED;
  

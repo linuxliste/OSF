@@ -12,7 +12,7 @@
 #include "config_tsdz8.h"
 #include "common.h"
 
-#define FIRMWARE_VERSION "0.1.13"      // 22/03/25 12h30 is not used; just for reference)
+#define FIRMWARE_VERSION "0.1.19"      // 22/03/25 12h30 is not used; just for reference)
 #define MAIN_CONFIGURATOR_VERSION 4   // for configurator (must be the same as in xls sheet)
 #define SUB_CONFIGURATOR_VERSION  0    // is not used (just for reference)
 
@@ -45,6 +45,10 @@
 #define TESTING_MODE 1    // motor is controlled by a few set up defined in uc_probe
 
 #define GENERATE_DATA_FOR_REGRESSION_ANGLES (0) // 1 to let irq0 generate intervals to apply regtression and calculate best angles
+#define uCPROBE_GUI_OSCILLOSCOPE MY_DISABLED // MY_ENABLED
+
+#define USE_IRQ_FOR_HALL (0) // 1 = use irq; 0 = use capture
+
 
 //#define APPLY_ENHANCED_POSITIONING (0) // 0 = do not apply; 1 = apply enhanced
 // enhanced means that we use only pattern 1 as reference +
@@ -116,7 +120,7 @@
 // It seems TSDZ8 motor has an inductance of 180 uH and 4 poles
 // So, TSDZ2 uses a multiplier = 39, TSDZ8 should use 39 * 180 / 135 * 4 / 8 = 26  (foc is based on erps*L*I/V) 
 // I reduce it because erps should be 2X lower due to the reduced number of poles
-#define FOC_ANGLE_MULTIPLIER					14
+#define FOC_ANGLE_MULTIPLIER					30 // seems better with a test done by ebikestuff
 
 
 // cadence
@@ -182,19 +186,19 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 #define MOTOR_ROTOR_INTERPOLATION_MIN_ERPS      5 // it was 10 for tsdz2 that used 8 poles; tsdz8 uses 4 poles so erps is 2 smaller
  
 // adc torque offset gap value for error
-#define ADC_TORQUE_SENSOR_OFFSET_THRESHOLD		30
+#define ADC_TORQUE_SENSOR_OFFSET_THRESHOLD		60 // was 30 for TSDZ2; changed to 60 for TSDZ8 because some motors have lot of difference depending on pedal position
 
 
-#define ADC_TORQUE_SENSOR_ANGLE_COEFF			11
-#define ADC_TORQUE_SENSOR_ANGLE_COEFF_X10		(uint16_t)(ADC_TORQUE_SENSOR_ANGLE_COEFF * 10)
+//#define ADC_TORQUE_SENSOR_ANGLE_COEFF			11
+//#define ADC_TORQUE_SENSOR_ANGLE_COEFF_X10		(uint16_t)(ADC_TORQUE_SENSOR_ANGLE_COEFF * 10)
 
 
 
-/*
+
 // Torque sensor range values
-#define ADC_TORQUE_SENSOR_RANGE					(uint16_t)(PEDAL_TORQUE_ADC_MAX - PEDAL_TORQUE_ADC_OFFSET)
+//#define ADC_TORQUE_SENSOR_RANGE					(uint16_t)(PEDAL_TORQUE_ADC_MAX - PEDAL_TORQUE_ADC_OFFSET)
 #define ADC_TORQUE_SENSOR_RANGE_TARGET	  		160
-
+/*
 // Torque sensor offset values
 #if TORQUE_SENSOR_CALIBRATED
 #define ADC_TORQUE_SENSOR_CALIBRATION_OFFSET    (uint16_t)(((6 * ADC_TORQUE_SENSOR_RANGE) / ADC_TORQUE_SENSOR_RANGE_TARGET) + 1)

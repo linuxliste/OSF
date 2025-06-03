@@ -1,0 +1,13 @@
+in 0.1.13
+- hall positions based on regression tests
+- foc multiplier hardcoded to 14
+- current averaging over a whole rotation
+
+
+in 0.1.14
+- foc multiplier hardcoded on 30 (seems better on test done by ebikestuff with 18A at more than 3000 rpm)
+- foc angle follow current (so avoid filtering on 16)
+- add a define in order to split ramp up/down ( based on 2X rates) from duty cycle updates (now at each pwm cyccle)
+- replace current averaging on one rotation by a huge filtering ( to avoid huge duty cycle variations at low erps when averaging current would be applied several time in one full rotation)
+
+
