@@ -19,9 +19,11 @@ static const uint8_t ui8_default_array[EEPROM_BYTES_STORED] =
   WHEEL_PERIMETER_0,							// 4 + EEPROM_BASE_ADDRESS
   WHEEL_PERIMETER_1,							// 5 + EEPROM_BASE_ADDRESS
   WHEEL_MAX_SPEED,								// 6 + EEPROM_BASE_ADDRESS
-  MOTOR_TYPE,									// 7 + EEPROM_BASE_ADDRESS
-  AVAIABLE_FOR_FUTURE_USE,						// 8 + EEPROM_BASE_ADDRESS
+//  MOTOR_TYPE,									// 7 + EEPROM_BASE_ADDRESS           // removed in a TSDZ2 update
+//  AVAILABLE_FOR_FUTURE_USE,						// 8 + EEPROM_BASE_ADDRESS   // removed in a TSDZ2 update
   // for oem display
+  TORQUE_SENSOR_ESTIMATED,						// 7 + EEPROM_BASE_ADDRESS     // added in a TSDZ2 update
+  PEDAL_TORQUE_PER_10_BIT_ADC_STEP_X100,		// 8 + EEPROM_BASE_ADDRESS // added in a TSDZ2 update
   MOTOR_ASSISTANCE_WITHOUT_PEDAL_ROTATION,		// 9 + EEPROM_BASE_ADDRESS 0 or 1 ; 1 allows to get assist just pressing on the pedal
   ASSISTANCE_WITH_ERROR_ENABLED,				// 10 + EEPROM_BASE_ADDRESS
   BATTERY_SOC,									// 11 + EEPROM_BASE_ADDRESS    State of charge
@@ -56,9 +58,11 @@ void m_configuration_init(void){
     m_configuration_variables.ui16_battery_low_voltage_cut_off_x10 = m_config.battery_low_voltage_cut_off * 10;
     m_configuration_variables.ui16_wheel_perimeter = m_config.wheel_perimeter;
     m_configuration_variables.ui8_wheel_speed_max = m_config.wheel_max_speed; 
-    m_configuration_variables.ui8_motor_type = m_config.motor_type;     
-    m_configuration_variables.ui8_avaiable_for_future_use = 0; 
+    //m_configuration_variables.ui8_motor_type = m_config.motor_type; // replaced by ui8_torque_sensor_estimated     
+    //m_configuration_variables.ui8_available_for_future_use = 0; //replaced by ui8_pedal_torque_per_10_bit_ADC_step_est_x100
     // for oem display
+    m_configuration_variables.ui8_torque_sensor_estimated = 0; // added by an updated
+    m_configuration_variables.ui8_pedal_torque_per_10_bit_ADC_step_est_x100 = m_config.pedal_torque_per_10_bit_adc_step_x100; // added by an updated
     m_configuration_variables.ui8_assist_without_pedal_rotation_enabled = m_config.motor_assistance_without_pedal_rotation;
     m_configuration_variables.ui8_assist_with_error_enabled = ASSISTANCE_WITH_ERROR_ENABLED; // is always disabled; must be enabled with the display
     m_configuration_variables.ui8_battery_SOC_percentage_8b = 0; // mstrens : Should be calculated and stored in eeprom (not defined in m_config) 

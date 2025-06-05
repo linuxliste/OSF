@@ -33,13 +33,6 @@ I am not sure this is correct when the 2 parameters are more than 128 (sum excee
 After debugging : 
 - in ebike_app_controller, remove the code that force the current on a fixed value in order to enable the switch on riding mode
 - Change/Add code for eeprom and initialisation for m_configuration when eeprom is in use
-- there was a set up #define PWM_DUTY_CYCLE_MAX 255 in ebike_app.c
-    there is perhaps an issue in motor because this generates a PWM compare value that exceeds the period (1680 = 4*420)
-    furthermore in motor.c, the code that increases the g_duty_cycle does not take action whe g_duty_cycle is at 255
-    So current can exceed the max; 
-    For testing, I reduced PWM_DUTY_CYCLE_MAX to 128 in main.h 
-    note: Instead of a #define, I changed the program to use extern const uint8_t ui8_pwm_duty_cycle_max;
-
 
 Test code for Wheel speed sensor detection
 Add code to save (in eeprom) actual battery consumption when power goes low (in tsdz2 at the end of the IRQ 19 kz when volt goes low) 

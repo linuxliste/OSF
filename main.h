@@ -12,8 +12,8 @@
 #include "config_tsdz8.h"
 #include "common.h"
 
-#define FIRMWARE_VERSION "0.1.19"      // 22/03/25 12h30 is not used; just for reference)
-#define MAIN_CONFIGURATOR_VERSION 4   // for configurator (must be the same as in xls sheet)
+#define FIRMWARE_VERSION "0.1.20"      // 22/03/25 12h30 is not used; just for reference)
+#define MAIN_CONFIGURATOR_VERSION 5   // for configurator (must be the same as in xls sheet)
 #define SUB_CONFIGURATOR_VERSION  0    // is not used (just for reference)
 
 
@@ -198,6 +198,11 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 // Torque sensor range values
 //#define ADC_TORQUE_SENSOR_RANGE					(uint16_t)(PEDAL_TORQUE_ADC_MAX - PEDAL_TORQUE_ADC_OFFSET)
 #define ADC_TORQUE_SENSOR_RANGE_TARGET	  		160
+#define PEDAL_TORQUE_PER_10_BIT_ADC_STEP_BASE_X100	34 // base adc step for remapping
+#define WEIGHT_ON_PEDAL_FOR_STEP_CALIBRATION		24 // Kg
+#define PERCENT_TORQUE_SENSOR_RANGE_WITH_WEIGHT		75 // % of torque sensor range with weight
+#define ADC_TORQUE_SENSOR_TARGET_WITH_WEIGHT		(uint16_t)((ADC_TORQUE_SENSOR_RANGE_TARGET * PERCENT_TORQUE_SENSOR_RANGE_WITH_WEIGHT) / 100)
+
 /*
 // Torque sensor offset values
 #if TORQUE_SENSOR_CALIBRATED
@@ -364,8 +369,12 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 #define ASSIST_PEDAL_LEVEL2				0x02
 #define ASSIST_PEDAL_LEVEL3				0x04
 #define ASSIST_PEDAL_LEVEL4				0x08
+#define ASSIST_PEDAL_LEVEL5							0x80
+// assist pedal level 5
+#define BEFORE_ECO									1
+#define AFTER_TURBO									2
 
-#define ASSIST_PEDAL_LEVEL01_PERCENT			60
+//#define ASSIST_PEDAL_LEVEL01_PERCENT			60
 
 // assist mode
 #define OFFROAD_MODE				0
@@ -377,16 +386,46 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 #define NO_FAULT					0
 #define NO_ERROR                    0 
 
-#define ERROR_OVERVOLTAGE				1 // E01 (E06 blinking for XH18)
-#define ERROR_TORQUE_SENSOR            	2 // E02
-#define ERROR_CADENCE_SENSOR		    3 // E03
-#define ERROR_MOTOR_BLOCKED            	4 // E04
-#define ERROR_THROTTLE					5 // E05 (E03 blinking for XH18)
-#define ERROR_OVERTEMPERATURE			6 // E06  
-#define ERROR_BATTERY_OVERCURRENT      	7 // E07 (E04 blinking for XH18)
-#define ERROR_SPEED_SENSOR				8 // E08
-#define ERROR_WRITE_EEPROM  			9 // E09 shared (E08 blinking for XH18)
-#define ERROR_MOTOR_CHECK              	9 // E09 shared (E08 blinking for XH18)
+// error codes
+// they are defined in config.h because they depend on the type of display (ekd01 codes are different)
+/*
+#if ENABLE_EKD01
+#define ERROR_OVERVOLTAGE							1  // E01
+#define ERROR_TORQUE_SENSOR							2  // E02
+#define ERROR_CADENCE_SENSOR						13 // E13 instead of E03
+#define ERROR_MOTOR_BLOCKED							4  // E04
+#define ERROR_THROTTLE								10 // E10 instead of E05
+#define ERROR_OVERTEMPERATURE						6  // E06
+#define ERROR_BATTERY_OVERCURRENT					7  // E07
+#define ERROR_SPEED_SENSOR 							3  // E14 instead of E08
+#define ERROR_WRITE_EEPROM 							9  // E09 shared
+#define ERROR_MOTOR_CHECK 							9  // E09 shared
+#else
+#define ERROR_OVERVOLTAGE							1 // E01 (E06 blinking for XH18)
+#define ERROR_TORQUE_SENSOR                       	2 // E02
+#define ERROR_CADENCE_SENSOR			          	3 // E03
+#define ERROR_MOTOR_BLOCKED                       	4 // E04
+#define ERROR_THROTTLE								5 // E05 (E03 blinking for XH18)
+#define ERROR_OVERTEMPERATURE						6 // E06
+#define ERROR_BATTERY_OVERCURRENT                 	7 // E07 (E04 blinking for XH18)
+#define ERROR_SPEED_SENSOR							8 // E08
+#define ERROR_WRITE_EEPROM  					  	9 // E09 shared (E08 blinking for XH18)
+#define ERROR_MOTOR_CHECK                       	9 // E09 shared (E08 blinking for XH18)
+#endif
+*/
+#define ERROR_OVERVOLTAGE               (c_ERROR_OVERVOLTAGE)
+#define ERROR_TORQUE_SENSOR				(c_ERROR_TORQUE_SENSOR)
+#define ERROR_CADENCE_SENSOR			(c_ERROR_CADENCE_SENSOR)
+#define ERROR_MOTOR_BLOCKED				(c_ERROR_MOTOR_BLOCKED)
+#define ERROR_THROTTLE					(c_ERROR_THROTTLE)		
+#define ERROR_OVERTEMPERATURE			(c_ERROR_OVERTEMPERATURE)	
+#define ERROR_BATTERY_OVERCURRENT		(c_ERROR_BATTERY_OVERCURRENT)
+#define ERROR_SPEED_SENSOR 				(c_ERROR_SPEED_SENSOR)
+#define ERROR_WRITE_EEPROM              (c_ERROR_WRITE_EEPROM)
+#define ERROR_MOTOR_CHECK 				(c_ERROR_MOTOR_CHECK)
+
+
+
 
 /* // this has been changed in ebike_app.c because it was used only one one place
 // optional ADC function
@@ -520,13 +559,39 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 
 #define ASSISTANCE_WITH_ERROR_ENABLED			0
 
-#define AVAIABLE_FOR_FUTURE_USE				0 // EEPROM
+#define AVAILABLE_FOR_FUTURE_USE				0 // EEPROM
 
 
 // added by mstrens to store the configuration from xls configurator
 #define ADDRESS_OF_M_CONFIG_FLASH 0x1000F000U // address in flash where the config is strored (must be the same as the adrress set in the xls for config)
 
 #define ADDRESS_OF_M_CONFIGURATION_VARIABLES 0x1000FF00 // address in flash of the variables modified by the display
-#define VERSION_OF_M_CONFIGURATION_VARIABLES 0XAABB // to to check if flash contains a setup that can be used
+#define VERSION_OF_M_CONFIGURATION_VARIABLES 0XAACC // to to check if flash contains a setup that can be used
+
+// added by mstrens to make it easier to reuse code from mbrusa
+#define DELAY_MENU_ON (m_config.delay_menu_on)
+#define BATTERY_VOLTAGE_RESET_SOC_PERCENT_X10  (c_BATTERY_VOLTAGE_RESET_SOC_PERCENT_X10)
+#define MOTOR_ACCELERATION (m_config.motor_acceleration)
+#define MOTOR_DECELERATION (m_config.motor_deceleration)
+#define SMOOTH_START_SET_PERCENT (m_config.smooth_start_set_percent)
+#define STARTUP_BOOST_TORQUE_FACTOR (m_config.startup_boost_torque_factor)
+#define STARTUP_BOOST_CADENCE_STEP (m_config.startup_boost_cadence_step)
+#define TARGET_MAX_BATTERY_POWER (m_config.target_max_battery_power)
+#define STREET_MODE_POWER_LIMIT (m_config.street_mode_power_limit)
+#define OVERCURRENT_DELAY (m_config.overcurrent_delay)
+#define ADC_THROTTLE_MIN_VALUE (m_config.adc_throttle_min_value)
+#define ADC_THROTTLE_MAX_VALUE (m_config.adc_throttle_max_value)
+#define ASSIST_THROTTLE_MIN_VALUE (m_config.assist_throttle_min_value)
+#define ASSIST_THROTTLE_MAX_VALUE (m_config.assist_throttle_max_value)
+#define WALK_ASSIST_THRESHOLD_SPEED_X10 (m_config.walk_assist_threshold_speed_x10)
+#define LIGHTS_CONFIGURATION_ON_STARTUP (m_config.lights_configuration_on_startup)
+#define LIGHTS_CONFIGURATION_1 (m_config.lights_configuration_1)
+#define LIGHTS_CONFIGURATION_2 (m_config.lights_configuration_2)
+#define LIGHTS_CONFIGURATION_3 (m_config.lights_configuration_3)
+#define DELAY_FUNCTION_STATUS (c_DELAY_FUNCTION_STATUS)
+#define ASSIST_LEVEL_5_PERCENT (m_config.assist_level_5_percent)
+#define WALK_ASSIST_THRESHOLD_SPEED (m_config.walk_assist_threshold_speed_x10 / 10)
+#define ACTUAL_BATTERY_VOLTAGE_PERCENT (m_config.actual_battery_voltage_percent)
+#define BATTERY_CELLS_NUMBER (m_config.battery_cells_number)
 
 #endif // _MAIN_H_

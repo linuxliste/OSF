@@ -54,9 +54,6 @@ uint16_t last_system_ticks = 0;
 volatile uint32_t system_ticks2 = 0;
 
 
-// maximum duty cycle
-extern uint8_t ui8_pwm_duty_cycle_max; 
-
 // for debugging only at the beginning
 uint32_t count = 0;
 uint32_t speed = 0; 

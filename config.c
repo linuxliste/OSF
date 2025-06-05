@@ -158,6 +158,8 @@ _ASSIST_LEVEL_1_OF_5_PERCENT ,
 _ALTERNATIVE_MILES ,
 _PWM_FREQ,
 _OVERCURRENT_DELAY,
+_ENABLE_EKD01,
+_ASSIST_LEVEL_5_MODE,
 } ; 
 
 //uint16_t c_ADC_TORQUE_SENSOR_RANGE_TARGET; 
@@ -196,10 +198,25 @@ uint16_t c_BATTERY_SOC_VOLTS_2_X10	;
 uint16_t c_BATTERY_SOC_VOLTS_1_X10	;
 uint16_t c_BATTERY_SOC_VOLTS_0_X10	;
 
+uint16_t c_BATTERY_VOLTAGE_RESET_SOC_PERCENT_X10 ;
+
 // cruise threshold (speed limit min km/h x10)
 uint16_t c_CRUISE_THRESHOLD_SPEED_X10;	
 uint16_t c_CRUISE_OFFROAD_THRESHOLD_SPEED_X10;
 uint16_t c_CRUISE_STREET_THRESHOLD_SPEED_X10;
+
+// error code (defined in main.h in TSDZ2 version but moved here because depend on type of display)
+uint8_t c_ERROR_OVERVOLTAGE	; //						1 // E01 (E06 blinking for XH18)
+uint8_t c_ERROR_TORQUE_SENSOR ; //                    	2 // E02
+uint8_t c_ERROR_CADENCE_SENSOR ; //			          	3 // E03
+uint8_t c_ERROR_MOTOR_BLOCKED ;//                      	4 // E04
+uint8_t c_ERROR_THROTTLE ; //								5 // E05 (E03 blinking for XH18)
+uint8_t c_ERROR_OVERTEMPERATURE	;//					6 // E06
+uint8_t c_ERROR_BATTERY_OVERCURRENT ;//                	7 // E07 (E04 blinking for XH18)
+uint8_t c_ERROR_SPEED_SENSOR ;//							8 // E08
+uint8_t c_ERROR_WRITE_EEPROM ;// 					  	9 // E09 shared (E08 blinking for XH18)
+uint8_t c_ERROR_MOTOR_CHECK  ;//                     	9 // E09 shared (E08 blinking for XH18)
+
 
 // defined in ebike_app.c
 extern uint8_t ui8_auto_data_number_display;
@@ -330,7 +347,7 @@ void init_extra_fields_config (){
         c_BATTERY_SOC_VOLTS_2_X10	=		(uint16_t)(m_config.battery_cells_number * ((float) m_config.li_ion_cell_volts_2_of_4 * 10));
         c_BATTERY_SOC_VOLTS_1_X10	=		(uint16_t)(m_config.battery_cells_number * ((float) m_config.li_ion_cell_volts_1_of_4 * 10));
         c_BATTERY_SOC_VOLTS_0_X10	=		(uint16_t)(m_config.battery_cells_number * ((float) m_config.li_ion_cell_volts_empty * 10));
-    } else { // ENABLE_VLCD5 or 850C
+    } else { // ENABLE_VLCD5 or 850C or ENABLE_EKD01
         c_LI_ION_CELL_VOLTS_8_X100	=	(uint16_t)((float)m_config.li_ion_cell_overvolt * 100.0);
         c_LI_ION_CELL_VOLTS_7_X100	=	(uint16_t)((float)m_config.li_ion_cell_reset_soc_percent * 100.0);
         c_LI_ION_CELL_VOLTS_6_X100	=	(uint16_t)((float)m_config.li_ion_cell_volts_full * 100);
@@ -350,6 +367,13 @@ void init_extra_fields_config (){
         c_BATTERY_SOC_VOLTS_1_X10	=		(uint16_t)(m_config.battery_cells_number * ((float)m_config.li_ion_cell_volts_1_of_6 * 10));
         c_BATTERY_SOC_VOLTS_0_X10	=		(uint16_t)(m_config.battery_cells_number * ((float)m_config.li_ion_cell_volts_empty * 10));
     }
+
+    // battery voltage reset SOC percentage ; is defined in main.h from mbrusa TSDZ2
+    //#define BATTERY_VOLTAGE_RESET_SOC_PERCENT_X10   (uint16_t)((float)LI_ION_CELL_RESET_SOC_PERCENT * (float)(BATTERY_CELLS_NUMBER * 10))
+    // and LI_ION_CELL_RESET_SOC_PERCENT = 4.10
+    #define LI_ION_CELL_RESET_SOC_PERCENT 4.10
+    c_BATTERY_VOLTAGE_RESET_SOC_PERCENT_X10 = (uint16_t)((float) LI_ION_CELL_RESET_SOC_PERCENT * (float) (m_config.battery_cells_number *10 ));
+
     // cruise threshold (speed limit min km/h x10)
     c_CRUISE_THRESHOLD_SPEED_X10 = m_config.cruise_threshold_speed * 10;
     #define CRUISE_THRESHOLD_SPEED_X10_DEFAULT		80
@@ -360,6 +384,29 @@ void init_extra_fields_config (){
         c_CRUISE_STREET_THRESHOLD_SPEED_X10	= c_CRUISE_THRESHOLD_SPEED_X10;
     }
 
+    if (m_config.enable_ekd01) {
+        c_ERROR_OVERVOLTAGE =   1;// E01
+        c_ERROR_TORQUE_SENSOR=  2;  // E02
+        c_ERROR_CADENCE_SENSOR= 13; // E13 instead of E03
+        c_ERROR_MOTOR_BLOCKED=  4;  // E04
+        c_ERROR_THROTTLE=       10; // E10 instead of E05
+        c_ERROR_OVERTEMPERATURE=6;  // E06
+        c_ERROR_BATTERY_OVERCURRENT=7;  // E07
+        c_ERROR_SPEED_SENSOR=  3;  // E14 instead of E08
+        c_ERROR_WRITE_EEPROM=  9;  // E09 shared
+        c_ERROR_MOTOR_CHECK=   9;  // E09 shared
+    } else {
+        c_ERROR_OVERVOLTAGE=    1; // E01 (E06 blinking for XH18)
+        c_ERROR_TORQUE_SENSOR=  2; // E02
+        c_ERROR_CADENCE_SENSOR= 3; // E03
+        c_ERROR_MOTOR_BLOCKED=  4; // E04
+        c_ERROR_THROTTLE=       5; // E05 (E03 blinking for XH18)
+        c_ERROR_OVERTEMPERATURE=6; // E06
+        c_ERROR_BATTERY_OVERCURRENT=7; // E07 (E04 blinking for XH18)
+        c_ERROR_SPEED_SENSOR=   8; // E08
+        c_ERROR_WRITE_EEPROM=   9; // E09 shared (E08 blinking for XH18)
+        c_ERROR_MOTOR_CHECK=    9; // E09 shared (E08 blinking for XH18)
+    }
     ui8_auto_data_number_display = m_config.auto_data_number_display;
     ui8_delay_display_function = m_config.delay_menu_on;
     ui8_display_data_on_startup = m_config.data_display_on_startup;
@@ -484,7 +531,7 @@ void upload_m_config(){
         m_config.main_version = *pConfig++; // read the value given by the pointer, and afterward increment it
         m_config.sub_version = *pConfig++;
         m_config.global_offset_angle = ((uint8_t) *pConfig++) - (uint8_t) 100;
-        m_config.global_offset_angle = 0; // discard value from javaconfigurator (to test with compiling)
+        //m_config.global_offset_angle = 0; // discard value from javaconfigurator (to test with compiling)
         m_config.foc_angle_multiplier = *pConfig++;
         m_config.foc_angle_multiplier = FOC_ANGLE_MULTIPLIER; // discard value from javaconfigurator (to test)
         m_config.reserve_3 = *pConfig++;
@@ -628,9 +675,11 @@ void upload_m_config(){
         m_config.cruise_mode_enabled = *pConfig++;
         m_config.throttle_mode = *pConfig++;
         m_config.street_mode_throttle_mode = *pConfig++;
-        m_config.assist_level_1_of_5_percent = *pConfig++;
+        m_config.assist_level_5_percent = *pConfig++;
         m_config.alternative_miles = *pConfig++;
         m_config.pwm_freq = *pConfig++;
         m_config.overcurrent_delay = *pConfig++;
+        m_config.enable_ekd01 = *pConfig++;
+        m_config.assist_level_5_mode = *pConfig++;
     } // end of good config version
 }

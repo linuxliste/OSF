@@ -105,15 +105,15 @@ So you must OR disconnect the battery (or at least power it OFF) OR take care th
 # 4.Generate the configuration file
 
 The configuration file is generated with the same tool as TSDZ2: JavaConfigurator.jar.
-This requires that you clone or download+unzip totally this repository : https://github.com/emmebrusa/TSDZ2-Smart-EBike-1
+A copy of this tool is provided in this repository. You have to use this copy because there can be some different parameters depending on the versions.
 
 
 To know how to use the JavaConfigurator and the purpose of all parameters, see the TSDZ2 manuals at https://github.com/emmebrusa/TSDZ2-Smart-EBike-1/tree/master/manuals
 
-There are still a few differences/points of attention about Torque sensor
+Take care that there are still a few differences/points of attention about Torque sensor
 * calibrated MUST be enabled because you have to fill Pedal torque ADC offset (no weight) and  Pedal torque ADC max (max weight)
 * Pedal torque ADC step must be correct in order to get a correct value of the human power (see mbrusa instructions). OSF TSDZ8 uses this field even when calibrated is enabled (on the opposite to TSDZ2)
-* Pedal torque ADC step adv is not used (even if calibrated is denabled)
+* Pedal torque ADC step adv is not used (even if calibrated is disabled)
 * Pedal torque ADC offset adjustement is not used.
 * TPedal torque ADC range adj is used to increase/decrease sensitivity for low pressure on the pedal. Sorry if the name if confusing but it was the only field from 860C that I could reuse for this. This parameter does not change the maximum assistance provided for any selected level when pressure on pedal is maximum but it allows to increase (or decrease) the assistance when pressure on pedal is quite low.
 This parameter can vary between -20 and +20. When this parameter is set on 0, the assistance is calculated based on the value of the torque sensor.
@@ -124,7 +124,7 @@ Reversely, the more the parameter is lower than 0 (up to -20), the more assistan
 * Pedal torque ADC max (max weight) has to be filled : to find the value, look at field ADC torque sensor when you apply the max pressure on the pedal (about 80 kg = full human weight) while holding the brakes. It seems that the value should be around 450 for TSDZ8 which is quite different from TSDZ2.
 
 
-Note : there is no need to install all additional softwares mentioned in the manual as you will use only JavaConfigurator.jar.
+Note : there is no need to install all additional softwares mentioned in the manual as you will use only JavaConfigurator.jar and there is no need for compiling/flashing a STM microprocessor (on the opposite to TSDZ2).
 So having java on you PC is enough.
 
 

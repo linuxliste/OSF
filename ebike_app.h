@@ -22,9 +22,6 @@ extern volatile uint8_t ui8_system_state;
 // cadence sensor
 extern uint16_t ui16_cadence_ticks_count_min_speed_adj;
 
-// Torque sensor coaster brake engaged threshold value
-extern uint16_t ui16_adc_coaster_brake_threshold;
-
 // ADC motor phase current max
 extern volatile uint16_t ui16_adc_motor_phase_current_max;
 
@@ -39,9 +36,9 @@ typedef struct  _configuration_variables
   uint16_t ui16_battery_low_voltage_cut_off_x10;
   uint16_t ui16_wheel_perimeter;
   uint8_t ui8_wheel_speed_max;
-  uint8_t ui8_motor_type;
-  uint8_t ui8_avaiable_for_future_use;
   // for oem display
+  uint8_t ui8_torque_sensor_estimated;
+  uint8_t ui8_pedal_torque_per_10_bit_ADC_step_est_x100;
   uint8_t ui8_assist_without_pedal_rotation_enabled;
   uint8_t ui8_assist_with_error_enabled;
   uint8_t ui8_battery_SOC_percentage_8b;
