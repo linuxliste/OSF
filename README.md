@@ -28,6 +28,7 @@ This version differs with :
 * We advise you to consult the laws of your country and tailor the motor configuration accordingly.
 * Please be aware of your surroundings and maintain a safe riding style.
 
+[![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=AD6HTLE53YDXW)
 
 To use this firmware, you will have to:
 
