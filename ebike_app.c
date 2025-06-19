@@ -343,7 +343,7 @@ void ebike_app_init(void)
 	// minimum value for these displays
 	// to compensate for the delay of the lights button
 	//#if ENABLE_VLCD6 || ENABLE_850C || ENABLE_EKD01
-	if ((m_config.enable_vlcd6) || (m_config.enablec850) || (m_config.enable_ekd01)){//#if ENABLE_VLCD6 || ENABLE_850C
+	if ((m_config.enable_vlcd6) || (m_config.enable_850c) || (m_config.enable_ekd01)){//#if ENABLE_VLCD6 || ENABLE_850C
 		if (ui8_delay_display_function < 70) {
 			ui8_delay_display_function = 70;
 		}
@@ -1846,10 +1846,126 @@ int expo(int x, int k)
   return neg ? -y : y;
 }
 
-
+// here the code for get_pedal_torque()
 #define TOFFSET_CYCLES 120 // 3sec (25ms*120)
 static uint8_t toffset_cycle_counter = 0;
 // get_pedal_torque has been totally rewrittent for TSDZ8 (do not update based on TSDZ2)
+
+
+#if (USE_SPIDER_LOGIC_FOR_TORQUE == (1))
+static uint16_t ui16_TSamples[21];
+static uint8_t ui8_TSamplesNum = 0;
+static uint8_t ui8_TSamplesPos = 0;
+static uint16_t ui16_TSum = 0;
+static uint8_t ui8_adc_pedal_torque_delta = 0;  // added by mstrens to save the remap torque in uint8_t
+
+// PWM IRQ set ui8_pas_new_transition when a new PAS signal transition is detected.
+// 20 transtions/revolution (one every 18 deg)
+// @120 rmp: 40 transitions/sec 1 every 25 ms
+// on exit, ui16_TSum contains the sum of 20 values (if ui8_TSampleNum = 20 = buffer is full)
+void new_torque_sample() {
+
+    if (ui8_pas_new_transition & 0x80) {
+    	// Pedal stop or backward rotation -> reset all
+        ui8_pas_new_transition = 0;
+        ui8_TSamplesNum = 0;
+        ui16_TSum = 0;
+        ui8_TSamplesPos = 0;
+        return;
+    }
+
+    ui8_pas_new_transition = 0;
+	uint16_t ui16_TorqueDeltaADC_1024 = 0;
+	if ( ui16_adc_torque_filtered > ui16_adc_pedal_torque_offset) {
+    	// map the delta value to max 1024.
+		ui16_TorqueDeltaADC_1024 = ((uint32_t)(ui16_adc_torque_filtered - ui16_adc_pedal_torque_offset) << 10) /ui16_adc_pedal_torque_range ;
+	}
+    if (ui16_TorqueDeltaADC_1024 == 0) {
+    	// torque adc value less than 0 torque reference ADC -> reset all
+        ui8_TSamplesNum = 0;
+        ui16_TSum = 0;
+        ui8_TSamplesPos = 0;
+        return;
+    }
+	uint16_t ui16_TSampleOld =  ui16_TSamples[ui8_TSamplesPos] ;
+    ui16_TSamples[ui8_TSamplesPos++] = ui16_TorqueDeltaADC_1024; // store the new delta value value
+    // Add to the average the new sample
+    ui16_TSum += ui16_TorqueDeltaADC_1024;
+    if (ui8_TSamplesPos >= 20) {
+        ui8_TSamplesPos = 0;
+    }
+    // Now ui8_TSamples[ui8_TSamplesPos] contains the torque delta ADC of the same pedal position at the previous pedal stroke
+    if (ui8_TSamplesNum == 20) {
+        // Remove from the average the sample at the same pedal position of the previous pedal stroke
+        ui16_TSum -= ui16_TSampleOld;
+    } else {
+        ui8_TSamplesNum++;
+    }
+}
+
+#define TORQUE_SENSOR_ADC_REMAP_1024_DIFF_MAX 2000 // max value is 1024
+static void get_pedal_torque(void) {
+	if (toffset_cycle_counter < TOFFSET_CYCLES) {  // less than 3 sec
+		ui16_adc_pedal_torque_offset_init = filter(ui16_adc_torque_filtered, ui16_adc_pedal_torque_offset_init , 4) ; // get filtered torque captured in motor.c irq1
+        toffset_cycle_counter++;
+		if ((toffset_cycle_counter == TOFFSET_CYCLES)&&(ui8_torque_sensor_calibrated)) {
+			if ((ui16_adc_pedal_torque_offset_init > ui16_adc_pedal_torque_offset_min)&& 
+			  (ui16_adc_pedal_torque_offset_init < ui16_adc_pedal_torque_offset_max)) {
+				ui8_adc_pedal_torque_offset_error = 0;
+			}
+			else {
+				ui8_adc_pedal_torque_offset_error = 1;
+			}
+		}
+		ui16_adc_pedal_torque = ui16_adc_pedal_torque_offset_init;	
+	} else { // after 3 sec
+		ui16_adc_pedal_torque = ui16_adc_torque_filtered; // ui16_adc_torque_filtered is the value calculated in irq
+	}
+	ui16_adc_pedal_torque_offset = ui16_adc_pedal_torque_offset_set ; // this value is received from the config (in 860C)
+	ui16_adc_pedal_torque_delta = 0; // this is the final value to retun 
+	int i32_adc_pedal_torque_delta_raw = (int)ui16_adc_pedal_torque - (int) ui16_adc_pedal_torque_offset;
+	if (i32_adc_pedal_torque_delta_raw > 0) {
+		uint16_t ui16_adc_pedal_torque_delta_1024 = ( i32_adc_pedal_torque_delta_raw << 10) /  ui16_adc_pedal_torque_range; // map to 1024
+		uint16_t ui16_tmp ;
+		if (ui8_TSamplesNum == 20)  { // replace by an average when difference is low
+			if (ui16_adc_pedal_torque_delta_1024 > ui16_TSamples[ui8_TSamplesPos]) {
+				ui16_tmp =  ui16_adc_pedal_torque_delta_1024 - ui16_TSamples[ui8_TSamplesPos];
+			} else {
+				ui16_tmp = ui16_TSamples[ui8_TSamplesPos] - ui16_adc_pedal_torque_delta_1024;
+			}
+			if (ui16_tmp < TORQUE_SENSOR_ADC_REMAP_1024_DIFF_MAX  ) {
+				ui16_adc_pedal_torque_delta_1024 = ui16_TSum / ((uint8_t)20); // overwrite with avg when difference with previous rotation is low
+			}
+		}
+		// apply expo	
+		i32_adc_pedal_torque_delta_expo =  expo(
+				(int) ui16_adc_pedal_torque_delta_1024  ,
+				 ((int) ui8_adc_pedal_torque_range_adj - 20) * 12 ); // apply expo ; *12 because expo expect a value in range -256/+256
+		ui16_adc_pedal_torque_delta = (i32_adc_pedal_torque_delta_expo * ADC_TORQUE_SENSOR_RANGE_TARGET) >> 10 ; // remap from max 1024 to max 160
+	}
+		
+	// here ui16_adc_pedal_torque_delta is known
+	ui16_adc_pedal_torque_delta_temp = ui16_adc_pedal_torque_delta;
+	
+	// for cadence sensor check
+	ui16_adc_pedal_torque_delta_no_boost = ui16_adc_pedal_torque_delta;
+		
+	// calculate torque on pedals
+	uint16_t ui16_pedal_torque_x100 = ui16_adc_pedal_torque_delta * ui8_pedal_torque_per_10_bit_ADC_step_x100;
+	
+	// calculate human power x10
+	// mstrens : always use ui16_pedal_torque_x100 ; discard m_configuration_variables.ui8_torque_sensor_adv_enabled
+	ui16_human_power_x10 = (uint16_t)(((uint32_t)ui16_pedal_torque_x100 * ui8_pedal_cadence_RPM) / 96); // see note below
+}
+#else 
+#define KATANA_BUFFER_LEN 40
+uint16_t katana_buffer[KATANA_BUFFER_LEN] ;
+uint8_t katana_index = 0;
+uint8_t katana_count = 0;
+uint16_t katana_sum = 0; 	
+
+
+
  static void get_pedal_torque(void)
 {
 			// parameters that could be filled by the user are
@@ -1933,6 +2049,7 @@ static uint8_t toffset_cycle_counter = 0;
 		// by default we use ui16_adc_torque_filtered (calculated in motor.c irq)
 		// when cadence is high enough, we use the max between actual value, actual rotation and previous rotation
 		ui16_adc_pedal_torque = ui16_adc_torque_filtered;
+		#if (USE_KATANA1234_LOGIC_FOR_TORQUE != (1))
 		#define PEDAL_CADENCE_MIN_FOR_USING_ROTATION 30
 		if (ui8_pedal_cadence_RPM > PEDAL_CADENCE_MIN_FOR_USING_ROTATION) { 
 			if ( ui16_adc_pedal_torque < ui16_adc_torque_actual_rotation) ui16_adc_pedal_torque = ui16_adc_torque_actual_rotation ;
@@ -1940,6 +2057,7 @@ static uint8_t toffset_cycle_counter = 0;
 		} else {
 			ui8_adc_torque_rotation_reset = 1 ; // will force also a reset of torque rotation in the motor.c irq 
 		}
+		#endif
 	}
 
 	// here we know the ui16_adc_pedal_torque but we still have to take care of 
@@ -1947,25 +2065,51 @@ static uint8_t toffset_cycle_counter = 0;
 	// - some kind of exponential
 	// - remap in order to have a max range of 160 (value used by TSDZ2
 	// calculate the delta value from calibration
-
+	uint16_t ui16_adc_pedal_torque_delta_160 = 0; // delta when lower than offset 
 	// calculate ui16_adc_pedal_torque_delta to remap 	
 	if (ui16_adc_pedal_torque > ui16_adc_pedal_torque_offset ) {
 		// calculate the raw delta value
 		ui16_adc_pedal_torque_delta_to_remap = ui16_adc_pedal_torque - ui16_adc_pedal_torque_offset;
 		// apply expo : value to remap must be scaled 1024 (so <<10) and 
-		//              coeff expect a value in range-256/256 while range_adj is in range 0/40 (even if javaconfig uses -20/+20)
+		//              coeff expect a value in range-256/256 while range_adj is in range 0/40
 		//                      so we have to substract 20 and multiply by 12.
 		i32_adc_pedal_torque_delta_expo =  expo(
 				(((int) ui16_adc_pedal_torque_delta_to_remap) << 10) /  (ui16_adc_pedal_torque_range) ,
 				 ((int) ui8_adc_pedal_torque_range_adj - 20) * 12 );
 		
 		// change the value so that the max would be about 160. So *160 and / 1024(>>10)
-		ui16_adc_pedal_torque_delta = (i32_adc_pedal_torque_delta_expo * ADC_TORQUE_SENSOR_RANGE_TARGET) >> 10 ;
+		ui16_adc_pedal_torque_delta_160 = (i32_adc_pedal_torque_delta_expo * ADC_TORQUE_SENSOR_RANGE_TARGET) >> 10 ;
 	}
-	else { // when torque is lower than offset, set it to 0
-		ui16_adc_pedal_torque_delta = 0;
-    }
 	
+	#if (USE_KATANA1234_LOGIC_FOR_TORQUE == (1))
+		// no cadence -> immediately clearing the buffer to have a quicker starting / stopping reaction
+		if (ui8_pedal_cadence_RPM == 0U) { 			
+			katana_sum = 0;
+			katana_count = 0;
+			katana_index = 0;
+		}
+		uint16_t katana_dif = 0;
+		uint8_t katana_factor = 16;
+		if (ui16_adc_pedal_torque_delta_160 > ui16_adc_pedal_torque_delta) katana_dif = ui16_adc_pedal_torque_delta_160 - ui16_adc_pedal_torque_delta;
+		else katana_dif = ui16_adc_pedal_torque_delta - ui16_adc_pedal_torque_delta_160;
+		if (katana_dif < 60) katana_factor = 1;
+		else if (katana_dif < 80) katana_factor = 2;
+		else if (katana_dif < 100) katana_factor = 4;
+		else if (katana_dif < 130) katana_factor = 8;
+		while ( katana_factor){
+			katana_sum += ui16_adc_pedal_torque_delta_160;
+			if (katana_count < KATANA_BUFFER_LEN) katana_count++;
+			else katana_sum -= katana_buffer[katana_index];
+			katana_buffer[katana_index] = ui16_adc_pedal_torque_delta_160 ;
+			katana_index++;
+			if (katana_index >= KATANA_BUFFER_LEN) katana_index = 0;
+			katana_factor--;
+		}
+		ui16_adc_pedal_torque_delta_160 = katana_sum / katana_count ;		
+	#endif
+
+
+	ui16_adc_pedal_torque_delta = ui16_adc_pedal_torque_delta_160 ; 
 	// here ui16_adc_pedal_torque_delta is known
 	ui16_adc_pedal_torque_delta_temp = ui16_adc_pedal_torque_delta;
 	
@@ -1999,6 +2143,7 @@ static uint8_t toffset_cycle_counter = 0;
     
 	------------------------------------------------------------------------*/
 }
+#endif
 
 /* not used when eeprom is not used
 struct_configuration_variables* get_configuration_variables(void)
@@ -3311,7 +3456,7 @@ void uart_send_package(){
 			else {
 				ui8_tx_buffer[4] = 0;
 			}
-		} else if (m_config.enablec850){ //} #elif ENABLE_850C
+		} else if (m_config.enable_850c){ //} #elif ENABLE_850C
 			ui8_tx_buffer[3] = ui8_battery_current_filtered_x10;
 			// battery power filtered x 10 for display data
 			ui16_battery_power_filtered_x10 = filter(ui16_battery_power_x10, ui16_battery_power_filtered_x10, 13);

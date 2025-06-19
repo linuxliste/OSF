@@ -144,7 +144,7 @@ _PEDAL_TORQUE_ADC_ANGLE_ADJ ,
 _PEDAL_TORQUE_PER_10_BIT_ADC_STEP_ADV_X100 ,
 _SOC_PERCENT_CALC ,
 _STARTUP_BOOST_AT_ZERO ,
-_ENABLEC850 ,
+_ENABLE_850C ,
 _STREET_MODE_THROTTLE_LEGAL ,
 _BRAKE_TEMPERATURE_SWITCH ,
 _eMTB_BASED_ON_POWER ,
@@ -154,7 +154,7 @@ _TEMPERATURE_SENSOR_TYPE ,
 _CRUISE_MODE_ENABLED ,
 _THROTTLE_MODE ,
 _STREET_MODE_THROTTLE_MODE ,
-_ASSIST_LEVEL_1_OF_5_PERCENT ,
+_ASSIST_LEVEL_5_PERCENT ,
 _ALTERNATIVE_MILES ,
 _PWM_FREQ,
 _OVERCURRENT_DELAY,
@@ -664,8 +664,9 @@ void upload_m_config(){
         m_config.pedal_torque_adc_angle_adj = *pConfig++;
         m_config.pedal_torque_per_10_bit_adc_step_adv_x100 = *pConfig++;
         m_config.soc_percent_calc = *pConfig++;
+        m_config.torque_sensor_estimated = *pConfig++;
         m_config.startup_boost_at_zero = *pConfig++;
-        m_config.enablec850 = *pConfig++;
+        m_config.enable_850c = *pConfig++;
         m_config.street_mode_throttle_legal = *pConfig++;
         m_config.brake_temperature_switch = *pConfig++;
         m_config.emtb_based_on_power = *pConfig++;
@@ -679,6 +680,7 @@ void upload_m_config(){
         m_config.alternative_miles = *pConfig++;
         m_config.pwm_freq = *pConfig++;
         m_config.overcurrent_delay = *pConfig++;
+        m_config.motor_type_tsdz8 = *pConfig++;
         m_config.enable_ekd01 = *pConfig++;
         m_config.assist_level_5_mode = *pConfig++;
     } // end of good config version

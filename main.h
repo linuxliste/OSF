@@ -13,7 +13,7 @@
 #include "common.h"
 
 #define FIRMWARE_VERSION "0.1.20"      // 22/03/25 12h30 is not used; just for reference)
-#define MAIN_CONFIGURATOR_VERSION 5   // for configurator (must be the same as in xls sheet)
+#define MAIN_CONFIGURATOR_VERSION 6  // for configurator (must be the same as in xls sheet)
 #define SUB_CONFIGURATOR_VERSION  0    // is not used (just for reference)
 
 
@@ -48,6 +48,9 @@
 #define uCPROBE_GUI_OSCILLOSCOPE MY_DISABLED // MY_ENABLED
 
 #define USE_IRQ_FOR_HALL (0) // 1 = use irq; 0 = use capture
+
+#define USE_SPIDER_LOGIC_FOR_TORQUE (0)// (1) = use Spider logic with a buffer of 20 value over one rotation.
+#define USE_KATANA1234_LOGIC_FOR_TORQUE (1) // (1) = use katana with an average of n last value; big changes getting more priority 
 
 
 //#define APPLY_ENHANCED_POSITIONING (0) // 0 = do not apply; 1 = apply enhanced
