@@ -13,7 +13,7 @@
 #include "common.h"
 
 #define FIRMWARE_VERSION "0.1.20"      // 22/03/25 12h30 is not used; just for reference)
-#define MAIN_CONFIGURATOR_VERSION 6  // for configurator (must be the same as in xls sheet)
+#define MAIN_CONFIGURATOR_VERSION 6  // for configurator (must be the same as in javaconfigurator TSDZ8_header.ini file)
 #define SUB_CONFIGURATOR_VERSION  0    // is not used (just for reference)
 
 
@@ -565,11 +565,11 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 #define AVAILABLE_FOR_FUTURE_USE				0 // EEPROM
 
 
-// added by mstrens to store the configuration from xls configurator
+// added by mstrens to store the configuration from javaconfigurator
 #define ADDRESS_OF_M_CONFIG_FLASH 0x1000F000U // address in flash where the config is strored (must be the same as the adrress set in the xls for config)
 
 #define ADDRESS_OF_M_CONFIGURATION_VARIABLES 0x1000FF00 // address in flash of the variables modified by the display
-#define VERSION_OF_M_CONFIGURATION_VARIABLES 0XAACC // to to check if flash contains a setup that can be used
+#define VERSION_OF_M_CONFIGURATION_VARIABLES 0XAADD // to to check if flash contains a setup that can be used
 
 // added by mstrens to make it easier to reuse code from mbrusa
 #define DELAY_MENU_ON (m_config.delay_menu_on)
