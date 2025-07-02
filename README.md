@@ -113,10 +113,16 @@ To know how to use the JavaConfigurator and the purpose of all parameters, see t
 
 Take care that there are still a few differences/points of attention about Torque sensor
 * calibrated MUST be enabled because you have to fill Pedal torque ADC offset (no weight) and  Pedal torque ADC max (max weight)
+
+
+* Pedal torque ADC step is important because it is used to convert raw values provided by the torque sensor into the human torque and so also to calculate the human power and the requested motor power. Measures done on only one TSDZ8 motor shows that the raw values provided by the torque sensor are proportional to the weight on the pedal up to about 50Kg (above there is a saturation) and that the raw value at 50kg seems to be about 85 % of the total range (difference between max and offset). In TSDZ8 firmware, ADC values are normalised in order to have a range of 160 steps. So Pedal torque ADC step could be estimated with : 50kg *167 / (85% * 160) = 61. Note: it could be that this value is defferent for your motor.
+
 * Pedal torque ADC step must be correct in order to get a correct value of the human power (see mbrusa instructions). OSF TSDZ8 uses this field even when calibrated is enabled (on the opposite to TSDZ2)
+
+
 * Pedal torque ADC step adv is not used (even if calibrated is disabled)
 * Pedal torque ADC offset adjustement is not used.
-* TPedal torque ADC range adj is used to increase/decrease sensitivity for low pressure on the pedal. Sorry if the name if confusing but it was the only field from 860C that I could reuse for this. This parameter does not change the maximum assistance provided for any selected level when pressure on pedal is maximum but it allows to increase (or decrease) the assistance when pressure on pedal is quite low.
+* Pedal torque ADC range adj is used to increase/decrease sensitivity for low pressure on the pedal. Sorry if the name if confusing but it was the only field from 860C that I could reuse for this. This parameter does not change the maximum assistance provided for any selected level when pressure on pedal is maximum but it allows to increase (or decrease) the assistance when pressure on pedal is quite low.
 This parameter can vary between -20 and +20. When this parameter is set on 0, the assistance is calculated based on the value of the torque sensor.
 The more the parameter is higher than 0 (up to 20) the less assistance you will get for small pressure on the pedal (but so the more you get for highier pressure - still never exceeding the max value defined for the selected level). In other words, the ratio assistance per kg pressure is lower for lowest pressure and higher for highest pressure compared to parameter set on 0.
 Reversely, the more the parameter is lower than 0 (up to -20), the more assistance you will get for small pressure on the pedal. In other words, the ratio assistance per kg pressure is higher for lowest pressure and lower for highest pressure compare to parameter set on 0.
@@ -125,8 +131,13 @@ Reversely, the more the parameter is lower than 0 (up to -20), the more assistan
 * Pedal torque ADC max (max weight) has to be filled : to find the value, look at field ADC torque sensor when you apply the max pressure on the pedal (about 80 kg = full human weight) while holding the brakes. It seems that the value should be around 450 for TSDZ8 which is quite different from TSDZ2.
 
 
+Values for the different assist levels/modes are different from the default values for TSDZ2: TSDZ8 can provide more power than TSDZ2. In order to get access to the full power even for lower weight on the pedal the ratio value/assitance has been changed for TSDZ8. You have to use a lower value (2 X lower) to get the same assistance for Power, Torque and Hybrid assist modes.
+
+
 Note : there is no need to install all additional softwares mentioned in the manual as you will use only JavaConfigurator.jar and there is no need for compiling/flashing a STM microprocessor (on the opposite to TSDZ2).
 So having java on you PC is enough.
+
+
 
 
 Doubble click (at least on Windows) on JavaConfigurator.jar

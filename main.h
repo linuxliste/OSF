@@ -12,7 +12,7 @@
 #include "config_tsdz8.h"
 #include "common.h"
 
-#define FIRMWARE_VERSION "0.1.20"      // 22/03/25 12h30 is not used; just for reference)
+#define FIRMWARE_VERSION "0.1.30"      // 22/03/25 12h30 is not used; just for reference)
 #define MAIN_CONFIGURATOR_VERSION 6  // for configurator (must be the same as in javaconfigurator TSDZ8_header.ini file)
 #define SUB_CONFIGURATOR_VERSION  0    // is not used (just for reference)
 
@@ -49,8 +49,11 @@
 
 #define USE_IRQ_FOR_HALL (0) // 1 = use irq; 0 = use capture
 
-#define USE_SPIDER_LOGIC_FOR_TORQUE (0)// (1) = use Spider logic with a buffer of 20 value over one rotation.
-#define USE_KATANA1234_LOGIC_FOR_TORQUE (1) // (1) = use katana with an average of n last value; big changes getting more priority 
+#define USE_SPIDER_LOGIC_FOR_TORQUE (0) // (1) = use Spider logic with a buffer of 20 value over one rotation.
+                                        // (2) = mstrens variant using "expected" concept + smoothing
+#define USE_KATANA1234_LOGIC_FOR_TORQUE (2) // (1) = use katana with an average of n last value; big changes getting more priority 
+                                            // (0) = use a logic based on max of current torque, max current rotation, max previous rotation
+                                            // (2) use katana logic with progressive resize depending on cadence
 
 
 //#define APPLY_ENHANCED_POSITIONING (0) // 0 = do not apply; 1 = apply enhanced
@@ -248,7 +251,8 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 */
 
 // scale the torque assist target current
-#define TORQUE_ASSIST_FACTOR_DENOMINATOR		120
+// changed by mstrens to allow more power for the same level
+#define TORQUE_ASSIST_FACTOR_DENOMINATOR		60 // in tSDZ2, it is 120, reducing the value, increase the current for the same level
 
 // torque step mode
 #define TORQUE_STEP_DEFAULT							0 // not calibrated
@@ -566,7 +570,7 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 
 
 // added by mstrens to store the configuration from javaconfigurator
-#define ADDRESS_OF_M_CONFIG_FLASH 0x1000F000U // address in flash where the config is strored (must be the same as the adrress set in the xls for config)
+#define ADDRESS_OF_M_CONFIG_FLASH 0x1000F000U // address in flash where the config is stored (must be the same as the adrress set in the xls for config)
 
 #define ADDRESS_OF_M_CONFIGURATION_VARIABLES 0x1000FF00 // address in flash of the variables modified by the display
 #define VERSION_OF_M_CONFIGURATION_VARIABLES 0XAADD // to to check if flash contains a setup that can be used

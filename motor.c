@@ -123,7 +123,7 @@ static uint16_t ui16_cadence_stop_counter = 0;
 static uint8_t ui8_cadence_calc_ref_state = NO_PAS_REF;
 const static uint8_t ui8_pas_old_valid_state[4] = { 0x01, 0x03, 0x00, 0x02 };
 //added by mstrens
-uint8_t ui8_pas_counter = 0; // counter to detect a full pedal rotation (after 20 valid transitions)
+uint8_t ui8_pas_counter = 0; // counter to detect a full pedal rotation (after 20 valid transitions) and save max torque per rotation
 
 // wheel speed sensor
 volatile uint16_t ui16_wheel_speed_sensor_ticks = 0;
@@ -864,13 +864,13 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
                 ui16_cadence_sensor_ticks = 0;
                 ui8_cadence_calc_ref_state = NO_PAS_REF; // 5
                 ui8_pas_new_transition = 0x80; // used in mspider logic for torque sensor
+                ui8_pas_counter = 0; // mstrens :  reset the counter for full rotation
                 goto skip_cadence;
             }
 			ui16_cadence_sensor_ticks_counter_min = ui16_cadence_ticks_count_min_speed_adj; // 4270 at 4km/h ... 341 at 40 km/h
             if (ui8_temp_cadence == ui8_cadence_calc_ref_state) { // pattern is valid and represent 1 tour
-                ui8_pas_new_transition = 1; // mspider logic for torque sensor;mark for one of the 20 transitions per rotation
-            
                 // ui16_cadence_calc_counter is valid for cadence calculation
+                ui8_pas_new_transition = 1; // mspider logic for torque sensor;mark for one of the 20 transitions per rotation
                 ui16_cadence_sensor_ticks = ui16_cadence_calc_counter; // use the counter as cadence for ebike_app.c
                 ui16_cadence_calc_counter = 0;
                 // software based Schmitt trigger to stop motor jitter when at resolution limits
@@ -909,13 +909,15 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
     if (irq1_max < temp1) irq1_max = temp1; // store the min enlapsed time in the irq
     #endif
     
-    // added by mstrens to calculate torque sensor without cyclic effect
+    // added by mstrens to calculate torque sensor without cyclic effect using the max per current and previous rotation
     // we have several data
     // ui16_adc_torque_filtered is the actual filtered ADC torque
     // ui16_adc_torque_actual_rotation is the max during current rotation
     // ui16_adc_torque_previous_rotation is the max during previous rotation
+    // ui8_pas_counter count the number of transition to detect a 360° pedal rotation
+
     
-    // first reset the values per rotation when requested by ebike_app.c
+    // first reset the values per rotation when requested by ebike_app.c (because cadence is lower than a threshold)
     if (ui8_adc_torque_rotation_reset) {
         ui8_adc_torque_rotation_reset = 0; //reset the flag
         ui16_adc_torque_actual_rotation = 0;  
