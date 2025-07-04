@@ -2027,8 +2027,8 @@ uint8_t katana_count = 0;
 uint16_t katana_sum = 0; 	
 #endif
 #if (USE_KATANA1234_LOGIC_FOR_TORQUE == (2))
-#define KATANA_BUFFER_LEN_MAX (30) // firt tested with 50 and this was not very positive
-#define KATANA_BUFFER_LEN_MIN (30)
+#define KATANA_BUFFER_LEN_MAX (35) // firt tested with 50 and this was not very positive
+#define KATANA_BUFFER_LEN_MIN (35)
 #define KATANA_2_POWER (6)                    // for a size of 64
 #define KATANA_MODULO ((1<<KATANA_2_POWER)-1)
 uint8_t katana_buffer[1<<KATANA_2_POWER] ; // using a power of 2 allow faster modulo: 64 = 2^6
