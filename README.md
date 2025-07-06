@@ -96,12 +96,20 @@ Note : original Segger jlink devices does not provide 3.3V on Vref pin by defaul
 To flash, you can follow the instructions from here to know how to use Jlink: 
 https://ebikestuff.eu/en/content/18-tsdz8-firmware-update-using-j-link-jlink-v9-programming-kit
 
+
 The HEX file to upload is the one you downloaded from this github site at step 1.
 It is in folder "files_to_flash" and named OSF_TSDZ8_Vxx_xx.hex where xx.xx is a version number.
 
-IMPORTANT NOTE: as said before, for flashing, the motor should not be powered by the battery AND simulterneously by the jlink device.
+IMPORTANT NOTE: as said before, for flashing, the motor should not be powered by the battery AND simulterneously by the jlink device. When powered by the battery AND Jlink device, there is a huge risk to damage the controller.
+
 So you must OR disconnect the battery (or at least power it OFF) OR take care that your Jkink does not provide power on Vref pin to the controller.
 
+
+Take also care to use the menu "manual programming" in J-flash and not the menu "Production programming F7".
+The menu "Production programming" has a default setup that erase totally the chip before flashing.
+This can be an issue because OSF requires flashing 2 different hex files (the OSF firmware and the configuration hex file).
+While flashing one, you usually do not want to erase the other part of the flash memory.
+Note : J-flash allows to disable the erase step when using "production programming" but this requires a specific additional action. 
 
 # 4.Generate the configuration file
 
@@ -146,6 +154,7 @@ It opens a graphical user interface. Take care to select TSDZ8 as "Motor type". 
 # 5.Flash the file with your configuraton
 
 Flash the HEX file your created at step4 in the same way, you flashed already the firmware.
+As said before, use menu "Manual programming" to avoid that J-flash totally erase the chip before flashing the configuration file. 
 
 Note:
 There is normally no need to re-flash the firmware each time you change the configuration file with other preferences.

@@ -531,9 +531,7 @@ void upload_m_config(){
         m_config.main_version = *pConfig++; // read the value given by the pointer, and afterward increment it
         m_config.sub_version = *pConfig++;
         m_config.global_offset_angle = ((uint8_t) *pConfig++) - (uint8_t) 100;
-        //m_config.global_offset_angle = 0; // discard value from javaconfigurator (to test with compiling)
-        m_config.foc_angle_multiplier = *pConfig++;  // !!!!!!!!!!!!! overwritten by next line
-        m_config.foc_angle_multiplier = FOC_ANGLE_MULTIPLIER; // discard value from javaconfigurator (to test)
+        m_config.foc_angle_multiplier = *pConfig++;  // !!!!!!!!!!!!! overwritten at the end of this function
         m_config.reserve_3 = *pConfig++;
         m_config.reserve_4 = *pConfig++;
         m_config.reserve_5 = *pConfig++;
@@ -683,5 +681,7 @@ void upload_m_config(){
         m_config.motor_type_tsdz8 = *pConfig++;
         m_config.enable_ekd01 = *pConfig++;
         m_config.assist_level_5_mode = *pConfig++;
+
+        m_config.foc_angle_multiplier = FOC_ANGLE_MULTIPLIER; // discard value from javaconfigurator (to test)
     } // end of good config version
 }

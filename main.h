@@ -12,7 +12,7 @@
 #include "config_tsdz8.h"
 #include "common.h"
 
-#define FIRMWARE_VERSION "0.1.30"      // 22/03/25 12h30 is not used; just for reference)
+#define FIRMWARE_VERSION "0.1.31"      // 22/03/25 12h30 is not used; just for reference)
 #define MAIN_CONFIGURATOR_VERSION 6  // for configurator (must be the same as in javaconfigurator TSDZ8_header.ini file)
 #define SUB_CONFIGURATOR_VERSION  0    // is not used (just for reference)
 
