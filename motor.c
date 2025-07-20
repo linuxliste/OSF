@@ -652,9 +652,9 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
                 // mstrens : added 128 for better rounding
                 //ui8_foc_flag = ((ui16_adc_foc_angle_current * ui8_foc_angle_multiplicator) + 128) >> 8 ; // multiplier = 39 for 48V tsdz2, 
                 ui8_foc_flag = (((uint16_t) ui8_adc_battery_current_filtered * (uint16_t) ui8_foc_angle_multiplicator) + 128) >> 8 ; // multiplier = 39 for 48V tsdz2, 
-                
-                if (ui8_foc_flag > 13)
-                    ui8_foc_flag = 13;
+                // max = 23 *100 / 16 * 40 = 22
+                if (ui8_foc_flag > 25)
+                    ui8_foc_flag = 25;
                 // removed by mstrens because current is already based on an average on 1 rotation
                 //ui8_foc_angle_accumulated = ui8_foc_angle_accumulated - (ui8_foc_angle_accumulated >> 4) + ui8_foc_flag;
                 //ui8_g_foc_angle = ui8_foc_angle_accumulated >> 4;

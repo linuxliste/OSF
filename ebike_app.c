@@ -2170,7 +2170,9 @@ static uint16_t ui16_adc_pedal_torque_noExpo;
 			if (katana_index >= KATANA_BUFFER_LEN) katana_index = 0;
 			katana_factor--;
 		}
-		ui16_adc_pedal_torque_delta_160 = katana_sum / katana_count ;		
+		if (katana_count > 0) {
+			ui16_adc_pedal_torque_delta_160 = katana_sum / katana_count ;
+		}			
 	#endif
 	#if (USE_KATANA1234_LOGIC_FOR_TORQUE == (2))
 		// no cadence -> immediately clear the buffer to have a quicker starting / stopping reaction
@@ -2224,8 +2226,10 @@ static uint16_t ui16_adc_pedal_torque_noExpo;
 			katana_next_write &= KATANA_MODULO;
 			katana_factor--;
 		}
-		ui16_adc_pedal_torque_delta_160 = katana_sum / katana_count ; // calculate average as final result
-		// check maximum : should not happen but added for safety.
+		if (katana_count > 0){
+			ui16_adc_pedal_torque_delta_160 = katana_sum / katana_count ; // calculate average as final result
+		}
+			// check maximum : should not happen but added for safety.
 		if 	(ui16_adc_pedal_torque_delta_160 > ADC_TORQUE_SENSOR_RANGE_TARGET) ui16_adc_pedal_torque_delta_160 = ADC_TORQUE_SENSOR_RANGE_TARGET;
 	#endif
 	// save the value before applying expo in order to calculate variation in katana1234 logic on next loop (here above)

@@ -142,6 +142,9 @@ Reversely, the more the parameter is lower than 0 (up to -20), the more assistan
 Values for the different assist levels/modes are different from the default values for TSDZ2: TSDZ8 can provide more power than TSDZ2. In order to get access to the full power even for lower weight on the pedal the ratio value/assitance has been changed for TSDZ8. You have to use a lower value (2 X lower) to get the same assistance for Power, Torque and Hybrid assist modes.
 
 
+OSF has a parameter named "FOC multiplier" that has an impact on motor efficency (for high current). Default value is 26 but it is not sure it is the best value. You can experiment other values (lower or higher) but be careful that motor efficiency can decrease a lot and the motor can become unstable and overheat. So be carreful when testing other values and start first with small changes. To test another value, you have to edit the file named "other settings/TSDZ8_heading.ini" in the line "foc_angle_multiplier". Rreplace the value "26" by another one, let javaconfigurator generate a new TSDZ8_config.hex file and upload it in the controller. I do not expect that the best value should exceed 40.
+
+
 Note : there is no need to install all additional softwares mentioned in the manual as you will use only JavaConfigurator.jar and there is no need for compiling/flashing a STM microprocessor (on the opposite to TSDZ2).
 So having java on you PC is enough.
 
