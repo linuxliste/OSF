@@ -1940,22 +1940,38 @@ void new_torque_sample() {
 //( (USE_SPIDER_LOGIC_FOR_TORQUE == (1)) || (USE_SPIDER_LOGIC_FOR_TORQUE == (2)) )
 #define TORQUE_SENSOR_ADC_REMAP_NORM_DIFF_MAX 100 // max value is 160
 static void get_pedal_torque(void) {
+
 	if (toffset_cycle_counter < TOFFSET_CYCLES) {  // less than 3 sec
+		// filter again the adc_torque_filtered value
 		ui16_adc_pedal_torque_offset_init = filter(ui16_adc_torque_filtered, ui16_adc_pedal_torque_offset_init , 4) ; // get filtered torque captured in motor.c irq1
-        toffset_cycle_counter++;
-		if ((toffset_cycle_counter == TOFFSET_CYCLES)&&(ui8_torque_sensor_calibrated)) {
+		toffset_cycle_counter++;
+		// mstrens when offset in configuration is very low, we use the parameter in the config as the margin 
+		// and we add it to the init value
+		if (ui8_torque_sensor_calibrated) {
+			if ( m_config.pedal_torque_adc_offset < 50 ){  
+				ui16_adc_pedal_torque_offset_set = ui16_adc_pedal_torque_offset_init + m_config.pedal_torque_adc_offset;
+			} else { 
+				ui16_adc_pedal_torque_offset_set = m_config.pedal_torque_adc_offset;
+			}
+		} else {   // not calibrated 
+			ui16_adc_pedal_torque_offset_set = ui16_adc_pedal_torque_offset_init + PEDAL_TORQUE_ADC_OFFSET_MARGIN_DEFAULT;
+		}	
+		// check the offset calibration at the end of the 3 sec delay with
+		// the value min and max calculated based on the offset (no load) value sent by 860c and some tolerances (for min)
+		if (toffset_cycle_counter == TOFFSET_CYCLES) {  
 			if ((ui16_adc_pedal_torque_offset_init > ui16_adc_pedal_torque_offset_min)&& 
-			  (ui16_adc_pedal_torque_offset_init < ui16_adc_pedal_torque_offset_max)) {
+			(ui16_adc_pedal_torque_offset_init < ui16_adc_pedal_torque_offset_max)) {
 				ui8_adc_pedal_torque_offset_error = 0;
 			}
 			else {
 				ui8_adc_pedal_torque_offset_error = 1;
 			}
 		}
-		ui16_adc_pedal_torque = ui16_adc_pedal_torque_offset_init;	
+		ui16_adc_pedal_torque = ui16_adc_pedal_torque_offset_init;
 	} else { // after 3 sec
 		ui16_adc_pedal_torque = ui16_adc_torque_filtered; // ui16_adc_torque_filtered is the value calculated in irq
 	}
+	
 	ui16_adc_pedal_torque_offset = ui16_adc_pedal_torque_offset_set ; // this value is received from the config (in 860C)
 	ui16_adc_pedal_torque_delta = 0; // this is the final value to retun 
 	uint16_t ui16_TorqueDeltaADC_norm = 0;
@@ -2077,10 +2093,20 @@ static uint16_t ui16_adc_pedal_torque_noExpo;
 		// filter again the adc_torque_filtered value
 		ui16_adc_pedal_torque_offset_init = filter(ui16_adc_torque_filtered, ui16_adc_pedal_torque_offset_init , 4) ; // get filtered torque captured in motor.c irq1
 		toffset_cycle_counter++;
-		
+		// mstrens when offset in configuration is very low, we use the parameter in the config as the margin 
+		// and we add it to the init value
+		if (ui8_torque_sensor_calibrated) {
+			if ( m_config.pedal_torque_adc_offset < 50 ){  
+				ui16_adc_pedal_torque_offset_set = ui16_adc_pedal_torque_offset_init + m_config.pedal_torque_adc_offset;
+			} else { 
+				ui16_adc_pedal_torque_offset_set = m_config.pedal_torque_adc_offset;
+			}
+		} else {   // not calibrated 
+			ui16_adc_pedal_torque_offset_set = ui16_adc_pedal_torque_offset_init + PEDAL_TORQUE_ADC_OFFSET_MARGIN_DEFAULT;
+		}	
 		// check the offset calibration at the end of the 3 sec delay with
 		// the value min and max calculated based on the offset (no load) value sent by 860c and some tolerances (for min)
-		if ((toffset_cycle_counter == TOFFSET_CYCLES)&&(ui8_torque_sensor_calibrated)) {  
+		if (toffset_cycle_counter == TOFFSET_CYCLES) {  
 			if ((ui16_adc_pedal_torque_offset_init > ui16_adc_pedal_torque_offset_min)&& 
 			(ui16_adc_pedal_torque_offset_init < ui16_adc_pedal_torque_offset_max)) {
 				ui8_adc_pedal_torque_offset_error = 0;

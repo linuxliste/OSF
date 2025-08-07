@@ -433,9 +433,14 @@ void init_extra_fields_config (){
     ui16_adc_pedal_torque_offset = m_config.pedal_torque_adc_offset;// PEDAL_TORQUE_ADC_OFFSET;      // 150
     ui16_adc_pedal_torque_offset_init = m_config.pedal_torque_adc_offset;// PEDAL_TORQUE_ADC_OFFSET; // 150
     //ui16_adc_pedal_torque_offset_cal =  m_config.pedal_torque_adc_offset;//PEDAL_TORQUE_ADC_OFFSET;  // 150
-    ui16_adc_pedal_torque_offset_min = m_config.pedal_torque_adc_offset - ADC_TORQUE_SENSOR_OFFSET_THRESHOLD; 
-    ui16_adc_pedal_torque_offset_max = m_config.pedal_torque_adc_offset ; // mstrens : offset_init may not exceed offset
-
+    //mstrens adapt min and max depending if calibrated or not
+    if (m_config.torque_sensor_calibrated) {
+        ui16_adc_pedal_torque_offset_min = m_config.pedal_torque_adc_offset - ADC_TORQUE_SENSOR_OFFSET_THRESHOLD; 
+        ui16_adc_pedal_torque_offset_max = m_config.pedal_torque_adc_offset ; // mstrens : offset_init may not exceed offset
+    } else {
+        ui16_adc_pedal_torque_offset_min = 140 ; // it is expected that offset is always within those limits
+        ui16_adc_pedal_torque_offset_max = 270 ; 
+    }
     ui8_torque_sensor_calibrated = m_config.torque_sensor_calibrated;// TORQUE_SENSOR_CALIBRATED;
  
      ui8_wheel_speed_max_array[0] = m_config.wheel_max_speed;
@@ -683,5 +688,9 @@ void upload_m_config(){
         m_config.assist_level_5_mode = *pConfig++;
 
         //m_config.foc_angle_multiplier = FOC_ANGLE_MULTIPLIER; // discard value from javaconfigurator (to test)
+        // when torque is not calibrated, we use always the default max value (450) and we discard the config
+        if ( ! m_config.torque_sensor_calibrated) {
+            m_config.pedal_torque_adc_max = _PEDAL_TORQUE_ADC_MAX ;
+        }
     } // end of good config version
 }

@@ -12,7 +12,7 @@
 #include "config_tsdz8.h"
 #include "common.h"
 
-#define FIRMWARE_VERSION "0.1.32"      // 22/03/25 12h30 is not used; just for reference)
+#define FIRMWARE_VERSION "0.1.33"      // 22/03/25 12h30 is not used; just for reference)
 #define MAIN_CONFIGURATOR_VERSION 6  // for configurator (must be the same as in javaconfigurator TSDZ8_header.ini file)
 #define SUB_CONFIGURATOR_VERSION  0    // is not used (just for reference)
 
@@ -600,5 +600,7 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 #define WALK_ASSIST_THRESHOLD_SPEED (m_config.walk_assist_threshold_speed_x10 / 10)
 #define ACTUAL_BATTERY_VOLTAGE_PERCENT (m_config.actual_battery_voltage_percent)
 #define BATTERY_CELLS_NUMBER (m_config.battery_cells_number)
+
+#define PEDAL_TORQUE_ADC_OFFSET_MARGIN_DEFAULT   (20) // margin added to ADC during the first 3 sec
 
 #endif // _MAIN_H_

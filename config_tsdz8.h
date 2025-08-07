@@ -29,7 +29,7 @@
 #define _MOTOR_ASSISTANCE_WITHOUT_PEDAL_ROTATION 0 // when enabled (1), assistance is provided when the pedal is pressed more than the thershold herafer
 #define _ASSISTANCE_WITHOUT_PEDAL_ROTATION_THRESHOLD 20
 #define _PEDAL_TORQUE_PER_10_BIT_ADC_STEP_X100 67    // used to calculate the correct ratio between the assistance factor and the human power + for total power
-#define _PEDAL_TORQUE_ADC_MAX 300                    // value from ADC when max weigth is apply on one pedal
+#define _PEDAL_TORQUE_ADC_MAX 450                    // value from ADC when max weigth is apply on one pedal ; for TSDZ8 450 seems usual
 #define _STARTUP_BOOST_TORQUE_FACTOR 250
 #define _MOTOR_BLOCKED_COUNTER_THRESHOLD 2
 #define _MOTOR_BLOCKED_BATTERY_CURRENT_THRESHOLD_X10 20  // mstrens : it was 30 for tsdz2, I reduce it for testing
