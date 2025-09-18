@@ -678,7 +678,16 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
 
         // get brake state-
         ui8_brake_state = XMC_GPIO_GetInput(IN_BRAKE_PORT, IN_BRAKE_PIN) == 0; // Low level means that brake is on
-    
+
+        // added by mstrens to detect overcurrent and to decrase immediatelu the duty cycle
+        //uint8_t ui8_temp_adc_current = ((XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 15 ) & 0xFFFF) +
+	    //								(XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 15 ) & 0xFFFF)) >>5  ;  // >>2 for IIR, >>2 for ADC12 to ADC10 , >>1 for averaging		
+	    // changed by mstrens to take care of infineon init for vadc (result 12bits and in reg 1)
+	    uint8_t ui8_temp_adc_current = (XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , VADC_I4_RESULT_REG ) & 0xFFFF) >> 2;// from 12 to 10bits 
+	    if ( ui8_temp_adc_current > ui8_adc_battery_overcurrent){ // 112+50 in tsdz2 (*0,16A) => 26A
+            ui8_g_duty_cycle -= (ui8_g_duty_cycle >> 2); // reduce immediately dutycycle by 25% to avoid overcurrent in next pwm 
+        }    
+		  
     // to debug
     //uint16_t temp1d  =  XMC_CCU4_SLICE_GetTimerValue(HALL_SPEED_TIMER_HW);
     //temp1d = temp1d - start_ticks;
@@ -735,9 +744,11 @@ __RAM_FUNC void CCU80_1_IRQHandler(){ // called when ccu8 Slice 3 reaches 840  c
             if (++ui8_counter_duty_cycle_ramp_up > ui8_controller_duty_cycle_ramp_up_inverse_step) {
                 ui8_counter_duty_cycle_ramp_up = 0;
                 // increment duty cycle
-                if (ui8_g_duty_cycle < PWM_DUTY_CYCLE_MAX) {
+                if (ui8_g_duty_cycle < PWM_DUTY_CYCLE_STARTUP) {
+                    ui8_g_duty_cycle = PWM_DUTY_CYCLE_STARTUP;
+                }	
+                else if (ui8_g_duty_cycle < PWM_DUTY_CYCLE_MAX) {
                     ui8_g_duty_cycle++;
-                    ui16_duty_cycle_count_up++;
                 }
             }
         }

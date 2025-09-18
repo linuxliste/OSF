@@ -58,6 +58,9 @@ extern volatile uint8_t ui8_battery_SOC_reset_flag;
 extern volatile uint8_t ui8_g_foc_angle;
 extern uint8_t ui8_foc_angle_multiplicator;
 
+// added by mstrens because defined in ebike_app.c and used in motor.c
+extern uint8_t ui8_adc_battery_overcurrent;
+
 // added by mstrens to debug
 
 #if ( GENERATE_DATA_FOR_REGRESSION_ANGLES == (1) )

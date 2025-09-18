@@ -12,7 +12,7 @@
 #include "config_tsdz8.h"
 #include "common.h"
 
-#define FIRMWARE_VERSION "0.1.33"      // 22/03/25 12h30 is not used; just for reference)
+#define FIRMWARE_VERSION "0.1.35"      // 22/03/25 12h30 is not used; just for reference)
 #define MAIN_CONFIGURATOR_VERSION 6  // for configurator (must be the same as in javaconfigurator TSDZ8_header.ini file)
 #define SUB_CONFIGURATOR_VERSION  0    // is not used (just for reference)
 
@@ -49,8 +49,10 @@
 
 #define USE_IRQ_FOR_HALL (0) // 1 = use irq; 0 = use capture
 
-#define USE_SPIDER_LOGIC_FOR_TORQUE (0) // (1) = use Spider logic with a buffer of 20 value over one rotation.
+// note when USE_SPIDER_LOGIC_FOR_TORQUE > 0, KATANA logic is not used; to use KATANA, USE_SPIDER must be 0
+#define USE_SPIDER_LOGIC_FOR_TORQUE (3) // (1) = use Spider logic with a buffer of 20 value over one rotation.
                                         // (2) = mstrens variant using "expected" concept + smoothing
+                                        // (3) = Spider logic, no reset of buffer when torque = 0, avg when less than 20.
 #define USE_KATANA1234_LOGIC_FOR_TORQUE (2) // (1) = use katana with an average of n last value; big changes getting more priority 
                                             // (0) = use a logic based on max of current torque, max current rotation, max previous rotation
                                             // (2) use katana logic with progressive resize depending on cadence
@@ -114,7 +116,8 @@
 #define MOTOR_OVER_SPEED_ERPS	1300 
 
 // for TSDZ2
-//#define MOTOR_SPEED_FIELD_WEAKENING_MIN			490 // it is to compare with erps 
+//#define MOTOR_SPEED_FIELD_WEAKENING_MIN			490 // 90 rpm it is to compare with erps 
+//#define ERPS_SPEED_OF_MOTOR_REENABLING				320 // 60 rpm
 //For TSDZ8, I expect that it must be 2 * smaller for the same mecanical speed (4 poles instead of 8)
 #define MOTOR_SPEED_FIELD_WEAKENING_MIN				245 // 90 rpm
 
@@ -289,7 +292,7 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
  ---------------------------------------------------------*/
 
 // cadence sensor
-//#define CADENCE_SENSOR_NUMBER_MAGNETS				20U
+//#define CADENCE_SENSOR_NUMBER_MAGNETS				20U // is not used in the code (hardcoded 60 min / 20 = 3)
 
 /*---------------------------------------------------------------------------
  NOTE: regarding the cadence sensor

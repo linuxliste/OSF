@@ -101,7 +101,7 @@ static uint16_t ui16_duty_cycle_percent = 0;
 volatile uint16_t ui16_adc_motor_phase_current_max = ADC_10_BIT_MOTOR_PHASE_CURRENT_MAX; // In tdsz2 it was 187
 static uint8_t ui8_error_battery_overcurrent = 0;
 static uint8_t ui8_error_battery_overcurrent_counter = 0;
-static uint8_t ui8_adc_battery_overcurrent = (uint8_t)(ADC_10_BIT_BATTERY_CURRENT_MAX + ADC_10_BIT_BATTERY_EXTRACURRENT); //In tdsz2 it was 112 + 50
+uint8_t ui8_adc_battery_overcurrent = (uint8_t)(ADC_10_BIT_BATTERY_CURRENT_MAX + ADC_10_BIT_BATTERY_EXTRACURRENT); //In tdsz2 it was 112 + 50
 static uint8_t ui8_adc_battery_current_max_temp_1 = 0;
 static uint8_t ui8_adc_battery_current_max_temp_2 = 0;
 static uint32_t ui32_adc_battery_power_max_x1000_array[2];
@@ -644,10 +644,10 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
 	//uint8_t ui8_temp_adc_current = ((XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , 15 ) & 0xFFFF) +
 	//								(XMC_VADC_GROUP_GetResult(vadc_0_group_1_HW , 15 ) & 0xFFFF)) >>5  ;  // >>2 for IIR, >>2 for ADC12 to ADC10 , >>1 for averaging		
 	// changed by mstrens to take care of infineon init for vadc (result 12bits and in reg 1)
-	uint8_t ui8_temp_adc_current = (XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , VADC_I4_RESULT_REG ) & 0xFFFF) >> 2;// from 12 to 10bits 
-	if ( ui8_temp_adc_current > ui8_adc_battery_overcurrent){ // 112+50 in tsdz2 (*0,16A) => 26A
-        ui8_error_battery_overcurrent = ERROR_BATTERY_OVERCURRENT ;
-    }
+	uint16_t ui16_temp_adc_current = (XMC_VADC_GROUP_GetResult(vadc_0_group_0_HW , VADC_I4_RESULT_REG ) & 0xFFFF) >> 2;// from 12 to 10bits 
+	//if ( ui8_temp_adc_current > ui8_adc_battery_overcurrent){ // 112+50 in tsdz2 (*0,16A) => 26A
+	//	ui8_error_battery_overcurrent = ERROR_BATTERY_OVERCURRENT ;
+	//} 
 
 	/*
     // Read in assembler to ensure data consistency (conversion overrun)
@@ -662,15 +662,16 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
 	__endasm;
 	#endif
     */
+
+   	// modified by mstrens (a reset was missing)
 	if (m_config.overcurrent_delay > 0) {  // OVERCURRENT_DELAY
-		if (ui8_error_battery_overcurrent) {
+		if ( ui16_temp_adc_current > (uint16_t) ui8_adc_battery_overcurrent){ // 112+50 in tsdz2 (*0,16A) => 26A
 			ui8_error_battery_overcurrent_counter++;
-		}
-		else {
+		} else {
 			ui8_error_battery_overcurrent_counter = 0;
 		}
 		if (ui8_error_battery_overcurrent_counter >= OVERCURRENT_DELAY) {
-			ui8_system_state = ui8_error_battery_overcurrent;
+			ui8_system_state = ERROR_BATTERY_OVERCURRENT;
 		}
 	} // endif
 	
@@ -745,7 +746,8 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
     // check if the motor should be enabled or disabled
 	// stop the motor e.g. if erps = 0 and current target and duty cycle are both 0
     if (ui8_motor_enabled
-		&& ((ui8_system_state == ERROR_MOTOR_BLOCKED)
+		&& ((ui8_brake_state)
+			|| (ui8_system_state == ERROR_MOTOR_BLOCKED)
 			|| (ui8_system_state == ERROR_MOTOR_CHECK)
 			|| (ui8_system_state == ERROR_BATTERY_OVERCURRENT)
 			|| (ui8_system_state == ERROR_THROTTLE)
@@ -757,11 +759,12 @@ static void ebike_control_motor(void) // is called every 25ms by ebike_app_contr
         motor_disable_pwm();
     }
 	else if (!ui8_motor_enabled
+			&& (!ui8_brake_state)
 			&& (ui16_motor_speed_erps < ERPS_SPEED_OF_MOTOR_REENABLING) // enable the motor only if it rotates slowly or is stopped
-			&& (ui8_adc_battery_current_target > 0U)
-			&& (!ui8_brake_state)) {
+			&& (ui8_adc_battery_current_target > 0U)) {
 		ui8_motor_enabled = 1;
-		ui8_g_duty_cycle = PWM_DUTY_CYCLE_STARTUP;
+		ui8_g_duty_cycle = 0;
+		//ui8_g_duty_cycle = PWM_DUTY_CYCLE_STARTUP;
 		//ui8_duty_cycle_ramp_up_inverse_step = PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN;
 		//ui8_duty_cycle_ramp_down_inverse_step = PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN;
 		ui8_fw_hall_counter_offset = 0;
@@ -1859,14 +1862,16 @@ int expo(int x, int k)
 static uint8_t toffset_cycle_counter = 0;
 // get_pedal_torque has been totally rewrittent for TSDZ8 (do not update based on TSDZ2)
 
-#if ( (USE_SPIDER_LOGIC_FOR_TORQUE == (1)) || (USE_SPIDER_LOGIC_FOR_TORQUE == (2)) )
+#if  (USE_SPIDER_LOGIC_FOR_TORQUE > (0)) 
 static uint16_t ui16_TSamples[21];
 static uint8_t ui8_TSamplesNum = 0;
 static uint8_t ui8_TSamplesPos = 0;
 static uint16_t ui16_TSum = 0;
 //static uint8_t ui8_adc_pedal_torque_delta = 0;  // added by mstrens to save the remap torque in uint8_t
+#if (USE_SPIDER_LOGIC_FOR_TORQUE == (2))
 static uint16_t ui16_TExpected[21];  // expected torque value based on expected in previous rotation and difference in TSamples
 static uint16_t ui16_TExpectedNew ;
+#endif
 static uint16_t ui16_adc_pedal_torque_filtered_noExpo ;
 uint16_t ui16_TSampleOld;
 // PWM IRQ set ui8_pas_new_transition when a new PAS signal transition is detected.
@@ -1894,6 +1899,8 @@ void new_torque_sample() {
 			ui16_TorqueDeltaADC_norm = ADC_TORQUE_SENSOR_RANGE_TARGET;
 		}
 	}
+    #if ((USE_SPIDER_LOGIC_FOR_TORQUE == (1)) || (USE_SPIDER_LOGIC_FOR_TORQUE == (2)))
+	// when define == 3, we do not reset the buffer
     if (ui16_TorqueDeltaADC_norm == 0) {   // perhaps this could be omitted
     	// torque adc value less than 0 torque reference ADC -> reset all
         ui8_TSamplesNum = 0;
@@ -1901,6 +1908,7 @@ void new_torque_sample() {
         ui8_TSamplesPos = 0;
         return;
     }
+	#endif
 	ui16_TSampleOld = ui16_TSamples[ui8_TSamplesPos] ; // latest value that will be lost (valid only if buffer is full = TSamplesNum == 20)
     ui16_TSamples[ui8_TSamplesPos] = ui16_TorqueDeltaADC_norm; // store the new delta value value
     ui16_TSum += ui16_TorqueDeltaADC_norm; // Add to the average the new sample
@@ -1911,6 +1919,7 @@ void new_torque_sample() {
 		} else {              // this should not happen because the value should already be part of the sum; added for safety
 			ui16_TSum = 0; 
 		}
+		#if (USE_SPIDER_LOGIC_FOR_TORQUE == (2))
 		// calculate new expected = old Expected(in the same pedal position) + new torque - old torque (only if result is posiif, else 0)
 		ui16_TExpectedNew = ui16_TExpected[ui8_TSamplesPos] + ui16_TorqueDeltaADC_norm;
 		if (ui16_TExpectedNew > ui16_TSampleOld) {
@@ -1920,8 +1929,10 @@ void new_torque_sample() {
 		}
 		// save the expected torque; to be used in get_pedal_torque;
 		ui16_TExpected[ui8_TSamplesPos] = ui16_TExpectedNew;
+		#endif
     } else {
         ui8_TSamplesNum++;
+		#if (USE_SPIDER_LOGIC_FOR_TORQUE == (2))
 		if (ui8_TSamplesNum == 20){ 
         	// fill expected array with the average
 			ui16_TExpectedNew = ui16_TSum / 20;
@@ -1929,6 +1940,7 @@ void new_torque_sample() {
 				ui16_TExpected[i] = ui16_TExpectedNew;
     		}
 		}
+		#endif
 	}
 	ui8_TSamplesPos++;  // increase the pos
 	if (ui8_TSamplesPos >= 20) {
@@ -1937,28 +1949,13 @@ void new_torque_sample() {
 
 }
 
-//( (USE_SPIDER_LOGIC_FOR_TORQUE == (1)) || (USE_SPIDER_LOGIC_FOR_TORQUE == (2)) )
+//( (USE_SPIDER_LOGIC_FOR_TORQUE > 0 (so 1, 2, 3)
 #define TORQUE_SENSOR_ADC_REMAP_NORM_DIFF_MAX 100 // max value is 160
 static void get_pedal_torque(void) {
-
 	if (toffset_cycle_counter < TOFFSET_CYCLES) {  // less than 3 sec
-		// filter again the adc_torque_filtered value
 		ui16_adc_pedal_torque_offset_init = filter(ui16_adc_torque_filtered, ui16_adc_pedal_torque_offset_init , 4) ; // get filtered torque captured in motor.c irq1
 		toffset_cycle_counter++;
-		// mstrens when offset in configuration is very low, we use the parameter in the config as the margin 
-		// and we add it to the init value
-		if (ui8_torque_sensor_calibrated) {
-			if ( m_config.pedal_torque_adc_offset < 50 ){  
-				ui16_adc_pedal_torque_offset_set = ui16_adc_pedal_torque_offset_init + m_config.pedal_torque_adc_offset;
-			} else { 
-				ui16_adc_pedal_torque_offset_set = m_config.pedal_torque_adc_offset;
-			}
-		} else {   // not calibrated 
-			ui16_adc_pedal_torque_offset_set = ui16_adc_pedal_torque_offset_init + PEDAL_TORQUE_ADC_OFFSET_MARGIN_DEFAULT;
-		}	
-		// check the offset calibration at the end of the 3 sec delay with
-		// the value min and max calculated based on the offset (no load) value sent by 860c and some tolerances (for min)
-		if (toffset_cycle_counter == TOFFSET_CYCLES) {  
+		if ((toffset_cycle_counter == TOFFSET_CYCLES)&&(ui8_torque_sensor_calibrated)) {
 			if ((ui16_adc_pedal_torque_offset_init > ui16_adc_pedal_torque_offset_min)&& 
 			(ui16_adc_pedal_torque_offset_init < ui16_adc_pedal_torque_offset_max)) {
 				ui8_adc_pedal_torque_offset_error = 0;
@@ -1971,7 +1968,6 @@ static void get_pedal_torque(void) {
 	} else { // after 3 sec
 		ui16_adc_pedal_torque = ui16_adc_torque_filtered; // ui16_adc_torque_filtered is the value calculated in irq
 	}
-	
 	ui16_adc_pedal_torque_offset = ui16_adc_pedal_torque_offset_set ; // this value is received from the config (in 860C)
 	ui16_adc_pedal_torque_delta = 0; // this is the final value to retun 
 	uint16_t ui16_TorqueDeltaADC_norm = 0;
@@ -1985,7 +1981,7 @@ static void get_pedal_torque(void) {
 	} else {
 		ui16_adc_pedal_torque_filtered_noExpo = 0 ;  // reset filtered no expo when torque is 0
 	}	
-#if (USE_SPIDER_LOGIC_FOR_TORQUE == (1))
+#if ((USE_SPIDER_LOGIC_FOR_TORQUE == (1)) || (USE_SPIDER_LOGIC_FOR_TORQUE == (3)) )
 	// when TSampleNum == 20,
 	//                     if difference with previous at the same position,is low, use the average (no filter because already average over one rotation)
 	//                     else ; use new value but with filtering
@@ -2004,7 +2000,13 @@ static void get_pedal_torque(void) {
 			ui16_adc_pedal_torque_filtered_noExpo = filter( ui16_TorqueDeltaADC_norm , ui16_adc_pedal_torque_filtered_noExpo , 5);
 		}
 	} else {   // when buffer is not full
+		#if (USE_SPIDER_LOGIC_FOR_TORQUE == (1)) 
 		ui16_adc_pedal_torque_filtered_noExpo = filter( ui16_TorqueDeltaADC_norm , ui16_adc_pedal_torque_filtered_noExpo , 5); 
+		#else // (USE_SPIDER_LOGIC_FOR_TORQUE == (3) we use the average
+		if (ui8_TSamplesNum > 0) {
+			ui16_adc_pedal_torque_filtered_noExpo = ui16_TSum / ui8_TSamplesNum; // overwrite with avg when less than 1 rotation
+		}	
+		#endif
 	}
 
 #else  // (USE_SPIDER_LOGIC_FOR_TORQUE == (2))
@@ -2026,14 +2028,14 @@ static void get_pedal_torque(void) {
 	// for cadence sensor check
 	ui16_adc_pedal_torque_delta_no_boost = ui16_adc_pedal_torque_delta;
 		
-	// calculate torque on pedals
+	// calculate torque on pedals // only in 860C the variable is static and used in display interface
 	uint16_t ui16_pedal_torque_x100 = ui16_adc_pedal_torque_delta * ui8_pedal_torque_per_10_bit_ADC_step_x100;
 	
 	// calculate human power x10
 	// mstrens : always use ui16_pedal_torque_x100 ; discard m_configuration_variables.ui8_torque_sensor_adv_enabled
 	ui16_human_power_x10 = (uint16_t)(((uint32_t)ui16_pedal_torque_x100 * ui8_pedal_cadence_RPM) / 96); // see note below
 }
-#else // NOT ( (USE_SPIDER_LOGIC_FOR_TORQUE == (1)) || (USE_SPIDER_LOGIC_FOR_TORQUE == (2)) )
+#else // NORMAL or KATANA logic : (USE_SPIDER_LOGIC_FOR_TORQUE == (0)) 
       //       so with KATANA logic or Max logic
 #if (USE_KATANA1234_LOGIC_FOR_TORQUE == (1))
 #define KATANA_BUFFER_LEN 40
@@ -2043,8 +2045,8 @@ uint8_t katana_count = 0;
 uint16_t katana_sum = 0; 	
 #endif
 #if (USE_KATANA1234_LOGIC_FOR_TORQUE == (2))
-#define KATANA_BUFFER_LEN_MAX (50) // firt tested with 50 and this was not very positive
-#define KATANA_BUFFER_LEN_MIN (30)
+#define KATANA_BUFFER_LEN_MAX (40) // firt tested with 50 and this was not very positive
+#define KATANA_BUFFER_LEN_MIN (40) // first used 30
 #define KATANA_2_POWER (6)                    // for a size of 64
 #define KATANA_MODULO ((1<<KATANA_2_POWER)-1)
 uint8_t katana_buffer[1<<KATANA_2_POWER] ; // using a power of 2 allow faster modulo: 64 = 2^6
@@ -2252,7 +2254,7 @@ static uint16_t ui16_adc_pedal_torque_noExpo;
 			katana_next_write &= KATANA_MODULO;
 			katana_factor--;
 		}
-		if (katana_count > 0){
+		if (katana_count > 0) {
 			ui16_adc_pedal_torque_delta_160 = katana_sum / katana_count ; // calculate average as final result
 		}
 			// check maximum : should not happen but added for safety.
@@ -3779,7 +3781,7 @@ void uart_send_package(){
 					ui16_display_data = ui16_display_data_factor / (ui16_pedal_weight_x100 / 10U);
 				}
 				else if (ui8_display_torque_sensor_calibration_step_flag) {
-					ui16_display_data = ui16_display_data_factor / (uint16_t)(ui8_torque_sensor_step_to_display * 10U);
+					ui16_display_data = (ui16_display_data_factor / (uint16_t)ui8_torque_sensor_step_to_display) * 10U;
 				}
 				else if (ui8_display_torque_sensor_calibration_value_flag) {
 					ui16_display_data = ui16_display_data_factor / ui16_torque_sensor_value_to_display;
@@ -3789,7 +3791,7 @@ void uart_send_package(){
 			  switch (ui8_display_data_on_startup) {
 				case 1:
 					if (m_config.units_type == MILES) {
-					ui16_display_data = ui16_display_data_factor / (ui16_battery_SOC_percentage_x10 * 10U);
+					ui16_display_data = (ui16_display_data_factor / ui16_battery_SOC_percentage_x10) * 10U;
 					} else {
 					ui16_display_data = ui16_display_data_factor / ui16_battery_SOC_percentage_x10;
 					}
@@ -3827,14 +3829,14 @@ void uart_send_package(){
 			  switch (ui8_data_index_array[ui8_data_index]) {
 				case 0:
 					if (m_config.units_type == MILES) {
-					ui16_display_data = ui16_display_data_factor / (ui16_motor_temperature_filtered_x10 * 10U);
+					ui16_display_data = (ui16_display_data_factor / ui16_motor_temperature_filtered_x10) * 10U;
 					} else {
 					ui16_display_data = ui16_display_data_factor / ui16_motor_temperature_filtered_x10;
 					}
 				  break;
 				case 1:
 					if (m_config.units_type == MILES) {
-					ui16_display_data = ui16_display_data_factor / (ui16_battery_SOC_percentage_x10 * 10U);
+					ui16_display_data = (ui16_display_data_factor / ui16_battery_SOC_percentage_x10) * 10U;
 					} else {
 					ui16_display_data = ui16_display_data_factor / ui16_battery_SOC_percentage_x10;
 					}
@@ -3864,13 +3866,13 @@ void uart_send_package(){
 				  break;
 				case 7:
 					if (m_config.units_type == MILES) {
-						ui16_display_data = ui16_display_data_factor / (ui8_pedal_cadence_RPM * 10U);
+						ui16_display_data = (ui16_display_data_factor / ui8_pedal_cadence_RPM) * 10U;
 					} else {
 						if (ui8_pedal_cadence_RPM > 99) {
 							ui16_display_data = ui16_display_data_factor / ui8_pedal_cadence_RPM;
 						}
 						else {
-							ui16_display_data = ui16_display_data_factor / (ui8_pedal_cadence_RPM * 10U);
+							ui16_display_data = (ui16_display_data_factor / ui8_pedal_cadence_RPM) * 10U;
 						}
 					}
 				  break;
@@ -3894,7 +3896,7 @@ void uart_send_package(){
 				  break;
 				case 12:
 					ui16_duty_cycle_percent = (uint16_t) ((ui8_g_duty_cycle * (uint8_t)100) / PWM_DUTY_CYCLE_MAX) - 1;
-					ui16_display_data = ui16_display_data_factor / (ui16_duty_cycle_percent * 10U);
+					ui16_display_data = (ui16_display_data_factor / ui16_duty_cycle_percent) * 10U;
 				  break;
 				default:
 				  break;
